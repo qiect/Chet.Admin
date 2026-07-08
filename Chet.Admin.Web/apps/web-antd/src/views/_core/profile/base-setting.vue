@@ -45,17 +45,21 @@ const formSchema = computed((): VbenFormSchema[] => {
 });
 
 onMounted(async () => {
-  const data = await getProfileApi();
-  profileData.value = data;
-  avatarUrl.value = data?.avatar || '';
-  profileBaseSettingRef.value.getFormApi().setValues({
-    realName: data.name,
-    username: data.email,
-    introduction: data.introduction,
-  });
+  try {
+    const data = await getProfileApi();
+    profileData.value = data;
+    avatarUrl.value = data?.avatar || '';
+    profileBaseSettingRef.value?.getFormApi()?.setValues({
+      realName: data?.name || '',
+      username: data?.email || '',
+      introduction: data?.introduction,
+    });
+  } catch {
+    message.error('获取个人信息失败');
+  }
 });
 
-// 上传前校验
+// 上传前校验：返回 true 让 customRequest 接管上传，校验失败返回 false 中止
 function beforeUpload(file: File) {
   const isImage = /^image\/(jpeg|png|gif|webp|bmp)$/i.test(file.type);
   if (!isImage) {
@@ -67,7 +71,8 @@ function beforeUpload(file: File) {
     message.error('头像图片大小不能超过 2MB');
     return false;
   }
-  return false; // 返回 false 阻止默认上传行为，改用手动上传
+  // 返回 true（或不返回），交给 custom-request 处理
+  return true;
 }
 
 // 自定义上传

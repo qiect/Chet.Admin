@@ -59,7 +59,11 @@ function setupAccessGuard(router: Router) {
             preferences.app.defaultHomePath,
         );
       }
-      return true;
+      // 关键修复：已登录但动态路由尚未生成时（如F5刷新核心路由页面），
+      // 不能直接返回，需要继续往下走动态路由生成流程，否则菜单栏会消失
+      if (!accessStore.accessToken || accessStore.isAccessChecked) {
+        return true;
+      }
     }
 
     // accessToken 检查
