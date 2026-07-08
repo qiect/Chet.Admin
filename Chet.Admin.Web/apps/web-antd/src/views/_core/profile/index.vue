@@ -4,13 +4,19 @@ import { ref } from 'vue';
 import { Profile } from '@vben/common-ui';
 import { useUserStore } from '@vben/stores';
 
+import ProfileBaseSetting from './base-setting.vue';
 import ProfilePasswordSetting from './password-setting.vue';
 
 const userStore = useUserStore();
 
-const tabsValue = ref<string>('password');
+// 默认显示"基本设置"
+const tabsValue = ref<string>('base');
 
 const tabs = ref([
+  {
+    label: '基本设置',
+    value: 'base',
+  },
   {
     label: '修改密码',
     value: 'password',
@@ -26,7 +32,8 @@ const tabs = ref([
     :tabs="tabs"
   >
     <template #content>
-      <ProfilePasswordSetting v-if="tabsValue === 'password'" />
+      <ProfileBaseSetting v-if="tabsValue === 'base'" />
+      <ProfilePasswordSetting v-else-if="tabsValue === 'password'" />
     </template>
   </Profile>
 </template>

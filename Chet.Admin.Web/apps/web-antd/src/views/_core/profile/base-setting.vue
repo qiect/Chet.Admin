@@ -7,7 +7,6 @@ import { ProfileBaseSetting } from '@vben/common-ui';
 import { useUserStore } from '@vben/stores';
 
 import { message, Upload, Avatar } from 'ant-design-vue';
-import { UserOutlined } from '@ant-design/icons-vue';
 
 import { getProfileApi, updateProfileApi } from '#/api';
 import { uploadFileApi } from '#/api/system/file';
@@ -115,12 +114,12 @@ async function handleSubmit(values: Record<string, any>) {
       <div class="avatar-label">头像</div>
       <div class="avatar-content">
         <Avatar
-          :size="96"
-          :src="avatarUrl ? avatarUrl : undefined"
-          class="avatar-preview"
-        >
-          <template #icon><UserOutlined /></template>
-        </Avatar>
+              :size="96"
+              :src="avatarUrl ? avatarUrl : undefined"
+              class="avatar-preview"
+            >
+              {{ avatarUrl ? '' : (profileData?.name?.charAt(0) || 'U') }}
+            </Avatar>
         <Upload
           :show-upload-list="false"
           :before-upload="beforeUpload"
