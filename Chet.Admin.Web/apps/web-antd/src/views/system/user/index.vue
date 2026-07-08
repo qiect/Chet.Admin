@@ -85,9 +85,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
 });
 
 // ========== 编辑用户表单 ==========
+// 注意：邮箱是用户唯一凭证，编辑时不可修改
 const editFormSchema: VbenFormSchema[] = [
   { component: 'Input', fieldName: 'name', label: '用户名', rules: 'required' },
-  { component: 'Input', fieldName: 'email', label: '邮箱', rules: 'required' },
+  { component: 'Input', fieldName: 'email', label: '邮箱', rules: 'required',
+    componentProps: { disabled: true, placeholder: '邮箱为唯一凭证，不可修改' },
+    help: '邮箱为用户唯一登录凭证，不支持修改',
+  },
   { component: 'TreeSelect', fieldName: 'departmentId', label: '所属部门',
     componentProps: { treeData: [], placeholder: '选择部门', allowClear: true, showSearch: true, treeNodeFilterProp: 'label', treeLine: true, treeDefaultExpandAll: true, dropdownStyle: { maxHeight: '400px' }, style: { width: '100%' } },
   },
@@ -105,7 +109,8 @@ const [EditModal, editModalApi] = useVbenModal({
     const values = await editFormApi.getValues();
 
     if (isEdit.value && editingId.value) {
-      await updateUserApi(editingId.value, { name: values.name, email: values.email, departmentId: values.departmentId, roleIds: values.roleIds });
+      // 编辑时不提交 email 字段（邮箱为唯一凭证不可修改）
+      await updateUserApi(editingId.value, { name: values.name, departmentId: values.departmentId, roleIds: values.roleIds });
       message.success('更新成功');
     } else {
       await createUserApi(values);

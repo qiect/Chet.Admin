@@ -12,6 +12,11 @@ export default defineConfig(async () => {
             target: 'http://localhost:5000',
             ws: true,
           },
+          // 静态资源（上传的文件）代理
+          '/uploads': {
+            changeOrigin: true,
+            target: 'http://localhost:5000',
+          },
         },
       },
     },

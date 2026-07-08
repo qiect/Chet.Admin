@@ -1,8 +1,10 @@
 using Chet.Admin.Configuration;
+using Chet.Admin.Contracts.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -41,6 +43,38 @@ public static class JwtConfiguration
                     // JWT过期或无效时返回401而非500
                     options.Events = new JwtBearerEvents
                     {
+                        OnTokenValidated = context =>
+                        {
+                            // 令牌验证通过后，检查是否在强制下线黑名单中
+                            var jwtToken = context.SecurityToken as JwtSecurityToken;
+                            if (jwtToken == null)
+                            {
+                                return Task.CompletedTask;
+                            }
+
+                            // 获取用户ID（Sub声明可能被映射为NameIdentifier）
+                            var userIdClaim = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)
+                                          ?? context.Principal?.FindFirst(JwtRegisteredClaimNames.Sub);
+                            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+                            {
+                                return Task.CompletedTask;
+                            }
+
+                            // 从DI容器解析在线用户服务
+                            var onlineUserService = context.HttpContext.RequestServices.GetService<IOnlineUserService>();
+                            if (onlineUserService == null)
+                            {
+                                return Task.CompletedTask;
+                            }
+
+                            // 检查令牌是否已被吊销（签发时间早于吊销时间则拒绝）
+                            if (onlineUserService.IsTokenRevoked(userId, jwtToken.ValidFrom))
+                            {
+                                context.Fail("Token has been revoked");
+                            }
+
+                            return Task.CompletedTask;
+                        },
                         OnAuthenticationFailed = context =>
                         {
                             // Token过期

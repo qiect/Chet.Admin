@@ -6,6 +6,7 @@ export interface BackendUserInfo {
   id: number;
   name: string;
   email: string;
+  avatar?: string | null;
   departmentId?: number | null;
   roles: string[];
   permissions: string[];
@@ -22,7 +23,7 @@ export async function getUserInfoApi() {
     userId: String(backendUserInfo.id),
     username: backendUserInfo.email,
     realName: backendUserInfo.name,
-    avatar: '',
+    avatar: backendUserInfo.avatar || '',
     roles: backendUserInfo.roles,
   };
   return {

@@ -174,6 +174,7 @@ public class AuthService : IAuthService
             Name = user.Name,
             Email = user.Email,
             DepartmentId = user.DepartmentId,
+            Avatar = user.Avatar,
             Roles = roles.Select(r => r.Code).ToList(),
             Permissions = permissions.Select(p => p.Code).ToList(),
         };

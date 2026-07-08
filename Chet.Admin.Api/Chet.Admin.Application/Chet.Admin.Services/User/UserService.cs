@@ -251,13 +251,10 @@ public class UserService : IUserService
         }
 
         // 更新基本信息（仅更新提供了值的字段）
+        // 注意：邮箱是用户唯一登录凭证，不支持修改
         if (!string.IsNullOrWhiteSpace(userUpdateDto.Name))
         {
             user.Name = userUpdateDto.Name;
-        }
-        if (!string.IsNullOrWhiteSpace(userUpdateDto.Email))
-        {
-            user.Email = userUpdateDto.Email;
         }
 
         // 如果提供了密码，则更新密码
