@@ -135,8 +135,6 @@ Content-Type: application/json
 | POST | `/roles` | 创建角色 |
 | PUT | `/roles/{id}` | 更新角色 |
 | DELETE | `/roles/{id}` | 删除角色 |
-| GET | `/roles/{id}/permissions` | 获取角色权限 |
-| PUT | `/roles/{id}/permissions` | 分配角色权限 |
 | GET | `/roles/{id}/menus` | 获取角色菜单 |
 | PUT | `/roles/{id}/menus` | 分配角色菜单 |
 | PUT | `/roles/{id}/data-scope` | 设置数据权限范围 |
@@ -173,19 +171,7 @@ Content-Type: application/json
 | PUT | `/departments/{id}` | 更新部门 |
 | DELETE | `/departments/{id}` | 删除部门 |
 
-### 4.6 权限模块（Permissions）
-
-| 方法 | 路径 | 说明 |
-| ---- | ---- | ---- |
-| GET | `/permissions` | 获取权限列表 |
-| GET | `/permissions/{id}` | 获取权限详情 |
-| POST | `/permissions` | 创建权限 |
-| PUT | `/permissions/{id}` | 更新权限 |
-| DELETE | `/permissions/{id}` | 删除权限 |
-
-权限码格式：`模块:资源:操作`（如 `system:user:create`）
-
-### 4.7 字典模块（Dictionaries）
+### 4.6 字典模块（Dictionaries）
 
 | 方法 | 路径 | 说明 |
 | ---- | ---- | ---- |
@@ -198,7 +184,7 @@ Content-Type: application/json
 
 预置字典：`user_status`（用户状态）、`menu_type`（菜单类型）、`gender`（性别）、`yes_no`（是否）
 
-### 4.8 仪表盘模块（Dashboard）
+### 4.7 仪表盘模块（Dashboard）
 
 | 方法 | 路径 | 说明 |
 | ---- | ---- | ---- |
@@ -206,7 +192,7 @@ Content-Type: application/json
 | GET | `/dashboard/trend?days=7` | 获取近 N 天注册 / 登录趋势 |
 | GET | `/dashboard/recent-logs?count=10` | 获取最近操作日志 |
 
-### 4.9 操作日志模块（AuditLogs）
+### 4.8 操作日志模块（AuditLogs）
 
 | 方法 | 路径 | 说明 |
 | ---- | ---- | ---- |
@@ -215,7 +201,7 @@ Content-Type: application/json
 
 **查询参数：** `pageNumber`、`pageSize`、`keyword`、`userId`、`module`、`action`、`startTime`、`endTime`
 
-### 4.10 通知公告模块（Notifications）
+### 4.9 通知公告模块（Notifications）
 
 | 方法 | 路径 | 说明 |
 | ---- | ---- | ---- |
@@ -230,7 +216,7 @@ Content-Type: application/json
 通知类型：`Announcement`（公告）/ `Notification`（通知）/ `Todo`（待办）
 优先级：`Low` / `Normal` / `High` / `Urgent`
 
-### 4.11 文件模块（Files）
+### 4.10 文件模块（Files）
 
 | 方法 | 路径 | 说明 |
 | ---- | ---- | ---- |
@@ -241,14 +227,14 @@ Content-Type: application/json
 
 **上传限制：** 单文件最大 10MB，支持 `.jpg` `.jpeg` `.png` `.gif` `.pdf` `.doc` `.docx` `.xls` `.xlsx` 等 15 种格式。静态文件通过 `/uploads/{filename}` 访问。
 
-### 4.12 在线用户模块（OnlineUsers）
+### 4.11 在线用户模块（OnlineUsers）
 
 | 方法 | 路径 | 说明 |
 | ---- | ---- | ---- |
 | GET | `/online-users` | 获取在线用户列表 |
 | DELETE | `/online-users/{userId}` | 强制下线 |
 
-### 4.13 健康检查模块（Health）
+### 4.12 健康检查模块（Health）
 
 | 方法 | 路径 | 说明 | 认证 |
 | ---- | ---- | ---- | ---- |
