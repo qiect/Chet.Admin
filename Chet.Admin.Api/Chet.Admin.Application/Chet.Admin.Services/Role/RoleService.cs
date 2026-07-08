@@ -14,6 +14,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chet.Admin.Services.Role;
 
+/// <summary>
+/// 角色服务实现
+/// </summary>
 public class RoleService : IRoleService
 {
     private readonly IRoleRepository _roleRepository;
@@ -39,6 +42,11 @@ public class RoleService : IRoleService
         _logger = logger;
     }
 
+    /// <summary>
+    /// 根据ID获取角色信息
+    /// </summary>
+    /// <param name="id">角色ID</param>
+    /// <returns>角色数据传输对象</returns>
     public async Task<RoleDto> GetRoleByIdAsync(int id)
     {
         _logger.LogInformation("Getting role by id: {Id}", id);
@@ -47,6 +55,10 @@ public class RoleService : IRoleService
         return _mapper.Map<RoleDto>(role);
     }
 
+    /// <summary>
+    /// 获取所有角色列表
+    /// </summary>
+    /// <returns>角色数据传输对象集合</returns>
     public async Task<IEnumerable<RoleDto>> GetAllRolesAsync()
     {
         _logger.LogInformation("Getting all roles");
@@ -54,6 +66,11 @@ public class RoleService : IRoleService
         return _mapper.Map<IEnumerable<RoleDto>>(roles);
     }
 
+    /// <summary>
+    /// 分页查询角色列表
+    /// </summary>
+    /// <param name="request">分页请求参数</param>
+    /// <returns>分页角色列表</returns>
     public async Task<PagedResult<RoleDto>> GetPagedRolesAsync(PagedRequest request)
     {
         _logger.LogInformation("Getting paged roles: Page {PageNumber}, Size {PageSize}", request.PageNumber, request.PageSize);
@@ -81,6 +98,11 @@ public class RoleService : IRoleService
         return new PagedResult<RoleDto>(roleDtos2, request.PageNumber, request.PageSize, pagedRoles.Metadata.TotalCount);
     }
 
+    /// <summary>
+    /// 创建角色
+    /// </summary>
+    /// <param name="dto">角色创建信息</param>
+    /// <returns>创建后的角色数据传输对象</returns>
     public async Task<RoleDto> CreateRoleAsync(RoleCreateDto dto)
     {
         _logger.LogInformation("Creating role: {Code}", dto.Code);
@@ -94,6 +116,11 @@ public class RoleService : IRoleService
         return _mapper.Map<RoleDto>(role);
     }
 
+    /// <summary>
+    /// 更新角色信息
+    /// </summary>
+    /// <param name="id">角色ID</param>
+    /// <param name="dto">角色更新信息</param>
     public async Task UpdateRoleAsync(int id, RoleUpdateDto dto)
     {
         _logger.LogInformation("Updating role: {Id}", id);
@@ -104,6 +131,10 @@ public class RoleService : IRoleService
         await _roleRepository.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 删除角色
+    /// </summary>
+    /// <param name="id">角色ID</param>
     public async Task DeleteRoleAsync(int id)
     {
         _logger.LogInformation("Deleting role: {Id}", id);
@@ -113,6 +144,11 @@ public class RoleService : IRoleService
         await _roleRepository.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 为角色分配权限
+    /// </summary>
+    /// <param name="roleId">角色ID</param>
+    /// <param name="permissionIds">权限ID列表</param>
     public async Task AssignPermissionsAsync(int roleId, List<int> permissionIds)
     {
         _logger.LogInformation("Assigning permissions to role: {RoleId}", roleId);
@@ -134,6 +170,11 @@ public class RoleService : IRoleService
         await _unitOfWork.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 为角色分配菜单
+    /// </summary>
+    /// <param name="roleId">角色ID</param>
+    /// <param name="menuIds">菜单ID列表</param>
     public async Task AssignMenusAsync(int roleId, List<int> menuIds)
     {
         _logger.LogInformation("Assigning menus to role: {RoleId}", roleId);
@@ -155,6 +196,11 @@ public class RoleService : IRoleService
         await _unitOfWork.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 获取角色拥有的权限列表
+    /// </summary>
+    /// <param name="roleId">角色ID</param>
+    /// <returns>权限数据传输对象集合</returns>
     public async Task<IEnumerable<PermissionDto>> GetRolePermissionsAsync(int roleId)
     {
         _logger.LogInformation("Getting permissions for role: {RoleId}", roleId);
@@ -162,6 +208,11 @@ public class RoleService : IRoleService
         return _mapper.Map<IEnumerable<PermissionDto>>(permissions);
     }
 
+    /// <summary>
+    /// 获取角色拥有的菜单列表
+    /// </summary>
+    /// <param name="roleId">角色ID</param>
+    /// <returns>菜单数据传输对象集合</returns>
     public async Task<IEnumerable<MenuDto>> GetRoleMenusAsync(int roleId)
     {
         _logger.LogInformation("Getting menus for role: {RoleId}", roleId);
@@ -169,6 +220,12 @@ public class RoleService : IRoleService
         return _mapper.Map<IEnumerable<MenuDto>>(menus);
     }
 
+    /// <summary>
+    /// 更新角色数据权限范围
+    /// </summary>
+    /// <param name="roleId">角色ID</param>
+    /// <param name="dataScope">数据权限范围（All、DeptAndChild、Dept、Self、Custom）</param>
+    /// <param name="customDeptIds">自定义部门ID列表，仅当dataScope为Custom时生效</param>
     public async Task UpdateDataScopeAsync(int roleId, string dataScope, List<int>? customDeptIds)
     {
         _logger.LogInformation("Updating data scope for role: {RoleId}, Scope: {DataScope}", roleId, dataScope);

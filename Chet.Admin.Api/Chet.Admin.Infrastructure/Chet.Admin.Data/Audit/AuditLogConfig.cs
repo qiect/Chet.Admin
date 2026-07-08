@@ -9,6 +9,10 @@ namespace Chet.Admin.Data.Audit;
 /// </summary>
 public class AuditLogConfig : IEntityTypeConfiguration<AuditLogEntity>
 {
+    /// <summary>
+    /// 配置操作日志实体映射
+    /// </summary>
+    /// <param name="builder">实体类型构建器</param>
     public void Configure(EntityTypeBuilder<AuditLogEntity> builder)
     {
         builder.HasKey(e => e.Id);

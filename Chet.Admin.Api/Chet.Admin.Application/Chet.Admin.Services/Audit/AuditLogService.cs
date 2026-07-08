@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chet.Admin.Services.Audit;
 
+/// <summary>
+/// 审计日志服务实现
+/// </summary>
 public class AuditLogService : IAuditLogService
 {
     private readonly AppDbContext _dbContext;
@@ -22,6 +25,11 @@ public class AuditLogService : IAuditLogService
         _logger = logger;
     }
 
+    /// <summary>
+    /// 分页查询审计日志列表
+    /// </summary>
+    /// <param name="request">审计日志分页请求参数（支持按用户、模块、操作、时间范围、关键词过滤）</param>
+    /// <returns>分页审计日志列表</returns>
     public async Task<PagedResult<AuditLogDto>> GetPagedAuditLogsAsync(AuditLogPagedRequest request)
     {
         request.Normalize();
@@ -60,6 +68,10 @@ public class AuditLogService : IAuditLogService
         return new PagedResult<AuditLogDto>(dtos, request.PageNumber, request.PageSize, totalCount);
     }
 
+    /// <summary>
+    /// 记录审计日志
+    /// </summary>
+    /// <param name="auditLog">审计日志信息</param>
     public async Task LogAsync(AuditLogDto auditLog)
     {
         try
@@ -74,6 +86,10 @@ public class AuditLogService : IAuditLogService
         }
     }
 
+    /// <summary>
+    /// 清理指定时间之前的审计日志
+    /// </summary>
+    /// <param name="before">截止时间，早于此时间的日志将被删除</param>
     public async Task ClearBeforeAsync(DateTime before)
     {
         var count = await _dbContext.AuditLogs.Where(x => x.OperatedAt < before).CountAsync();

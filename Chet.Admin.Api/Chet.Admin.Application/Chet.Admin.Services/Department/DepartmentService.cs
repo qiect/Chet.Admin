@@ -10,6 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chet.Admin.Services.Department;
 
+/// <summary>
+/// 部门服务实现
+/// </summary>
 public class DepartmentService : IDepartmentService
 {
     private readonly IDepartmentRepository _departmentRepository;
@@ -29,6 +32,11 @@ public class DepartmentService : IDepartmentService
         _logger = logger;
     }
 
+    /// <summary>
+    /// 根据ID获取部门信息
+    /// </summary>
+    /// <param name="id">部门ID</param>
+    /// <returns>部门数据传输对象</returns>
     public async Task<DepartmentDto> GetDepartmentByIdAsync(int id)
     {
         _logger.LogInformation("Getting department by id: {Id}", id);
@@ -37,6 +45,10 @@ public class DepartmentService : IDepartmentService
         return _mapper.Map<DepartmentDto>(dept);
     }
 
+    /// <summary>
+    /// 获取所有部门列表
+    /// </summary>
+    /// <returns>部门数据传输对象集合</returns>
     public async Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync()
     {
         _logger.LogInformation("Getting all departments");
@@ -44,6 +56,10 @@ public class DepartmentService : IDepartmentService
         return _mapper.Map<IEnumerable<DepartmentDto>>(departments);
     }
 
+    /// <summary>
+    /// 获取部门树形结构
+    /// </summary>
+    /// <returns>部门树形结构集合</returns>
     public async Task<IEnumerable<DepartmentTreeDto>> GetDepartmentTreeAsync()
     {
         _logger.LogInformation("Getting department tree");
@@ -52,6 +68,11 @@ public class DepartmentService : IDepartmentService
         return BuildDepartmentTree(deptDtos, 0);
     }
 
+    /// <summary>
+    /// 分页查询部门列表
+    /// </summary>
+    /// <param name="request">分页请求参数</param>
+    /// <returns>分页部门列表</returns>
     public async Task<PagedResult<DepartmentDto>> GetPagedDepartmentsAsync(PagedRequest request)
     {
         _logger.LogInformation("Getting paged departments: Page {PageNumber}, Size {PageSize}", request.PageNumber, request.PageSize);
@@ -79,6 +100,11 @@ public class DepartmentService : IDepartmentService
         return new PagedResult<DepartmentDto>(deptDtos2, request.PageNumber, request.PageSize, pagedDepts.Metadata.TotalCount);
     }
 
+    /// <summary>
+    /// 创建部门
+    /// </summary>
+    /// <param name="dto">部门创建信息</param>
+    /// <returns>创建后的部门数据传输对象</returns>
     public async Task<DepartmentDto> CreateDepartmentAsync(DepartmentCreateDto dto)
     {
         _logger.LogInformation("Creating department: {Code}", dto.Code);
@@ -92,6 +118,11 @@ public class DepartmentService : IDepartmentService
         return _mapper.Map<DepartmentDto>(dept);
     }
 
+    /// <summary>
+    /// 更新部门信息
+    /// </summary>
+    /// <param name="id">部门ID</param>
+    /// <param name="dto">部门更新信息</param>
     public async Task UpdateDepartmentAsync(int id, DepartmentUpdateDto dto)
     {
         _logger.LogInformation("Updating department: {Id}", id);
@@ -102,6 +133,10 @@ public class DepartmentService : IDepartmentService
         await _departmentRepository.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 删除部门
+    /// </summary>
+    /// <param name="id">部门ID</param>
     public async Task DeleteDepartmentAsync(int id)
     {
         _logger.LogInformation("Deleting department: {Id}", id);
@@ -111,6 +146,12 @@ public class DepartmentService : IDepartmentService
         await _departmentRepository.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 递归构建部门树形结构
+    /// </summary>
+    /// <param name="allDepts">所有部门列表</param>
+    /// <param name="parentId">父节点ID</param>
+    /// <returns>树形结构部门集合</returns>
     private static IEnumerable<DepartmentTreeDto> BuildDepartmentTree(List<DepartmentTreeDto> allDepts, int parentId)
     {
         return allDepts

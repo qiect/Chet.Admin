@@ -2,8 +2,14 @@ using FluentValidation;
 
 namespace Chet.Admin.DTOs.User.Validators;
 
+/// <summary>
+/// 用户登录DTO验证器
+/// </summary>
 public class LoginDtoValidator : AbstractValidator<LoginDto>
 {
+    /// <summary>
+    /// 验证规则配置
+    /// </summary>
     public LoginDtoValidator()
     {
         RuleFor(x => x.Email)

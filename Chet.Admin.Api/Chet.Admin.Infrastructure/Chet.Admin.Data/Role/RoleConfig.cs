@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chet.Admin.Data.Role
 {
+    /// <summary>
+    /// 角色配置
+    /// </summary>
     public class RoleConfig : IEntityTypeConfiguration<RoleEntity>
     {
+        /// <summary>
+        /// 配置角色实体映射
+        /// </summary>
+        /// <param name="builder">实体类型构建器</param>
         public void Configure(EntityTypeBuilder<RoleEntity> builder)
         {
             builder.HasKey(e => e.Id);

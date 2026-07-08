@@ -57,8 +57,16 @@ internal sealed class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOpti
 {
     private readonly IApiVersionDescriptionProvider _provider;
 
+    /// <summary>
+    /// 初始化 ConfigureSwaggerOptions 的新实例
+    /// </summary>
+    /// <param name="provider">API版本描述提供者</param>
     public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) => _provider = provider;
 
+    /// <summary>
+    /// 配置Swagger生成选项，为每个API版本创建文档并添加JWT认证支持
+    /// </summary>
+    /// <param name="options">Swagger生成选项</param>
     public void Configure(SwaggerGenOptions options)
     {
         foreach (var description in _provider.ApiVersionDescriptions)

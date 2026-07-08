@@ -5,6 +5,9 @@ using Chet.Admin.DTOs.Audit;
 
 namespace Chet.Admin.Api.Middleware;
 
+/// <summary>
+/// 审计日志中间件
+/// </summary>
 public class AuditLogMiddleware
 {
     private readonly RequestDelegate _next;
@@ -30,12 +33,22 @@ public class AuditLogMiddleware
         { "DELETE", "Delete" },
     };
 
+    /// <summary>
+    /// 初始化审计日志中间件的新实例
+    /// </summary>
+    /// <param name="next">下一个中间件委托</param>
+    /// <param name="logger">日志记录器</param>
     public AuditLogMiddleware(RequestDelegate next, ILogger<AuditLogMiddleware> logger)
     {
         _next = next;
         _logger = logger;
     }
 
+    /// <summary>
+    /// 处理HTTP请求，对API写操作进行审计日志记录
+    /// </summary>
+    /// <param name="context">HTTP上下文</param>
+    /// <param name="auditLogService">审计日志服务</param>
     public async Task InvokeAsync(HttpContext context, IAuditLogService auditLogService)
     {
         var path = context.Request.Path.Value ?? "";

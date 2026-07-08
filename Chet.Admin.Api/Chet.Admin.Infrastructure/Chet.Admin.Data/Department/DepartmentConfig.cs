@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chet.Admin.Data.Department
 {
+    /// <summary>
+    /// 部门配置
+    /// </summary>
     public class DepartmentConfig : IEntityTypeConfiguration<DepartmentEntity>
     {
+        /// <summary>
+        /// 配置部门实体映射
+        /// </summary>
+        /// <param name="builder">实体类型构建器</param>
         public void Configure(EntityTypeBuilder<DepartmentEntity> builder)
         {
             builder.HasKey(e => e.Id);

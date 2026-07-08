@@ -49,6 +49,11 @@ public class AuthService : IAuthService
         _permissionRepository = permissionRepository;
     }
 
+    /// <summary>
+    /// 用户登录
+    /// </summary>
+    /// <param name="loginDto">登录信息</param>
+    /// <returns>JWT令牌对（包含访问令牌和刷新令牌）</returns>
     public async Task<JwtTokenDto> LoginAsync(LoginDto loginDto)
     {
         _logger.LogInformation("User login attempt: {Email}", loginDto.Email);
@@ -91,6 +96,10 @@ public class AuthService : IAuthService
         }
     }
 
+    /// <summary>
+    /// 用户注册
+    /// </summary>
+    /// <param name="registerDto">注册信息</param>
     public async Task RegisterAsync(RegisterDto registerDto)
     {
         _logger.LogInformation("User registration attempt: {Email}", registerDto.Email);
@@ -124,6 +133,11 @@ public class AuthService : IAuthService
         }
     }
 
+    /// <summary>
+    /// 刷新JWT令牌
+    /// </summary>
+    /// <param name="refreshTokenDto">刷新令牌请求信息</param>
+    /// <returns>新的JWT令牌对</returns>
     public async Task<JwtTokenDto> RefreshTokenAsync(RefreshTokenDto refreshTokenDto)
     {
         _logger.LogInformation("Refresh token attempt");
@@ -132,6 +146,11 @@ public class AuthService : IAuthService
         return token;
     }
 
+    /// <summary>
+    /// 获取当前用户信息（包含角色和权限）
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <returns>用户信息数据传输对象</returns>
     public async Task<UserInfoDto> GetUserInfoAsync(int userId)
     {
         _logger.LogInformation("Get user info attempt: {UserId}", userId);

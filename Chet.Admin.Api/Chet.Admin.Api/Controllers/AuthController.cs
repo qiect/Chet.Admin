@@ -74,6 +74,8 @@ public class AuthController : ControllerBase
     /// <param name="logger">日志记录器，用于记录操作日志和安全审计信息</param>
     /// <param name="captchaService">验证码服务</param>
     /// <param name="unitOfWork">工作单元</param>
+    /// <param name="onlineUserService">在线用户服务</param>
+    /// <param name="appSettings">应用程序配置</param>
     public AuthController(
         IAuthService authService,
         IUserService userService,

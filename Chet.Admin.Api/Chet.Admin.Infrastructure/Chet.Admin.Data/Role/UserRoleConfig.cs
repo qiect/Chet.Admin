@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chet.Admin.Data.Role
 {
+    /// <summary>
+    /// 用户角色关联配置
+    /// </summary>
     public class UserRoleConfig : IEntityTypeConfiguration<UserRoleEntity>
     {
+        /// <summary>
+        /// 配置用户角色关联实体映射
+        /// </summary>
+        /// <param name="builder">实体类型构建器</param>
         public void Configure(EntityTypeBuilder<UserRoleEntity> builder)
         {
             builder.ToTable("UserRoles", t => t.HasComment("用户角色关联表"));

@@ -11,6 +11,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chet.Admin.Services.Dashboard;
 
+/// <summary>
+/// 仪表盘服务实现
+/// </summary>
 public class DashboardService : IDashboardService
 {
     private readonly AppDbContext _dbContext;
@@ -22,6 +25,10 @@ public class DashboardService : IDashboardService
         _logger = logger;
     }
 
+    /// <summary>
+    /// 获取仪表盘统计数据
+    /// </summary>
+    /// <returns>包含用户、角色、菜单、部门数量及今日登录、活跃用户数的统计对象</returns>
     public async Task<DashboardStatsDto> GetStatsAsync()
     {
         var today = DateTime.UtcNow.Date;
@@ -53,6 +60,11 @@ public class DashboardService : IDashboardService
         };
     }
 
+    /// <summary>
+    /// 获取登录趋势数据
+    /// </summary>
+    /// <param name="days">统计天数，默认7天</param>
+    /// <returns>登录趋势数据</returns>
     public async Task<DashboardTrendDto> GetTrendAsync(int days = 7)
     {
         var items = new List<TrendItem>();
@@ -76,6 +88,11 @@ public class DashboardService : IDashboardService
         return new DashboardTrendDto { Items = items };
     }
 
+    /// <summary>
+    /// 获取最近的审计日志列表
+    /// </summary>
+    /// <param name="count">获取的记录数，默认10条</param>
+    /// <returns>最近审计日志列表</returns>
     public async Task<List<RecentLogItem>> GetRecentLogsAsync(int count = 10)
     {
         return await _dbContext.AuditLogs

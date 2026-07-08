@@ -10,56 +10,32 @@ using Chet.Admin.Mapping.User;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
 
-/// <summary>
-/// ASP.NET Core Web API 应用程序入口点
-/// <para>
-/// 本文件是应用程序的启动配置中心，负责：
-/// - 初始化日志系统（Serilog）
-/// - 配置依赖注入服务
-/// - 构建中间件管道
-/// - 启动HTTP服务器监听
-/// </para>
-/// </summary>
-/// <remarks>
-/// <para>项目架构概览：</para>
-/// <para>
-/// 本项目采用分层架构（Layered Architecture）设计模式：
-/// <list type="table">
-///   <listheader>
-///     <term>层</term>
-///     <description>职责</description>
-///   </listheader>
-///   <item>
-///     <term>Api（表示层）</term>
-///     <description>控制器、中间件、配置、DTO</description>
-///   </item>
-///   <item>
-///     <term>Application（应用层）</term>
-///     <description>业务逻辑、服务、映射、DTO定义</description>
-///   </item>
-///   <item>
-///     <term>Infrastructure（基础设施层）</term>
-///     <description>数据访问、缓存、日志、外部服务集成</description>
-///   </item>
-///   <item>
-///     <term>Core（核心层）</term>
-///     <description>领域实体、接口、共享工具、契约</description>
-///   </item>
-/// </list>
-/// 
-/// <para>技术栈：</para>
-/// <list type="bullet">
-///   <item><description>.NET 10 + C# 12</description></item>
-///   <item><description>Entity Framework Core 8/9 (SQLite)</description></item>
-///   <item><description>Redis缓存（可选，支持NoOp降级）</description></item>
-///   <item><description>JWT身份认证</description></item>
-///   <item><description>AutoMapper对象映射</description></item>
-///   <item><description>Serilog结构化日志</description></item>
-///   <item><description>Swagger/OpenAPI文档</description></item>
-///   <item><description>Docker容器化部署</description></item>
-/// </list>
-/// </para>
-/// </remarks>
+/*
+ * ASP.NET Core Web API 应用程序入口点
+ *
+ * 本文件是应用程序的启动配置中心，负责：
+ * - 初始化日志系统（Serilog）
+ * - 配置依赖注入服务
+ * - 构建中间件管道
+ * - 启动HTTP服务器监听
+ *
+ * 项目架构概览：
+ * 本项目采用分层架构（Layered Architecture）设计模式：
+ *   - Api（表示层）：控制器、中间件、配置、DTO
+ *   - Application（应用层）：业务逻辑、服务、映射、DTO定义
+ *   - Infrastructure（基础设施层）：数据访问、缓存、日志、外部服务集成
+ *   - Core（核心层）：领域实体、接口、共享工具、契约
+ *
+ * 技术栈：
+ *   - .NET 10 + C# 12
+ *   - Entity Framework Core 8/9 (SQLite)
+ *   - Redis缓存（可选，支持NoOp降级）
+ *   - JWT身份认证
+ *   - AutoMapper对象映射
+ *   - Serilog结构化日志
+ *   - Swagger/OpenAPI文档
+ *   - Docker容器化部署
+ */
 
 // ============================================
 // 第一阶段：初始化和前置检查

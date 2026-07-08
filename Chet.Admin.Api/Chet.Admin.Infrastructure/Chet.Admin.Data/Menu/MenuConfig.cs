@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chet.Admin.Data.Menu
 {
+    /// <summary>
+    /// 菜单配置
+    /// </summary>
     public class MenuConfig : IEntityTypeConfiguration<MenuEntity>
     {
+        /// <summary>
+        /// 配置菜单实体映射
+        /// </summary>
+        /// <param name="builder">实体类型构建器</param>
         public void Configure(EntityTypeBuilder<MenuEntity> builder)
         {
             builder.HasKey(e => e.Id);

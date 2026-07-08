@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chet.Admin.Data.Dictionary
 {
+    /// <summary>
+    /// 字典配置
+    /// </summary>
     public class DictionaryConfig : IEntityTypeConfiguration<DictionaryEntity>
     {
+        /// <summary>
+        /// 配置字典实体映射
+        /// </summary>
+        /// <param name="builder">实体类型构建器</param>
         public void Configure(EntityTypeBuilder<DictionaryEntity> builder)
         {
             builder.HasKey(e => e.Id);

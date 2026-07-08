@@ -138,6 +138,13 @@ public class UserDto
 /// </summary>
 public class UserRoleInfoDto
 {
+    /// <summary>
+    /// 角色ID
+    /// </summary>
     public int Id { get; set; }
+
+    /// <summary>
+    /// 角色名称
+    /// </summary>
     public string Name { get; set; } = string.Empty;
 }

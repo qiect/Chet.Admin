@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chet.Admin.Data.Permission
 {
+    /// <summary>
+    /// 权限配置
+    /// </summary>
     public class PermissionConfig : IEntityTypeConfiguration<PermissionEntity>
     {
+        /// <summary>
+        /// 配置权限实体映射
+        /// </summary>
+        /// <param name="builder">实体类型构建器</param>
         public void Configure(EntityTypeBuilder<PermissionEntity> builder)
         {
             builder.HasKey(e => e.Id);

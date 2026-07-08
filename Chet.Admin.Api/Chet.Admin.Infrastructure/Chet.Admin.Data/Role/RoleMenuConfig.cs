@@ -5,8 +5,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chet.Admin.Data.Role
 {
+    /// <summary>
+    /// 角色菜单关联配置
+    /// </summary>
     public class RoleMenuConfig : IEntityTypeConfiguration<RoleMenuEntity>
     {
+        /// <summary>
+        /// 配置角色菜单关联实体映射
+        /// </summary>
+        /// <param name="builder">实体类型构建器</param>
         public void Configure(EntityTypeBuilder<RoleMenuEntity> builder)
         {
             builder.ToTable("RoleMenus", t => t.HasComment("角色菜单关联表"));

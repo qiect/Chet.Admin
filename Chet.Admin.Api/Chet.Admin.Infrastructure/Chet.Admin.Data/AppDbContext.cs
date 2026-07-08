@@ -29,18 +29,70 @@ namespace Chet.Admin.Data
         /// 表示数据库中的 Users 表
         /// </summary>
         public DbSet<UserEntity> Users { get; set; }
+
+        /// <summary>
+        /// 角色表
+        /// </summary>
         public DbSet<RoleEntity> Roles { get; set; }
+
+        /// <summary>
+        /// 权限表
+        /// </summary>
         public DbSet<PermissionEntity> Permissions { get; set; }
+
+        /// <summary>
+        /// 菜单表
+        /// </summary>
         public DbSet<MenuEntity> Menus { get; set; }
+
+        /// <summary>
+        /// 部门表
+        /// </summary>
         public DbSet<DepartmentEntity> Departments { get; set; }
+
+        /// <summary>
+        /// 字典表
+        /// </summary>
         public DbSet<DictionaryEntity> Dictionaries { get; set; }
+
+        /// <summary>
+        /// 用户角色关联表
+        /// </summary>
         public DbSet<UserRoleEntity> UserRoles { get; set; }
+
+        /// <summary>
+        /// 角色权限关联表
+        /// </summary>
         public DbSet<RolePermissionEntity> RolePermissions { get; set; }
+
+        /// <summary>
+        /// 角色菜单关联表
+        /// </summary>
         public DbSet<RoleMenuEntity> RoleMenus { get; set; }
+
+        /// <summary>
+        /// 角色自定义数据权限部门关联表
+        /// </summary>
         public DbSet<RoleDataScopeDeptEntity> RoleDataScopeDepts { get; set; }
+
+        /// <summary>
+        /// 操作日志表
+        /// </summary>
         public DbSet<AuditLogEntity> AuditLogs { get; set; }
+
+        /// <summary>
+        /// 通知公告表
+        /// </summary>
         public DbSet<NotificationEntity> Notifications { get; set; }
+
+        /// <summary>
+        /// 通知接收者表
+        /// </summary>
         public DbSet<NotificationRecipientEntity> NotificationRecipients { get; set; }
+
+        /// <summary>
+        /// 文件管理表
+        /// </summary>
         public DbSet<FileEntity> Files { get; set; }
 
         /// <summary>

@@ -9,6 +9,10 @@ namespace Chet.Admin.Data.User
     /// </summary>
     public class UserConfig : IEntityTypeConfiguration<UserEntity>
     {
+        /// <summary>
+        /// 配置用户实体映射
+        /// </summary>
+        /// <param name="builder">实体类型构建器</param>
         public void Configure(EntityTypeBuilder<UserEntity> builder)
         {
             builder.HasKey(e => e.Id); // 设置主键

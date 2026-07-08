@@ -10,6 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chet.Admin.Services.Permission;
 
+/// <summary>
+/// 权限服务实现
+/// </summary>
 public class PermissionService : IPermissionService
 {
     private readonly IPermissionRepository _permissionRepository;
@@ -29,6 +32,11 @@ public class PermissionService : IPermissionService
         _logger = logger;
     }
 
+    /// <summary>
+    /// 根据ID获取权限信息
+    /// </summary>
+    /// <param name="id">权限ID</param>
+    /// <returns>权限数据传输对象</returns>
     public async Task<PermissionDto> GetPermissionByIdAsync(int id)
     {
         _logger.LogInformation("Getting permission by id: {Id}", id);
@@ -37,6 +45,10 @@ public class PermissionService : IPermissionService
         return _mapper.Map<PermissionDto>(permission);
     }
 
+    /// <summary>
+    /// 获取所有权限列表
+    /// </summary>
+    /// <returns>权限数据传输对象集合</returns>
     public async Task<IEnumerable<PermissionDto>> GetAllPermissionsAsync()
     {
         _logger.LogInformation("Getting all permissions");
@@ -44,6 +56,11 @@ public class PermissionService : IPermissionService
         return _mapper.Map<IEnumerable<PermissionDto>>(permissions);
     }
 
+    /// <summary>
+    /// 分页查询权限列表
+    /// </summary>
+    /// <param name="request">分页请求参数</param>
+    /// <returns>分页权限列表</returns>
     public async Task<PagedResult<PermissionDto>> GetPagedPermissionsAsync(PagedRequest request)
     {
         _logger.LogInformation("Getting paged permissions: Page {PageNumber}, Size {PageSize}", request.PageNumber, request.PageSize);
@@ -71,6 +88,11 @@ public class PermissionService : IPermissionService
         return new PagedResult<PermissionDto>(permissionDtos2, request.PageNumber, request.PageSize, pagedPermissions.Metadata.TotalCount);
     }
 
+    /// <summary>
+    /// 创建权限
+    /// </summary>
+    /// <param name="dto">权限创建信息</param>
+    /// <returns>创建后的权限数据传输对象</returns>
     public async Task<PermissionDto> CreatePermissionAsync(PermissionCreateDto dto)
     {
         _logger.LogInformation("Creating permission: {Code}", dto.Code);
@@ -84,6 +106,11 @@ public class PermissionService : IPermissionService
         return _mapper.Map<PermissionDto>(permission);
     }
 
+    /// <summary>
+    /// 更新权限信息
+    /// </summary>
+    /// <param name="id">权限ID</param>
+    /// <param name="dto">权限更新信息</param>
     public async Task UpdatePermissionAsync(int id, PermissionUpdateDto dto)
     {
         _logger.LogInformation("Updating permission: {Id}", id);
@@ -94,6 +121,10 @@ public class PermissionService : IPermissionService
         await _permissionRepository.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 删除权限
+    /// </summary>
+    /// <param name="id">权限ID</param>
     public async Task DeletePermissionAsync(int id)
     {
         _logger.LogInformation("Deleting permission: {Id}", id);

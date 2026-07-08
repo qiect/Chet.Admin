@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chet.Admin.Data.File;
 
+/// <summary>
+/// 文件配置
+/// </summary>
 public class FileConfig : IEntityTypeConfiguration<FileEntity>
 {
+    /// <summary>
+    /// 配置文件实体映射
+    /// </summary>
+    /// <param name="builder">实体类型构建器</param>
     public void Configure(EntityTypeBuilder<FileEntity> builder)
     {
         builder.HasKey(e => e.Id);

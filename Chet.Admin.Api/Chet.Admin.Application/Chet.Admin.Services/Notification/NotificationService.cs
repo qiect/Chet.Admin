@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chet.Admin.Services.Notification;
 
+/// <summary>
+/// 通知服务实现
+/// </summary>
 public class NotificationService : INotificationService
 {
     private readonly AppDbContext _dbContext;
@@ -22,6 +25,12 @@ public class NotificationService : INotificationService
         _logger = logger;
     }
 
+    /// <summary>
+    /// 创建通知
+    /// </summary>
+    /// <param name="dto">通知创建信息</param>
+    /// <param name="senderId">发送者ID，可为空</param>
+    /// <returns>创建后的通知数据传输对象</returns>
     public async Task<NotificationDto> CreateNotificationAsync(CreateNotificationDto dto, int? senderId = null)
     {
         _logger.LogInformation("Creating notification: {Title}", dto.Title);
@@ -58,6 +67,11 @@ public class NotificationService : INotificationService
         return _mapper.Map<NotificationDto>(entity);
     }
 
+    /// <summary>
+    /// 分页查询通知列表
+    /// </summary>
+    /// <param name="request">分页请求参数</param>
+    /// <returns>分页通知列表</returns>
     public async Task<PagedResult<NotificationDto>> GetPagedNotificationsAsync(PagedRequest request)
     {
         _logger.LogInformation("Getting paged notifications: Page {PageNumber}, Size {PageSize}", request.PageNumber, request.PageSize);
@@ -82,6 +96,12 @@ public class NotificationService : INotificationService
         return new PagedResult<NotificationDto>(dtos, request.PageNumber, request.PageSize, totalCount);
     }
 
+    /// <summary>
+    /// 获取当前用户的通知列表（包含全局通知和指定接收者的通知）
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <param name="request">分页请求参数</param>
+    /// <returns>分页通知列表，包含已读状态</returns>
     public async Task<PagedResult<NotificationDto>> GetMyNotificationsAsync(int userId, PagedRequest request)
     {
         _logger.LogInformation("Getting my notifications for user: {UserId}", userId);
@@ -129,6 +149,11 @@ public class NotificationService : INotificationService
         return new PagedResult<NotificationDto>(dtos, request.PageNumber, request.PageSize, totalCount);
     }
 
+    /// <summary>
+    /// 获取用户未读通知数量
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <returns>未读通知数量</returns>
     public async Task<UnreadCountDto> GetUnreadCountAsync(int userId)
     {
         _logger.LogInformation("Getting unread count for user: {UserId}", userId);
@@ -148,6 +173,11 @@ public class NotificationService : INotificationService
         return new UnreadCountDto { Count = globalUnread + personalUnread };
     }
 
+    /// <summary>
+    /// 将指定通知标记为已读
+    /// </summary>
+    /// <param name="notificationId">通知ID</param>
+    /// <param name="userId">用户ID</param>
     public async Task MarkAsReadAsync(int notificationId, int userId)
     {
         _logger.LogInformation("Marking notification {NotificationId} as read for user {UserId}", notificationId, userId);
@@ -178,6 +208,10 @@ public class NotificationService : INotificationService
         await _dbContext.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 将用户所有未读通知标记为已读
+    /// </summary>
+    /// <param name="userId">用户ID</param>
     public async Task MarkAllAsReadAsync(int userId)
     {
         _logger.LogInformation("Marking all notifications as read for user {UserId}", userId);
@@ -222,6 +256,10 @@ public class NotificationService : INotificationService
         await _dbContext.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 删除通知及其关联的接收者记录
+    /// </summary>
+    /// <param name="id">通知ID</param>
     public async Task DeleteNotificationAsync(int id)
     {
         _logger.LogInformation("Deleting notification: {Id}", id);

@@ -2,8 +2,14 @@ using FluentValidation;
 
 namespace Chet.Admin.DTOs.User.Validators;
 
+/// <summary>
+/// 用户创建DTO验证器
+/// </summary>
 public class UserCreateDtoValidator : AbstractValidator<UserCreateDto>
 {
+    /// <summary>
+    /// 验证规则配置
+    /// </summary>
     public UserCreateDtoValidator()
     {
         RuleFor(x => x.Name)

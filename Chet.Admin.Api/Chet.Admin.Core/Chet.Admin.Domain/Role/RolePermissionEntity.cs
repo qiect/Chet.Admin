@@ -7,13 +7,24 @@ namespace Chet.Admin.Domain.Role
     /// </summary>
     public class RolePermissionEntity
     {
+        /// <summary>
+        /// 角色ID
+        /// </summary>
         public int RoleId { get; set; }
+
+        /// <summary>
+        /// 权限ID
+        /// </summary>
         public int PermissionId { get; set; }
 
         /// <summary>
-        /// 导航属性
+        /// 导航属性-角色
         /// </summary>
         public RoleEntity Role { get; set; } = null!;
+
+        /// <summary>
+        /// 导航属性-权限
+        /// </summary>
         public PermissionEntity Permission { get; set; } = null!;
     }
 }

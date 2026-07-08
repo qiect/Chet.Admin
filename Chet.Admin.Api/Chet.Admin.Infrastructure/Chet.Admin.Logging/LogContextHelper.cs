@@ -171,7 +171,10 @@ public static class LogContextHelper
         {
             _disposables = disposables;
         }
-        
+
+        /// <summary>
+        /// 释放所有托管的 IDisposable 对象
+        /// </summary>
         public void Dispose()
         {
             if (!_disposed)

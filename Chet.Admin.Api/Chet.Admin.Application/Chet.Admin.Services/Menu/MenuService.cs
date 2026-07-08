@@ -10,6 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chet.Admin.Services.Menu;
 
+/// <summary>
+/// 菜单服务实现
+/// </summary>
 public class MenuService : IMenuService
 {
     private readonly IMenuRepository _menuRepository;
@@ -29,6 +32,11 @@ public class MenuService : IMenuService
         _logger = logger;
     }
 
+    /// <summary>
+    /// 根据ID获取菜单信息
+    /// </summary>
+    /// <param name="id">菜单ID</param>
+    /// <returns>菜单数据传输对象</returns>
     public async Task<MenuDto> GetMenuByIdAsync(int id)
     {
         _logger.LogInformation("Getting menu by id: {Id}", id);
@@ -37,6 +45,10 @@ public class MenuService : IMenuService
         return _mapper.Map<MenuDto>(menu);
     }
 
+    /// <summary>
+    /// 获取所有菜单列表
+    /// </summary>
+    /// <returns>菜单数据传输对象集合</returns>
     public async Task<IEnumerable<MenuDto>> GetAllMenusAsync()
     {
         _logger.LogInformation("Getting all menus");
@@ -44,6 +56,10 @@ public class MenuService : IMenuService
         return _mapper.Map<IEnumerable<MenuDto>>(menus);
     }
 
+    /// <summary>
+    /// 获取菜单树形结构
+    /// </summary>
+    /// <returns>菜单树形结构集合</returns>
     public async Task<IEnumerable<MenuTreeDto>> GetMenuTreeAsync()
     {
         _logger.LogInformation("Getting menu tree");
@@ -52,6 +68,11 @@ public class MenuService : IMenuService
         return BuildMenuTree(menuDtos, 0);
     }
 
+    /// <summary>
+    /// 分页查询菜单列表
+    /// </summary>
+    /// <param name="request">分页请求参数</param>
+    /// <returns>分页菜单列表</returns>
     public async Task<PagedResult<MenuDto>> GetPagedMenusAsync(PagedRequest request)
     {
         _logger.LogInformation("Getting paged menus: Page {PageNumber}, Size {PageSize}", request.PageNumber, request.PageSize);
@@ -79,6 +100,11 @@ public class MenuService : IMenuService
         return new PagedResult<MenuDto>(menuDtos2, request.PageNumber, request.PageSize, pagedMenus.Metadata.TotalCount);
     }
 
+    /// <summary>
+    /// 创建菜单
+    /// </summary>
+    /// <param name="dto">菜单创建信息</param>
+    /// <returns>创建后的菜单数据传输对象</returns>
     public async Task<MenuDto> CreateMenuAsync(MenuCreateDto dto)
     {
         _logger.LogInformation("Creating menu: {Name}", dto.Name);
@@ -88,6 +114,11 @@ public class MenuService : IMenuService
         return _mapper.Map<MenuDto>(menu);
     }
 
+    /// <summary>
+    /// 更新菜单信息
+    /// </summary>
+    /// <param name="id">菜单ID</param>
+    /// <param name="dto">菜单更新信息</param>
     public async Task UpdateMenuAsync(int id, MenuUpdateDto dto)
     {
         _logger.LogInformation("Updating menu: {Id}", id);
@@ -98,6 +129,10 @@ public class MenuService : IMenuService
         await _menuRepository.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 删除菜单
+    /// </summary>
+    /// <param name="id">菜单ID</param>
     public async Task DeleteMenuAsync(int id)
     {
         _logger.LogInformation("Deleting menu: {Id}", id);
@@ -107,6 +142,12 @@ public class MenuService : IMenuService
         await _menuRepository.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// 递归构建菜单树形结构
+    /// </summary>
+    /// <param name="allMenus">所有菜单列表</param>
+    /// <param name="parentId">父节点ID</param>
+    /// <returns>树形结构菜单集合</returns>
     private static IEnumerable<MenuTreeDto> BuildMenuTree(List<MenuTreeDto> allMenus, int parentId)
     {
         return allMenus

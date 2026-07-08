@@ -46,6 +46,11 @@ public class UserService : IUserService
         _logger = logger;
     }
 
+    /// <summary>
+    /// 根据ID获取用户信息
+    /// </summary>
+    /// <param name="id">用户ID</param>
+    /// <returns>用户数据传输对象</returns>
     public async Task<UserDto> GetUserByIdAsync(int id)
     {
         _logger.LogInformation("Getting user by id: {Id}", id);
@@ -63,6 +68,10 @@ public class UserService : IUserService
         }, CacheKeys.Expiry.Medium);
     }
 
+    /// <summary>
+    /// 获取所有用户列表
+    /// </summary>
+    /// <returns>用户数据传输对象集合</returns>
     public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
     {
         _logger.LogInformation("Getting all users");
@@ -76,6 +85,11 @@ public class UserService : IUserService
         }, CacheKeys.Expiry.Medium);
     }
 
+    /// <summary>
+    /// 分页查询用户列表
+    /// </summary>
+    /// <param name="request">分页请求参数</param>
+    /// <returns>分页用户列表</returns>
     public async Task<PagedResult<UserDto>> GetPagedUsersAsync(PagedRequest request)
     {
         _logger.LogInformation("Getting paged users: Page {PageNumber}, Size {PageSize}", request.PageNumber, request.PageSize);
@@ -114,6 +128,12 @@ public class UserService : IUserService
         return new PagedResult<UserDto>(userDtos2, request.PageNumber, request.PageSize, totalCount2);
     }
 
+    /// <summary>
+    /// 根据当前用户数据权限分页查询用户列表
+    /// </summary>
+    /// <param name="request">分页请求参数</param>
+    /// <param name="currentUserId">当前登录用户ID，用于数据权限过滤</param>
+    /// <returns>分页用户列表</returns>
     public async Task<PagedResult<UserDto>> GetPagedUsersAsync(PagedRequest request, int? currentUserId)
     {
         if (!currentUserId.HasValue)
@@ -176,6 +196,11 @@ public class UserService : IUserService
         return new PagedResult<UserDto>(userDtos, request.PageNumber, request.PageSize, totalCount);
     }
 
+    /// <summary>
+    /// 创建用户
+    /// </summary>
+    /// <param name="userCreateDto">用户创建信息</param>
+    /// <returns>创建后的用户数据传输对象</returns>
     public async Task<UserDto> CreateUserAsync(UserCreateDto userCreateDto)
     {
         _logger.LogInformation("Creating user: {Email}", userCreateDto.Email);
@@ -210,6 +235,11 @@ public class UserService : IUserService
         return _mapper.Map<UserDto>(user);
     }
 
+    /// <summary>
+    /// 更新用户信息
+    /// </summary>
+    /// <param name="id">用户ID</param>
+    /// <param name="userUpdateDto">用户更新信息</param>
     public async Task UpdateUserAsync(int id, UserUpdateDto userUpdateDto)
     {
         _logger.LogInformation("Updating user: {Id}", id);
@@ -269,6 +299,10 @@ public class UserService : IUserService
         await _cacheService.RemoveByPatternAsync(CacheKeys.Users.Pattern);
     }
 
+    /// <summary>
+    /// 删除用户
+    /// </summary>
+    /// <param name="id">用户ID</param>
     public async Task DeleteUserAsync(int id)
     {
         _logger.LogInformation("Deleting user: {Id}", id);
@@ -286,6 +320,11 @@ public class UserService : IUserService
         await _cacheService.RemoveByPatternAsync(CacheKeys.Users.Pattern);
     }
 
+    /// <summary>
+    /// 为用户分配角色
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <param name="roleIds">角色ID列表</param>
     public async Task AssignRolesAsync(int userId, List<int> roleIds)
     {
         _logger.LogInformation("Assigning roles to user: {UserId}", userId);
@@ -311,6 +350,12 @@ public class UserService : IUserService
         await _cacheService.RemoveByPatternAsync(CacheKeys.Users.Pattern);
     }
 
+    /// <summary>
+    /// 创建用户并分配角色
+    /// </summary>
+    /// <param name="dto">用户创建信息</param>
+    /// <param name="roleIds">角色ID列表</param>
+    /// <returns>创建后的用户数据传输对象</returns>
     public async Task<UserDto> CreateUserWithRolesAsync(UserCreateDto dto, List<int> roleIds)
     {
         _logger.LogInformation("Creating user with roles: {Email}", dto.Email);
@@ -339,6 +384,12 @@ public class UserService : IUserService
         return _mapper.Map<UserDto>(user);
     }
 
+    /// <summary>
+    /// 修改用户密码
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <param name="oldPassword">旧密码</param>
+    /// <param name="newPassword">新密码</param>
     public async Task ChangePasswordAsync(int userId, string oldPassword, string newPassword)
     {
         _logger.LogInformation("Changing password for user: {UserId}", userId);
@@ -365,6 +416,12 @@ public class UserService : IUserService
         await _cacheService.RemoveByPatternAsync(CacheKeys.Users.Pattern);
     }
 
+    /// <summary>
+    /// 更新用户个人资料
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <param name="name">用户名称，为空则不更新</param>
+    /// <param name="avatar">头像地址，为空则不更新</param>
     public async Task UpdateProfileAsync(int userId, string? name, string? avatar)
     {
         _logger.LogInformation("Updating profile for user: {UserId}", userId);

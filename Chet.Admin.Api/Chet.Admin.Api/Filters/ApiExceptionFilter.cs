@@ -9,6 +9,10 @@ namespace Chet.Admin.Api.Filters;
 /// </summary>
 public class ApiExceptionFilter : IExceptionFilter
 {
+    /// <summary>
+    /// 处理未捕获的异常，根据异常类型返回相应的HTTP状态码
+    /// </summary>
+    /// <param name="context">异常上下文</param>
     public void OnException(ExceptionContext context)
     {
         var exception = context.Exception;

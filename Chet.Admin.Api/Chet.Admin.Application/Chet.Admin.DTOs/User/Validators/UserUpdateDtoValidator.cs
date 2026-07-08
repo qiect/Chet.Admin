@@ -2,8 +2,14 @@ using FluentValidation;
 
 namespace Chet.Admin.DTOs.User.Validators;
 
+/// <summary>
+/// 用户更新DTO验证器
+/// </summary>
 public class UserUpdateDtoValidator : AbstractValidator<UserUpdateDto>
 {
+    /// <summary>
+    /// 验证规则配置
+    /// </summary>
     public UserUpdateDtoValidator()
     {
         // 所有字段均为可选，仅在有值时验证格式

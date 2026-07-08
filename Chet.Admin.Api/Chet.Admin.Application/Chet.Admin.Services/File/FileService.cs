@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chet.Admin.Services.File;
 
+/// <summary>
+/// 文件服务实现
+/// </summary>
 public class FileService : IFileService
 {
     private readonly AppDbContext _dbContext;
@@ -30,6 +33,13 @@ public class FileService : IFileService
         }
     }
 
+    /// <summary>
+    /// 分页查询文件列表
+    /// </summary>
+    /// <param name="pageNumber">页码</param>
+    /// <param name="pageSize">每页条数</param>
+    /// <param name="keyword">搜索关键词</param>
+    /// <returns>文件列表和总条数</returns>
     public async Task<(List<FileDto> items, int total)> GetListAsync(int pageNumber, int pageSize, string? keyword)
     {
         var query = _dbContext.Files.AsNoTracking();
@@ -61,6 +71,12 @@ public class FileService : IFileService
         return (items, total);
     }
 
+    /// <summary>
+    /// 上传文件
+    /// </summary>
+    /// <param name="file">上传的文件</param>
+    /// <param name="uploaderId">上传者ID，可为空</param>
+    /// <returns>文件数据传输对象</returns>
     public async Task<FileDto> UploadAsync(IFormFile file, int? uploaderId)
     {
         if (file.Length > MaxFileSize)
@@ -103,6 +119,11 @@ public class FileService : IFileService
         };
     }
 
+    /// <summary>
+    /// 根据ID获取文件信息
+    /// </summary>
+    /// <param name="id">文件ID</param>
+    /// <returns>文件数据传输对象，不存在时返回null</returns>
     public async Task<FileDto?> GetByIdAsync(int id)
     {
         var entity = await _dbContext.Files.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
@@ -119,6 +140,11 @@ public class FileService : IFileService
         };
     }
 
+    /// <summary>
+    /// 下载文件
+    /// </summary>
+    /// <param name="id">文件ID</param>
+    /// <returns>包含文件数据、内容类型和文件名的元组，不存在时返回null</returns>
     public async Task<(byte[] Data, string ContentType, string FileName)?> DownloadAsync(int id)
     {
         var entity = await _dbContext.Files.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
@@ -131,6 +157,10 @@ public class FileService : IFileService
         return (data, entity.ContentType, entity.FileName);
     }
 
+    /// <summary>
+    /// 删除文件（同时删除物理文件和数据库记录）
+    /// </summary>
+    /// <param name="id">文件ID</param>
     public async Task DeleteAsync(int id)
     {
         var entity = await _dbContext.Files.FirstOrDefaultAsync(f => f.Id == id);

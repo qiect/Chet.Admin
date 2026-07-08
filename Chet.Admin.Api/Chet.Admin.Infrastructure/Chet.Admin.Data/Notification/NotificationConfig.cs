@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Chet.Admin.Data.Notification;
 
+/// <summary>
+/// 通知配置
+/// </summary>
 public class NotificationConfig : IEntityTypeConfiguration<NotificationEntity>
 {
+    /// <summary>
+    /// 配置通知实体映射
+    /// </summary>
+    /// <param name="builder">实体类型构建器</param>
     public void Configure(EntityTypeBuilder<NotificationEntity> builder)
     {
         builder.HasKey(e => e.Id);
@@ -23,8 +30,15 @@ public class NotificationConfig : IEntityTypeConfiguration<NotificationEntity>
     }
 }
 
+/// <summary>
+/// 通知接收者配置
+/// </summary>
 public class NotificationRecipientConfig : IEntityTypeConfiguration<NotificationRecipientEntity>
 {
+    /// <summary>
+    /// 配置通知接收者实体映射
+    /// </summary>
+    /// <param name="builder">实体类型构建器</param>
     public void Configure(EntityTypeBuilder<NotificationRecipientEntity> builder)
     {
         builder.HasKey(e => e.Id);

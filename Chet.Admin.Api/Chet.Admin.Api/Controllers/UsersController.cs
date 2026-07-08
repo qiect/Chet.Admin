@@ -107,6 +107,7 @@ public class UsersController : ControllerBase
     /// </remarks>
     /// <param name="pageNumber">页码，从1开始，默认为1</param>
     /// <param name="pageSize">每页大小，默认为20，最大为100</param>
+    /// <param name="keyword">搜索关键词，可选参数</param>
     /// <returns>200 返回分页用户数据和分页元信息</returns>
     /// <response code="200">成功返回分页用户列表</response>
     [HttpGet("paged")]

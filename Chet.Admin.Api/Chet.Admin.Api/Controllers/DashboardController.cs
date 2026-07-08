@@ -7,6 +7,9 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Chet.Admin.Api.Controllers;
 
+/// <summary>
+/// 仪表盘控制器
+/// </summary>
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [Authorize]
@@ -15,11 +18,19 @@ public class DashboardController : ControllerBase
 {
     private readonly IDashboardService _dashboardService;
 
+    /// <summary>
+    /// 初始化仪表盘控制器的新实例
+    /// </summary>
+    /// <param name="dashboardService">仪表盘服务接口</param>
     public DashboardController(IDashboardService dashboardService)
     {
         _dashboardService = dashboardService;
     }
 
+    /// <summary>
+    /// 获取仪表盘统计数据
+    /// </summary>
+    /// <returns>统计数据</returns>
     [HttpGet("stats")]
     public async Task<IActionResult> GetStats()
     {
@@ -27,6 +38,11 @@ public class DashboardController : ControllerBase
         return Ok(ApiResponse.Ok(stats, "Dashboard stats retrieved successfully"));
     }
 
+    /// <summary>
+    /// 获取仪表盘趋势数据
+    /// </summary>
+    /// <param name="days">统计天数</param>
+    /// <returns>趋势数据</returns>
     [HttpGet("trend")]
     public async Task<IActionResult> GetTrend([FromQuery] int days = 7)
     {
@@ -34,6 +50,11 @@ public class DashboardController : ControllerBase
         return Ok(ApiResponse.Ok(trend, "Dashboard trend retrieved successfully"));
     }
 
+    /// <summary>
+    /// 获取最近操作日志
+    /// </summary>
+    /// <param name="count">返回条数</param>
+    /// <returns>最近操作日志列表</returns>
     [HttpGet("recent-logs")]
     public async Task<IActionResult> GetRecentLogs([FromQuery] int count = 10)
     {

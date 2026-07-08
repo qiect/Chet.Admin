@@ -31,10 +31,19 @@ public abstract class ApiResponseBase
     /// </summary>
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
+    /// <summary>
+    /// 初始化 <see cref="ApiResponseBase"/> 类的新实例
+    /// </summary>
     protected ApiResponseBase()
     {
     }
 
+    /// <summary>
+    /// 使用指定参数初始化 <see cref="ApiResponseBase"/> 类的新实例
+    /// </summary>
+    /// <param name="statusCode">响应状态码</param>
+    /// <param name="success">是否成功</param>
+    /// <param name="message">响应消息</param>
     protected ApiResponseBase(int statusCode, bool success, string? message = null)
     {
         StatusCode = statusCode;
@@ -53,10 +62,20 @@ public class ApiResponse : ApiResponseBase
     /// </summary>
     public object? Data { get; set; }
 
+    /// <summary>
+    /// 初始化 <see cref="ApiResponse"/> 类的新实例
+    /// </summary>
     private ApiResponse()
     {
     }
 
+    /// <summary>
+    /// 使用指定参数初始化 <see cref="ApiResponse"/> 类的新实例
+    /// </summary>
+    /// <param name="statusCode">响应状态码</param>
+    /// <param name="success">是否成功</param>
+    /// <param name="data">响应数据</param>
+    /// <param name="message">响应消息</param>
     private ApiResponse(int statusCode, bool success, object? data, string? message = null)
         : base(statusCode, success, message)
     {
@@ -99,10 +118,20 @@ public class ApiResponse<T> : ApiResponseBase
     /// </summary>
     public T? Data { get; set; }
 
+    /// <summary>
+    /// 初始化 <see cref="ApiResponse{T}"/> 类的新实例
+    /// </summary>
     protected ApiResponse()
     {
     }
 
+    /// <summary>
+    /// 使用指定参数初始化 <see cref="ApiResponse{T}"/> 类的新实例
+    /// </summary>
+    /// <param name="statusCode">响应状态码</param>
+    /// <param name="success">是否成功</param>
+    /// <param name="data">响应数据</param>
+    /// <param name="message">响应消息</param>
     protected ApiResponse(int statusCode, bool success, T? data, string? message = null)
         : base(statusCode, success, message)
     {
@@ -201,6 +230,12 @@ public class PagedMetadata
     /// </summary>
     public bool HasNextPage => PageNumber < TotalPages;
 
+    /// <summary>
+    /// 使用指定分页参数初始化 <see cref="PagedMetadata"/> 类的新实例
+    /// </summary>
+    /// <param name="pageNumber">当前页码</param>
+    /// <param name="pageSize">每页大小</param>
+    /// <param name="totalCount">总记录数</param>
     public PagedMetadata(int pageNumber, int pageSize, int totalCount)
     {
         PageNumber = pageNumber;
@@ -225,10 +260,20 @@ public class PagedResult<T>
     /// </summary>
     public PagedMetadata Metadata { get; set; } = null!;
 
+    /// <summary>
+    /// 初始化 <see cref="PagedResult{T}"/> 类的新实例
+    /// </summary>
     public PagedResult()
     {
     }
 
+    /// <summary>
+    /// 使用指定数据列表和分页参数初始化 <see cref="PagedResult{T}"/> 类的新实例
+    /// </summary>
+    /// <param name="items">当前页数据列表</param>
+    /// <param name="pageNumber">当前页码</param>
+    /// <param name="pageSize">每页大小</param>
+    /// <param name="totalCount">总记录数</param>
     public PagedResult(List<T> items, int pageNumber, int pageSize, int totalCount)
     {
         Items = items;
@@ -242,6 +287,9 @@ public class PagedResult<T>
 /// <typeparam name="T">响应数据类型</typeparam>
 public class PaginatedResponse<T> : ApiResponse<PagedResult<T>>
 {
+    /// <summary>
+    /// 初始化 <see cref="PaginatedResponse{T}"/> 类的新实例
+    /// </summary>
     private PaginatedResponse()
     {
     }

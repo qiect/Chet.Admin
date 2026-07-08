@@ -7,6 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Chet.Admin.Services.Role;
 
+/// <summary>
+/// 数据权限服务实现
+/// </summary>
 public class DataScopeService : IDataScopeService
 {
     private readonly AppDbContext _dbContext;
@@ -18,6 +21,11 @@ public class DataScopeService : IDataScopeService
         _logger = logger;
     }
 
+    /// <summary>
+    /// 获取用户可访问的部门ID列表
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <returns>可访问的部门ID列表</returns>
     public async Task<List<int>> GetAccessibleDeptIdsAsync(int userId)
     {
         // 获取用户角色
@@ -81,6 +89,11 @@ public class DataScopeService : IDataScopeService
         return result.ToList();
     }
 
+    /// <summary>
+    /// 获取用户的数据权限范围
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <returns>数据权限范围字符串（All、DeptAndChild、Dept、Custom、Self）</returns>
     public async Task<string> GetDataScopeAsync(int userId)
     {
         var roleIds = await _dbContext.UserRoles
@@ -105,6 +118,11 @@ public class DataScopeService : IDataScopeService
         return "Self";
     }
 
+    /// <summary>
+    /// 递归获取指定部门的所有子部门ID
+    /// </summary>
+    /// <param name="parentId">父部门ID</param>
+    /// <param name="result">用于收集子部门ID的集合</param>
     private async Task AddChildDeptsAsync(int parentId, HashSet<int> result)
     {
         var children = await _dbContext.Departments
