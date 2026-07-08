@@ -100,48 +100,52 @@ async function handleCustomUpload(options: { file: File }) {
 
 // 保存基本信息（姓名）
 async function handleSubmit(values: Record<string, any>) {
-  await updateProfileApi({ name: values.realName });
-  message.success('个人信息更新成功');
+  try {
+    await updateProfileApi({ name: values.realName });
+    message.success('个人信息更新成功');
+  } catch {
+    message.error('个人信息更新失败');
+  }
 }
 </script>
 <template>
-  <ProfileBaseSetting
-    ref="profileBaseSettingRef"
-    :form-schema="formSchema"
-    @submit="handleSubmit"
-  >
-    <template #default>
-      <div class="profile-base-wrapper">
-        <div class="avatar-section">
-          <div class="avatar-label">头像</div>
-          <div class="avatar-content">
-            <Avatar
-              :size="96"
-              :src="avatarUrl ? avatarUrl : undefined"
-              class="avatar-preview"
-            >
-              <template #icon><UserOutlined /></template>
-            </Avatar>
-            <Upload
-              :show-upload-list="false"
-              :before-upload="beforeUpload"
-              :custom-request="handleCustomUpload"
-              accept="image/jpeg,image/png,image/gif,image/webp,image/bmp"
-            >
-              <a-button type="primary" :loading="uploading" ghost>
-                {{ uploading ? '上传中...' : '更换头像' }}
-              </a-button>
-            </Upload>
-            <div class="avatar-tip">支持 JPG/PNG/GIF/WEBP/BMP，大小不超过 2MB</div>
-          </div>
-        </div>
+  <div class="profile-container">
+    <!-- 头像上传区域 -->
+    <div class="avatar-section">
+      <div class="avatar-label">头像</div>
+      <div class="avatar-content">
+        <Avatar
+          :size="96"
+          :src="avatarUrl ? avatarUrl : undefined"
+          class="avatar-preview"
+        >
+          <template #icon><UserOutlined /></template>
+        </Avatar>
+        <Upload
+          :show-upload-list="false"
+          :before-upload="beforeUpload"
+          :custom-request="handleCustomUpload"
+          accept="image/jpeg,image/png,image/gif,image/webp,image/bmp"
+        >
+          <a-button type="primary" :loading="uploading" ghost>
+            {{ uploading ? '上传中...' : '更换头像' }}
+          </a-button>
+        </Upload>
+        <div class="avatar-tip">支持 JPG/PNG/GIF/WEBP/BMP，大小不超过 2MB</div>
       </div>
-    </template>
-  </ProfileBaseSetting>
+    </div>
+
+    <!-- 基本信息表单（姓名、邮箱、简介） -->
+    <ProfileBaseSetting
+      ref="profileBaseSettingRef"
+      :form-schema="formSchema"
+      @submit="handleSubmit"
+    />
+  </div>
 </template>
 
 <style scoped>
-.profile-base-wrapper {
+.profile-container {
   margin-bottom: 16px;
 }
 
