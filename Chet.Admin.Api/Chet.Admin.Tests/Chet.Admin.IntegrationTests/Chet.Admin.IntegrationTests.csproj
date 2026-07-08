@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Chet.Admin.Api\Chet.Admin.Api.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Application\Chet.Admin.DTOs\Chet.Admin.DTOs.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Application\Chet.Admin.Mapping\Chet.Admin.Mapping.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Application\Chet.Admin.Services\Chet.Admin.Services.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Core\Chet.Admin.Contracts\Chet.Admin.Contracts.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Core\Chet.Admin.Domain\Chet.Admin.Domain.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Core\Chet.Admin.Shared\Chet.Admin.Shared.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Infrastructure\Chet.Admin.Caching\Chet.Admin.Caching.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Infrastructure\Chet.Admin.Data\Chet.Admin.Data.csproj" />
+  </ItemGroup>
+
+</Project>

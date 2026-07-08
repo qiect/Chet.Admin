@@ -1,0 +1,17 @@
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Temporary scripts
+_rename_project.ps1
+_rename_python.py
+
+# Keep sub-project .gitignore files
+!.gitignore

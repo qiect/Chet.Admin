@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chet.Admin.Domain\Chet.Admin.Domain.csproj" />
+    <ProjectReference Include="..\Chet.Admin.Shared\Chet.Admin.Shared.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Application\Chet.Admin.DTOs\Chet.Admin.DTOs.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>

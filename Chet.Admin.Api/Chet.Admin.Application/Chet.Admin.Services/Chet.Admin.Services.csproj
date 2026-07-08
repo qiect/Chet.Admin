@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Chet.Admin.Core\Chet.Admin.Contracts\Chet.Admin.Contracts.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Core\Chet.Admin.Shared\Chet.Admin.Shared.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Infrastructure\Chet.Admin.Configuration\Chet.Admin.Configuration.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Infrastructure\Chet.Admin.Data\Chet.Admin.Data.csproj" />
+    <ProjectReference Include="..\..\Chet.Admin.Infrastructure\Chet.Admin.Caching\Chet.Admin.Caching.csproj" />
+  </ItemGroup>
+
+</Project>
