@@ -11,14 +11,11 @@ import { Button, message, Tree, Spin, Alert } from 'ant-design-vue';
 import { useVbenForm } from '#/adapter/form';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import {
-  assignRolePermissionsApi,
   assignRoleMenusApi,
   createRoleApi,
   deleteRoleApi,
-  getPermissionAllApi,
   getRoleListApi,
   getRoleMenusApi,
-  getRolePermissionsApi,
   updateRoleApi,
   updateDataScopeApi,
 } from '#/api/system/role';
@@ -171,11 +168,11 @@ const [Modal, modalApi] = useVbenModal({
   },
 });
 
-// ========== 统一权限分配 ==========
+// ========== 菜单分配 ==========
 interface TreeNode {
-  key: string;
+  key: number;
   title: string;
-  value: string;
+  value: number;
   children?: TreeNode[];
   selectable?: boolean;
   disableCheckbox?: boolean;
@@ -184,101 +181,26 @@ interface TreeNode {
 const assignLoading = ref(false);
 const assignRoleId = ref(0);
 const treeData = ref<TreeNode[]>([]);
-const checkedKeys = ref<string[]>([]);
-const halfCheckedKeys = ref<string[]>([]);
-// 存储菜单key和权限key的映射
-const menuKeySet = ref<Set<string>>(new Set());
-const permKeySet = ref<Set<string>>(new Set());
+const checkedKeys = ref<number[]>([]);
+const halfCheckedKeys = ref<number[]>([]);
 
-// 构建统一树：菜单为父节点，权限为子节点
-function buildUnifiedTree(menus: any[], permissions: any[]): TreeNode[] {
-  const permMap = new Map<number, any[]>();
-  for (const perm of permissions) {
-    const menuId = perm.menuId ?? 0;
-    if (!permMap.has(menuId)) permMap.set(menuId, []);
-    permMap.get(menuId)!.push(perm);
-  }
-
-  menuKeySet.value.clear();
-  permKeySet.value.clear();
-
-  function buildNode(menu: any): TreeNode {
-    const menuKey = `menu-${menu.id}`;
-    menuKeySet.value.add(menuKey);
-
-    const children: TreeNode[] = [];
-
-    // 添加该菜单下的权限作为子节点
-    const menuPerms = permMap.get(menu.id) || [];
-    for (const perm of menuPerms) {
-      const permKey = `perm-${perm.id}`;
-      permKeySet.value.add(permKey);
-      children.push({
-        key: permKey,
-        title: `${perm.name} [${perm.code}]`,
-        value: permKey,
-        selectable: false,
-      });
-    }
-
-    // 递归处理子菜单
-    if (menu.children && menu.children.length > 0) {
-      for (const child of menu.children) {
-        children.push(buildNode(child));
-      }
-    }
-
-    return {
-      key: menuKey,
-      title: menu.type === 'Button' ? `${menu.name} [按钮]` : menu.name,
-      value: menuKey,
-      children: children.length > 0 ? children : undefined,
-      selectable: false,
-    };
-  }
-
-  return menus.map(m => buildNode(m));
-}
-
-// 从checkedKeys中提取菜单ID和权限ID
-function extractIds(keys: string[], halfKeys: string[]) {
-  const menuIds: number[] = [];
-  const permissionIds: number[] = [];
-
-  for (const key of [...keys, ...halfKeys]) {
-    if (key.startsWith('menu-')) {
-      menuIds.push(Number(key.replace('menu-', '')));
-    }
-  }
-  for (const key of keys) {
-    if (key.startsWith('perm-')) {
-      permissionIds.push(Number(key.replace('perm-', '')));
-    }
-  }
-
-  return { menuIds, permissionIds };
-}
-
-// 从当前角色的菜单ID和权限ID生成checkedKeys
-function buildCheckedKeys(menuIds: number[], permissionIds: number[]): string[] {
-  const keys: string[] = [];
-  for (const id of menuIds) {
-    keys.push(`menu-${id}`);
-  }
-  for (const id of permissionIds) {
-    keys.push(`perm-${id}`);
-  }
-  return keys;
+// 构建菜单树数据
+function buildMenuTree(menus: any[]): TreeNode[] {
+  return (menus || []).map((m: any) => ({
+    key: m.id,
+    title: m.type === 'Button' ? `${m.name} [按钮]` : m.name,
+    value: m.id,
+    children: m.children && m.children.length > 0 ? buildMenuTree(m.children) : undefined,
+    selectable: false,
+  }));
 }
 
 const [AssignModal, assignModalApi] = useVbenModal({
   onConfirm: async () => {
-    const { menuIds, permissionIds } = extractIds(checkedKeys.value, halfCheckedKeys.value);
-    await Promise.all([
-      assignRoleMenusApi(assignRoleId.value, menuIds),
-      assignRolePermissionsApi(assignRoleId.value, permissionIds),
-    ]);
-    message.success('权限分配成功');
+    // 提交勾选的菜单ID(包含半选状态的父级菜单)
+    const menuIds = [...checkedKeys.value, ...halfCheckedKeys.value];
+    await assignRoleMenusApi(assignRoleId.value, menuIds);
+    message.success('菜单分配成功');
     assignModalApi.close();
   },
   async onOpenChange(isOpen) {
@@ -287,18 +209,15 @@ const [AssignModal, assignModalApi] = useVbenModal({
       assignRoleId.value = data.roleId;
       assignLoading.value = true;
       try {
-        const [menus, roleMenuList, rolePermList, allPerms] = await Promise.all([
+        const [menus, roleMenuList] = await Promise.all([
           getMenuTreeApi(),
           getRoleMenusApi(data.roleId),
-          getRolePermissionsApi(data.roleId),
-          getPermissionAllApi(),
         ]);
 
-        treeData.value = buildUnifiedTree(menus || [], allPerms || []);
+        treeData.value = buildMenuTree(menus || []);
 
-        const currentMenuIds = (roleMenuList || []).map((m: any) => m.id);
-        const currentPermIds = (rolePermList || []).map((p: any) => p.id);
-        checkedKeys.value = buildCheckedKeys(currentMenuIds, currentPermIds);
+        // 回显已分配的菜单
+        checkedKeys.value = (roleMenuList || []).map((m: any) => m.id);
       } finally {
         assignLoading.value = false;
       }
@@ -322,11 +241,11 @@ function onDelete(row: any) {
     <Modal title="角色管理">
       <Form />
     </Modal>
-    <AssignModal title="分配权限" class="w-[600px]">
+    <AssignModal title="分配菜单" class="w-[600px]">
       <Spin :spinning="assignLoading">
         <Alert type="info" show-icon class="mb-3">
           <template #message>
-            <span class="text-xs">勾选菜单表示可访问该页面，勾选权限表示可执行该操作。半选状态的菜单也会被分配。</span>
+            <span class="text-xs">勾选菜单分配访问权限。半选状态的父级菜单也会被分配。</span>
           </template>
         </Alert>
         <Tree
@@ -348,7 +267,7 @@ function onDelete(row: any) {
         <VbenTableAction
           :actions="[
             { text: '编辑', auth: 'system:role:update', onClick: () => onEdit(row) },
-            { text: '分配权限', auth: 'system:role:update', onClick: () => onAssign(row) },
+            { text: '分配菜单', auth: 'system:role:update', onClick: () => onAssign(row) },
           ]"
           :dropdown-actions="[{ text: '删除', auth: 'system:role:delete', danger: true, popConfirm: { title: '确认删除？', confirm: () => onDelete(row) } }]"
         />

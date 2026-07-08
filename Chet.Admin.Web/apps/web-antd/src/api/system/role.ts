@@ -47,25 +47,6 @@ export async function deleteRoleApi(id: number) {
 }
 
 /**
- * 获取指定角色的权限列表
- * @param id 角色ID
- * @returns 角色权限列表
- */
-export async function getRolePermissionsApi(id: number) {
-  return requestClient.get(`/roles/${id}/permissions`);
-}
-
-/**
- * 为指定角色分配权限
- * @param id 角色ID
- * @param permissionIds 权限ID数组
- * @returns 分配结果
- */
-export async function assignRolePermissionsApi(id: number, permissionIds: number[]) {
-  return requestClient.post(`/roles/${id}/permissions`, permissionIds);
-}
-
-/**
  * 获取指定角色的菜单列表
  * @param id 角色ID
  * @returns 角色菜单列表
@@ -82,14 +63,6 @@ export async function getRoleMenusApi(id: number) {
  */
 export async function assignRoleMenusApi(id: number, menuIds: number[]) {
   return requestClient.post(`/roles/${id}/menus`, menuIds);
-}
-
-/**
- * 获取全部权限列表(角色模块使用)
- * @returns 权限列表
- */
-export async function getPermissionAllApi() {
-  return requestClient.get('/permissions');
 }
 
 /**

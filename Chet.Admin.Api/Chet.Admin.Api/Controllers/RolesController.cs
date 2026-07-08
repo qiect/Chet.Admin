@@ -1,6 +1,5 @@
 using Chet.Admin.Contracts.Role;
 using Chet.Admin.DTOs.Role;
-using Chet.Admin.DTOs.Permission;
 using Chet.Admin.DTOs.Menu;
 using Chet.Admin.Shared;
 using Microsoft.AspNetCore.Authorization;
@@ -115,33 +114,6 @@ public class RolesController : ControllerBase
     {
         await _roleService.DeleteRoleAsync(id);
         return Ok(ApiResponse.NoContent("Role deleted successfully"));
-    }
-
-    /// <summary>
-    /// 获取角色所拥有的权限列表
-    /// </summary>
-    /// <param name="id">角色ID</param>
-    /// <returns>权限列表</returns>
-    [HttpGet("{id}/permissions")]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetRolePermissions(int id)
-    {
-        var permissions = await _roleService.GetRolePermissionsAsync(id);
-        return Ok(ApiResponse.Ok(permissions, "Role permissions retrieved successfully"));
-    }
-
-    /// <summary>
-    /// 为角色分配权限
-    /// </summary>
-    /// <param name="id">角色ID</param>
-    /// <param name="permissionIds">权限ID列表</param>
-    /// <returns>分配结果</returns>
-    [HttpPost("{id}/permissions")]
-    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> AssignPermissions(int id, [FromBody] List<int> permissionIds)
-    {
-        await _roleService.AssignPermissionsAsync(id, permissionIds);
-        return Ok(ApiResponse.Ok(null, "Permissions assigned successfully"));
     }
 
     /// <summary>

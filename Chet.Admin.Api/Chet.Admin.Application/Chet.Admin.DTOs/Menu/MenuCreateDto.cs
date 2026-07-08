@@ -69,5 +69,10 @@ namespace Chet.Admin.DTOs.Menu
         /// 权限标识
         /// </summary>
         public string? Permission { get; set; }
+
+        /// <summary>
+        /// 权限/按钮描述
+        /// </summary>
+        public string? Description { get; set; }
     }
 }

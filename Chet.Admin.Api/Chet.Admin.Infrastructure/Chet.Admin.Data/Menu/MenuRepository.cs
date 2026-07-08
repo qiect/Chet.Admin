@@ -59,4 +59,21 @@ public class MenuRepository : EfCoreRepository<MenuEntity>, IMenuRepository
             .OrderBy(m => m.Sort)
             .ToListAsync();
     }
+
+    /// <summary>
+    /// 根据用户ID查询其所有权限码（从菜单表的Button/Api节点获取）
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <returns>权限码字符串列表</returns>
+    public async Task<List<string>> GetPermissionCodesByUserIdAsync(int userId)
+    {
+        return await _dbContext.UserRoles
+            .Where(ur => ur.UserId == userId)
+            .Join(_dbContext.RoleMenus, ur => ur.RoleId, rm => rm.RoleId, (ur, rm) => rm)
+            .Select(rm => rm.Menu)
+            .Where(m => (m.Type == "Button" || m.Type == "Api") && !string.IsNullOrEmpty(m.Permission))
+            .Select(m => m.Permission!)
+            .Distinct()
+            .ToListAsync();
+    }
 }

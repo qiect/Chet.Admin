@@ -41,11 +41,6 @@ namespace Chet.Admin.Domain.Role
         public List<UserRoleEntity> UserRoles { get; set; } = [];
 
         /// <summary>
-        /// 角色权限关联
-        /// </summary>
-        public List<RolePermissionEntity> RolePermissions { get; set; } = [];
-
-        /// <summary>
         /// 角色菜单关联
         /// </summary>
         public List<RoleMenuEntity> RoleMenus { get; set; } = [];

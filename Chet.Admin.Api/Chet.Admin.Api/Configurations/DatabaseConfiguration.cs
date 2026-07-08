@@ -1,6 +1,5 @@
 using Chet.Admin.Data;
 using Chet.Admin.Domain.Role;
-using Chet.Admin.Domain.Permission;
 using Chet.Admin.Domain.Menu;
 using Chet.Admin.Domain.Department;
 using Chet.Admin.Domain.Dictionary;
@@ -328,19 +327,6 @@ public static class DatabaseConfiguration
                 IsVisible = true,
                 Permission = "system:dept:list"
             };
-            var permMenu = new MenuEntity
-            {
-                Name = "权限管理",
-                Path = "/system/permission",
-                Component = "/system/permission/index",
-                Icon = "lucide:key-round",
-                ParentId = systemMenu.Id,
-                Type = "Menu",
-                Sort = 5,
-                IsEnabled = true,
-                IsVisible = true,
-                Permission = "system:permission:list"
-            };
             var dictMenu = new MenuEntity
             {
                 Name = "字典管理",
@@ -406,7 +392,7 @@ public static class DatabaseConfiguration
                 IsVisible = true,
                 Permission = "system:online:list"
             };
-            await dbContext.Menus.AddRangeAsync(userMenu, roleMenu, menuMenu, deptMenu, permMenu, dictMenu, auditMenu, notificationMenu, fileMenu, onlineMenu);
+            await dbContext.Menus.AddRangeAsync(userMenu, roleMenu, menuMenu, deptMenu, dictMenu, auditMenu, notificationMenu, fileMenu, onlineMenu);
             await dbContext.SaveChangesAsync();
 
             // 按钮级菜单
@@ -425,9 +411,6 @@ public static class DatabaseConfiguration
             var dictCreateBtn = new MenuEntity { Name = "新增字典", Path = "", Component = "", ParentId = dictMenu.Id, Type = "Button", Sort = 1, IsEnabled = true, IsVisible = false, Permission = "system:dict:create" };
             var dictUpdateBtn = new MenuEntity { Name = "编辑字典", Path = "", Component = "", ParentId = dictMenu.Id, Type = "Button", Sort = 2, IsEnabled = true, IsVisible = false, Permission = "system:dict:update" };
             var dictDeleteBtn = new MenuEntity { Name = "删除字典", Path = "", Component = "", ParentId = dictMenu.Id, Type = "Button", Sort = 3, IsEnabled = true, IsVisible = false, Permission = "system:dict:delete" };
-            var permCreateBtn = new MenuEntity { Name = "新增权限", Path = "", Component = "", ParentId = permMenu.Id, Type = "Button", Sort = 1, IsEnabled = true, IsVisible = false, Permission = "system:permission:create" };
-            var permUpdateBtn = new MenuEntity { Name = "编辑权限", Path = "", Component = "", ParentId = permMenu.Id, Type = "Button", Sort = 2, IsEnabled = true, IsVisible = false, Permission = "system:permission:update" };
-            var permDeleteBtn = new MenuEntity { Name = "删除权限", Path = "", Component = "", ParentId = permMenu.Id, Type = "Button", Sort = 3, IsEnabled = true, IsVisible = false, Permission = "system:permission:delete" };
             var auditListBtn = new MenuEntity { Name = "查看日志", Path = "", Component = "", ParentId = auditMenu.Id, Type = "Button", Sort = 1, IsEnabled = true, IsVisible = false, Permission = "system:audit:list" };
             var auditClearBtn = new MenuEntity { Name = "清除日志", Path = "", Component = "", ParentId = auditMenu.Id, Type = "Button", Sort = 2, IsEnabled = true, IsVisible = false, Permission = "system:audit:clear" };
             var notifCreateBtn = new MenuEntity { Name = "新增通知", Path = "", Component = "", ParentId = notificationMenu.Id, Type = "Button", Sort = 1, IsEnabled = true, IsVisible = false, Permission = "system:notification:create" };
@@ -442,7 +425,6 @@ public static class DatabaseConfiguration
                 menuCreateBtn, menuUpdateBtn, menuDeleteBtn,
                 deptCreateBtn, deptUpdateBtn, deptDeleteBtn,
                 dictCreateBtn, dictUpdateBtn, dictDeleteBtn,
-                permCreateBtn, permUpdateBtn, permDeleteBtn,
                 auditListBtn, auditClearBtn,
                 notifCreateBtn, notifDeleteBtn,
                 onlineListBtn, onlineForceOfflineBtn,
@@ -450,82 +432,30 @@ public static class DatabaseConfiguration
             );
             await dbContext.SaveChangesAsync();
 
-            // 种子权限
-            var permissions = new List<PermissionEntity>
-            {
-                new() { Code = "system:user:list", Name = "用户列表", Type = "Menu", MenuId = userMenu.Id },
-                new() { Code = "system:user:create", Name = "创建用户", Type = "Button", MenuId = userMenu.Id },
-                new() { Code = "system:user:update", Name = "编辑用户", Type = "Button", MenuId = userMenu.Id },
-                new() { Code = "system:user:delete", Name = "删除用户", Type = "Button", MenuId = userMenu.Id },
-                new() { Code = "system:role:list", Name = "角色列表", Type = "Menu", MenuId = roleMenu.Id },
-                new() { Code = "system:role:create", Name = "创建角色", Type = "Button", MenuId = roleMenu.Id },
-                new() { Code = "system:role:update", Name = "编辑角色", Type = "Button", MenuId = roleMenu.Id },
-                new() { Code = "system:role:delete", Name = "删除角色", Type = "Button", MenuId = roleMenu.Id },
-                new() { Code = "system:menu:list", Name = "菜单列表", Type = "Menu", MenuId = menuMenu.Id },
-                new() { Code = "system:menu:create", Name = "创建菜单", Type = "Button", MenuId = menuMenu.Id },
-                new() { Code = "system:menu:update", Name = "编辑菜单", Type = "Button", MenuId = menuMenu.Id },
-                new() { Code = "system:menu:delete", Name = "删除菜单", Type = "Button", MenuId = menuMenu.Id },
-                new() { Code = "system:dept:list", Name = "部门列表", Type = "Menu", MenuId = deptMenu.Id },
-                new() { Code = "system:dept:create", Name = "创建部门", Type = "Button", MenuId = deptMenu.Id },
-                new() { Code = "system:dept:update", Name = "编辑部门", Type = "Button", MenuId = deptMenu.Id },
-                new() { Code = "system:dept:delete", Name = "删除部门", Type = "Button", MenuId = deptMenu.Id },
-                new() { Code = "system:dict:list", Name = "字典列表", Type = "Menu", MenuId = dictMenu.Id },
-                new() { Code = "system:dict:create", Name = "创建字典", Type = "Button", MenuId = dictMenu.Id },
-                new() { Code = "system:dict:update", Name = "编辑字典", Type = "Button", MenuId = dictMenu.Id },
-                new() { Code = "system:dict:delete", Name = "删除字典", Type = "Button", MenuId = dictMenu.Id },
-                new() { Code = "system:permission:list", Name = "权限列表", Type = "Menu", MenuId = permMenu.Id },
-                new() { Code = "system:permission:create", Name = "创建权限", Type = "Button", MenuId = permMenu.Id },
-                new() { Code = "system:permission:update", Name = "编辑权限", Type = "Button", MenuId = permMenu.Id },
-                new() { Code = "system:permission:delete", Name = "删除权限", Type = "Button", MenuId = permMenu.Id },
-                new() { Code = "system:audit:list", Name = "查看日志", Type = "Menu", MenuId = auditMenu.Id },
-                new() { Code = "system:audit:clear", Name = "清除日志", Type = "Button", MenuId = auditMenu.Id },
-                new() { Code = "system:notification:list", Name = "通知列表", Type = "Menu", MenuId = notificationMenu.Id },
-                new() { Code = "system:notification:create", Name = "创建通知", Type = "Button", MenuId = notificationMenu.Id },
-                new() { Code = "system:notification:delete", Name = "删除通知", Type = "Button", MenuId = notificationMenu.Id },
-                new() { Code = "system:online:list", Name = "在线用户列表", Type = "Menu", MenuId = onlineMenu.Id },
-                new() { Code = "system:online:force-offline", Name = "强制下线", Type = "Button", MenuId = onlineMenu.Id },
-                new() { Code = "system:file:list", Name = "文件列表", Type = "Menu", MenuId = fileMenu.Id },
-                new() { Code = "system:file:upload", Name = "上传文件", Type = "Button", MenuId = fileMenu.Id },
-                new() { Code = "system:file:delete", Name = "删除文件", Type = "Button", MenuId = fileMenu.Id },
-            };
-            await dbContext.Permissions.AddRangeAsync(permissions);
-            await dbContext.SaveChangesAsync();
-
-            // 管理员角色分配所有权限和菜单
+            // 管理员角色分配所有菜单
             var allMenus = await dbContext.Menus.ToListAsync();
-            var allPermissions = await dbContext.Permissions.ToListAsync();
 
             foreach (var menu in allMenus)
             {
                 await dbContext.RoleMenus.AddAsync(new RoleMenuEntity { RoleId = adminRole.Id, MenuId = menu.Id });
             }
-            foreach (var perm in allPermissions)
-            {
-                await dbContext.RolePermissions.AddAsync(new RolePermissionEntity { RoleId = adminRole.Id, PermissionId = perm.Id });
-            }
             await dbContext.SaveChangesAsync();
 
-            // 普通用户角色分配查看权限
-            var viewPermissions = allPermissions.Where(p => p.Code.EndsWith(":list")).ToList();
+            // 普通用户角色分配查看菜单
             var viewMenus = allMenus.Where(m => m.Type == "Menu" || m.Type == "Directory").ToList();
             foreach (var menu in viewMenus)
             {
                 await dbContext.RoleMenus.AddAsync(new RoleMenuEntity { RoleId = userRole.Id, MenuId = menu.Id });
             }
-            foreach (var perm in viewPermissions)
-            {
-                await dbContext.RolePermissions.AddAsync(new RolePermissionEntity { RoleId = userRole.Id, PermissionId = perm.Id });
-            }
             await dbContext.SaveChangesAsync();
 
             // 种子字典 - 父级类型
             var menuTypeDict = new DictionaryEntity { DictType = "menu_type", Name = "菜单类型", Value = "", Label = "菜单类型", ParentId = 0, Sort = 1 };
-            var permTypeDict = new DictionaryEntity { DictType = "permission_type", Name = "权限类型", Value = "", Label = "权限类型", ParentId = 0, Sort = 2 };
             var statusDict = new DictionaryEntity { DictType = "status", Name = "状态", Value = "", Label = "状态", ParentId = 0, Sort = 3 };
             var userStatusDict = new DictionaryEntity { DictType = "user_status", Name = "用户状态", Value = "", Label = "用户状态", ParentId = 0, Sort = 4 };
             var genderDict = new DictionaryEntity { DictType = "gender", Name = "性别", Value = "", Label = "性别", ParentId = 0, Sort = 5 };
             var yesNoDict = new DictionaryEntity { DictType = "yes_no", Name = "是否", Value = "", Label = "是否", ParentId = 0, Sort = 6 };
-            await dbContext.Dictionaries.AddRangeAsync(menuTypeDict, permTypeDict, statusDict, userStatusDict, genderDict, yesNoDict);
+            await dbContext.Dictionaries.AddRangeAsync(menuTypeDict, statusDict, userStatusDict, genderDict, yesNoDict);
             await dbContext.SaveChangesAsync();
 
             // 种子字典 - 子级项
@@ -535,10 +465,6 @@ public static class DatabaseConfiguration
                 new() { DictType = "menu_type", Name = "菜单类型-目录", Value = "Directory", Label = "目录", ParentId = menuTypeDict.Id, Sort = 1 },
                 new() { DictType = "menu_type", Name = "菜单类型-菜单", Value = "Menu", Label = "菜单", ParentId = menuTypeDict.Id, Sort = 2 },
                 new() { DictType = "menu_type", Name = "菜单类型-按钮", Value = "Button", Label = "按钮", ParentId = menuTypeDict.Id, Sort = 3 },
-                // permission_type 子项
-                new() { DictType = "permission_type", Name = "权限类型-菜单", Value = "Menu", Label = "菜单", ParentId = permTypeDict.Id, Sort = 1 },
-                new() { DictType = "permission_type", Name = "权限类型-按钮", Value = "Button", Label = "按钮", ParentId = permTypeDict.Id, Sort = 2 },
-                new() { DictType = "permission_type", Name = "权限类型-接口", Value = "Api", Label = "接口", ParentId = permTypeDict.Id, Sort = 3 },
                 // status 子项
                 new() { DictType = "status", Name = "状态-启用", Value = "1", Label = "启用", ParentId = statusDict.Id, Sort = 1 },
                 new() { DictType = "status", Name = "状态-禁用", Value = "0", Label = "禁用", ParentId = statusDict.Id, Sort = 2 },
@@ -593,7 +519,6 @@ public static class DatabaseConfiguration
                 {
                     { "菜单管理", "/system/menu" },
                     { "部门管理", "/system/department" },
-                    { "权限管理", "/system/permission" },
                     { "字典管理", "/system/dictionary" },
                     { "通知管理", "/system/notification" },
                     { "文件管理", "/system/file" }
@@ -612,7 +537,7 @@ public static class DatabaseConfiguration
                 var sortMapping = new Dictionary<string, int>
                 {
                     { "用户管理", 1 }, { "角色管理", 2 }, { "菜单管理", 3 },
-                    { "部门管理", 4 }, { "权限管理", 5 }, { "字典管理", 6 },
+                    { "部门管理", 4 }, { "字典管理", 6 },
                     { "操作日志", 7 }, { "通知管理", 8 }, { "文件管理", 9 },
                     { "在线用户", 10 }
                 };

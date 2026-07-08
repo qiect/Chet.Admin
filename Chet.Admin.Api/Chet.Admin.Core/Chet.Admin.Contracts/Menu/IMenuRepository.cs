@@ -28,5 +28,12 @@ namespace Chet.Admin.Contracts.Menu
         /// <param name="parentId">父级菜单ID</param>
         /// <returns>菜单实体集合</returns>
         Task<IEnumerable<MenuEntity>> GetMenusByParentIdAsync(int parentId);
+
+        /// <summary>
+        /// 根据用户ID查询其所有权限码（从菜单表的Button/Api节点获取）
+        /// </summary>
+        /// <param name="userId">用户ID</param>
+        /// <returns>权限码字符串列表</returns>
+        Task<List<string>> GetPermissionCodesByUserIdAsync(int userId);
     }
 }

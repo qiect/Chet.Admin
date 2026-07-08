@@ -6,7 +6,7 @@ using Chet.Admin.Contracts.Jwt;
 using Chet.Admin.Contracts.Security;
 using Chet.Admin.Contracts.User;
 using Chet.Admin.Contracts.Role;
-using Chet.Admin.Contracts.Permission;
+using Chet.Admin.Contracts.Menu;
 using Chet.Admin.Domain.User;
 using Chet.Admin.DTOs.Auth;
 using Chet.Admin.DTOs.User;
@@ -27,7 +27,7 @@ public class AuthService : IAuthService
     private readonly ILogger<AuthService> _logger;
     private readonly AppSettings _appSettings;
     private readonly IRoleRepository _roleRepository;
-    private readonly IPermissionRepository _permissionRepository;
+    private readonly IMenuRepository _menuRepository;
 
     public AuthService(
         IUnitOfWork unitOfWork,
@@ -37,7 +37,7 @@ public class AuthService : IAuthService
         ILogger<AuthService> logger,
         AppSettings appSettings,
         IRoleRepository roleRepository,
-        IPermissionRepository permissionRepository)
+        IMenuRepository menuRepository)
     {
         _unitOfWork = unitOfWork;
         _jwtService = jwtService;
@@ -46,7 +46,7 @@ public class AuthService : IAuthService
         _logger = logger;
         _appSettings = appSettings;
         _roleRepository = roleRepository;
-        _permissionRepository = permissionRepository;
+        _menuRepository = menuRepository;
     }
 
     /// <summary>
@@ -166,7 +166,7 @@ public class AuthService : IAuthService
         // 获取角色
         var roles = await _roleRepository.GetRolesByUserIdAsync(userId);
         // 获取权限
-        var permissions = await _permissionRepository.GetPermissionsByUserIdAsync(userId);
+        var permissions = await _menuRepository.GetPermissionCodesByUserIdAsync(userId);
 
         var userInfo = new UserInfoDto
         {
@@ -176,7 +176,7 @@ public class AuthService : IAuthService
             DepartmentId = user.DepartmentId,
             Avatar = user.Avatar,
             Roles = roles.Select(r => r.Code).ToList(),
-            Permissions = permissions.Select(p => p.Code).ToList(),
+            Permissions = permissions,
         };
 
         return userInfo;

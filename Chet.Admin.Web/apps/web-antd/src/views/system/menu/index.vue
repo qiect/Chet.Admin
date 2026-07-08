@@ -52,6 +52,7 @@ const columns: VxeTableGridColumns = [
     },
   },
   { field: 'permission', title: '权限标识', minWidth: 180 },
+  { field: 'description', title: '描述', minWidth: 150 },
   { field: 'path', title: '路径', minWidth: 160 },
   { field: 'component', title: '组件', minWidth: 160 },
   { field: 'icon', title: '图标', width: 90 },
@@ -97,6 +98,13 @@ const formSchema: VbenFormSchema[] = [
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type === 'Menu' || values.type === 'Button'; },
+    },
+  },
+  { component: 'Input', fieldName: 'description', label: '描述',
+    help: '按钮/权限的说明描述',
+    dependencies: {
+      triggerFields: ['type'],
+      if(values) { return values.type === 'Button'; },
     },
   },
   { component: 'Input', fieldName: 'path', label: '路由路径',

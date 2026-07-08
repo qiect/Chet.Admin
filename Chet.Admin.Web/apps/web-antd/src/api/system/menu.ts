@@ -17,16 +17,6 @@ export async function getMenuTreeApi() {
 }
 
 /**
- * 分页查询菜单列表
- * @param params 查询参数
- * @returns 菜单分页列表,包含数据项和总记录数
- */
-export async function getMenuListApi(params: any) {
-  const result = await requestClient.get('/menus/paged', { params });
-  return { items: result?.items || [], total: result?.metadata?.totalCount || 0 };
-}
-
-/**
  * 创建菜单
  * @param data 菜单信息
  * @returns 创建结果

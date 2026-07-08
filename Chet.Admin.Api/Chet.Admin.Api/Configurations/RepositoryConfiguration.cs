@@ -1,14 +1,12 @@
 using Chet.Admin.Contracts;
 using Chet.Admin.Contracts.User;
 using Chet.Admin.Contracts.Role;
-using Chet.Admin.Contracts.Permission;
 using Chet.Admin.Contracts.Menu;
 using Chet.Admin.Contracts.Department;
 using Chet.Admin.Contracts.Dictionary;
 using Chet.Admin.Data;
 using Chet.Admin.Data.User;
 using Chet.Admin.Data.Role;
-using Chet.Admin.Data.Permission;
 using Chet.Admin.Data.Menu;
 using Chet.Admin.Data.Department;
 using Chet.Admin.Data.Dictionary;
@@ -30,7 +28,6 @@ public static class RepositoryConfiguration
         services.AddScoped(typeof(IRepository<>), typeof(EfCoreRepository<>));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IMenuRepository, MenuRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IDictionaryRepository, DictionaryRepository>();

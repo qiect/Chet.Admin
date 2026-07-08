@@ -38,7 +38,7 @@ namespace Chet.Admin.Domain.Menu
         public int ParentId { get; set; }
 
         /// <summary>
-        /// 菜单类型（Directory=目录, Menu=菜单, Button=按钮）
+        /// 菜单类型（Directory=目录, Menu=菜单, Button=按钮, Api=接口）
         /// </summary>
         public string Type { get; set; } = "Menu";
 
@@ -71,6 +71,11 @@ namespace Chet.Admin.Domain.Menu
         /// 权限标识
         /// </summary>
         public string? Permission { get; set; }
+
+        /// <summary>
+        /// 权限/按钮描述
+        /// </summary>
+        public string? Description { get; set; }
 
         /// <summary>
         /// 子菜单

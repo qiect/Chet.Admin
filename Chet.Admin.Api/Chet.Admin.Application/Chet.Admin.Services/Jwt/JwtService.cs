@@ -2,7 +2,7 @@ using Chet.Admin.Configuration;
 using Chet.Admin.Contracts.Jwt;
 using Chet.Admin.Contracts.User;
 using Chet.Admin.Contracts.Role;
-using Chet.Admin.Contracts.Permission;
+using Chet.Admin.Contracts.Menu;
 using Chet.Admin.Domain.User;
 using Chet.Admin.DTOs.Auth;
 using Microsoft.Extensions.Logging;
@@ -63,7 +63,7 @@ public class JwtService : IJwtService
     private readonly AppSettings _appSettings;
     private readonly IUserRepository _userRepository;
     private readonly IRoleRepository _roleRepository;
-    private readonly IPermissionRepository _permissionRepository;
+    private readonly IMenuRepository _menuRepository;
     private readonly ILogger<JwtService> _logger;
 
     /// <summary>
@@ -72,14 +72,14 @@ public class JwtService : IJwtService
     /// <param name="appSettings">应用程序配置对象，包含JWT相关的配置参数</param>
     /// <param name="userRepository">用户仓储实例，用于查询用户和更新Refresh Token</param>
     /// <param name="roleRepository">角色仓储实例，用于查询用户角色</param>
-    /// <param name="permissionRepository">权限仓储实例，用于查询用户权限</param>
+    /// <param name="menuRepository">菜单仓储实例，用于查询用户权限</param>
     /// <param name="logger">日志记录器，用于记录令牌操作和异常信息</param>
-    public JwtService(AppSettings appSettings, IUserRepository userRepository, IRoleRepository roleRepository, IPermissionRepository permissionRepository, ILogger<JwtService> logger)
+    public JwtService(AppSettings appSettings, IUserRepository userRepository, IRoleRepository roleRepository, IMenuRepository menuRepository, ILogger<JwtService> logger)
     {
         _appSettings = appSettings;
         _userRepository = userRepository;
         _roleRepository = roleRepository;
-        _permissionRepository = permissionRepository;
+        _menuRepository = menuRepository;
         _logger = logger;
     }
 
@@ -120,10 +120,10 @@ public class JwtService : IJwtService
         }
 
         // 添加权限Claims
-        var permissions = await _permissionRepository.GetPermissionsByUserIdAsync(user.Id);
+        var permissions = await _menuRepository.GetPermissionCodesByUserIdAsync(user.Id);
         foreach (var permission in permissions)
         {
-            claims.Add(new Claim("permission", permission.Code));
+            claims.Add(new Claim("permission", permission));
         }
 
         // 使用框架中设计好的AppSettings配置

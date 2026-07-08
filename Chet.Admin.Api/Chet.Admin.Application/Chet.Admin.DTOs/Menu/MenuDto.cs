@@ -76,6 +76,11 @@ namespace Chet.Admin.DTOs.Menu
         public string? Permission { get; set; }
 
         /// <summary>
+        /// 权限/按钮描述
+        /// </summary>
+        public string? Description { get; set; }
+
+        /// <summary>
         /// 创建时间
         /// </summary>
         public DateTime CreatedAt { get; set; }

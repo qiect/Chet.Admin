@@ -20,7 +20,6 @@ public class AuditLogMiddleware
         { "roles", "Role" },
         { "menus", "Menu" },
         { "departments", "Department" },
-        { "permissions", "Permission" },
         { "dictionaries", "Dictionary" },
         { "auth", "Auth" },
         { "auditlogs", "AuditLog" },

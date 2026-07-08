@@ -1,7 +1,6 @@
 using Chet.Admin.Domain;
 using Chet.Admin.Domain.User;
 using Chet.Admin.Domain.Role;
-using Chet.Admin.Domain.Permission;
 using Chet.Admin.Domain.Menu;
 using Chet.Admin.Domain.Department;
 using Chet.Admin.Domain.Dictionary;
@@ -36,11 +35,6 @@ namespace Chet.Admin.Data
         public DbSet<RoleEntity> Roles { get; set; }
 
         /// <summary>
-        /// 权限表
-        /// </summary>
-        public DbSet<PermissionEntity> Permissions { get; set; }
-
-        /// <summary>
         /// 菜单表
         /// </summary>
         public DbSet<MenuEntity> Menus { get; set; }
@@ -59,11 +53,6 @@ namespace Chet.Admin.Data
         /// 用户角色关联表
         /// </summary>
         public DbSet<UserRoleEntity> UserRoles { get; set; }
-
-        /// <summary>
-        /// 角色权限关联表
-        /// </summary>
-        public DbSet<RolePermissionEntity> RolePermissions { get; set; }
 
         /// <summary>
         /// 角色菜单关联表

@@ -31,6 +31,7 @@ namespace Chet.Admin.Data.Menu
             builder.Property(e => e.IsCache).HasComment("是否缓存");
             builder.Property(e => e.IsVisible).HasComment("是否显示");
             builder.Property(e => e.Permission).HasMaxLength(100).HasComment("权限标识");
+            builder.Property(e => e.Description).HasMaxLength(200).HasComment("权限/按钮描述");
 
             builder.HasIndex(e => e.ParentId).HasDatabaseName("IX_Menus_ParentId");
         }

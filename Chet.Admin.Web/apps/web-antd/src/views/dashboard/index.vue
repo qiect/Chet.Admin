@@ -165,7 +165,6 @@ const shortcuts = [
   { icon: 'lucide:shield', title: '角色管理', desc: '角色与权限配置', path: '/system/role', color: '#f59e0b' },
   { icon: 'lucide:menu', title: '菜单管理', desc: '菜单与路由配置', path: '/system/menu', color: '#10b981' },
   { icon: 'lucide:building', title: '部门管理', desc: '组织架构管理', path: '/system/department', color: '#3b82f6' },
-  { icon: 'lucide:key-round', title: '权限管理', desc: '权限编码管理', path: '/system/permission', color: '#ef4444' },
   { icon: 'lucide:book-open', title: '字典管理', desc: '数据字典维护', path: '/system/dictionary', color: '#8b5cf6' },
 ];
 

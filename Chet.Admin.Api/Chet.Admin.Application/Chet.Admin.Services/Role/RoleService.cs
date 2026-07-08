@@ -2,10 +2,8 @@ using AutoMapper;
 using Chet.Admin.Contracts;
 using Chet.Admin.Contracts.Role;
 using Chet.Admin.Contracts.Menu;
-using Chet.Admin.Contracts.Permission;
 using Chet.Admin.Domain.Role;
 using Chet.Admin.DTOs.Menu;
-using Chet.Admin.DTOs.Permission;
 using Chet.Admin.DTOs.Role;
 using Chet.Admin.Shared;
 using Chet.Admin.Data;
@@ -20,7 +18,6 @@ namespace Chet.Admin.Services.Role;
 public class RoleService : IRoleService
 {
     private readonly IRoleRepository _roleRepository;
-    private readonly IPermissionRepository _permissionRepository;
     private readonly IMenuRepository _menuRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -28,14 +25,12 @@ public class RoleService : IRoleService
 
     public RoleService(
         IRoleRepository roleRepository,
-        IPermissionRepository permissionRepository,
         IMenuRepository menuRepository,
         IUnitOfWork unitOfWork,
         IMapper mapper,
         ILogger<RoleService> logger)
     {
         _roleRepository = roleRepository;
-        _permissionRepository = permissionRepository;
         _menuRepository = menuRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -145,32 +140,6 @@ public class RoleService : IRoleService
     }
 
     /// <summary>
-    /// 为角色分配权限
-    /// </summary>
-    /// <param name="roleId">角色ID</param>
-    /// <param name="permissionIds">权限ID列表</param>
-    public async Task AssignPermissionsAsync(int roleId, List<int> permissionIds)
-    {
-        _logger.LogInformation("Assigning permissions to role: {RoleId}", roleId);
-        var role = await _roleRepository.GetByIdAsync(roleId)
-            ?? throw new NotFoundException(nameof(RoleEntity), roleId);
-
-        var dbContext = (AppDbContext)_unitOfWork.DbContext;
-
-        // 删除旧的关联
-        var existing = await dbContext.RolePermissions.Where(rp => rp.RoleId == roleId).ToListAsync();
-        dbContext.RolePermissions.RemoveRange(existing);
-
-        // 添加新的关联
-        foreach (var permissionId in permissionIds)
-        {
-            await dbContext.RolePermissions.AddAsync(new RolePermissionEntity { RoleId = roleId, PermissionId = permissionId });
-        }
-
-        await _unitOfWork.SaveChangesAsync();
-    }
-
-    /// <summary>
     /// 为角色分配菜单
     /// </summary>
     /// <param name="roleId">角色ID</param>
@@ -194,18 +163,6 @@ public class RoleService : IRoleService
         }
 
         await _unitOfWork.SaveChangesAsync();
-    }
-
-    /// <summary>
-    /// 获取角色拥有的权限列表
-    /// </summary>
-    /// <param name="roleId">角色ID</param>
-    /// <returns>权限数据传输对象集合</returns>
-    public async Task<IEnumerable<PermissionDto>> GetRolePermissionsAsync(int roleId)
-    {
-        _logger.LogInformation("Getting permissions for role: {RoleId}", roleId);
-        var permissions = await _permissionRepository.GetPermissionsByRoleIdAsync(roleId);
-        return _mapper.Map<IEnumerable<PermissionDto>>(permissions);
     }
 
     /// <summary>

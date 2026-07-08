@@ -1,5 +1,4 @@
 using Chet.Admin.DTOs.Menu;
-using Chet.Admin.DTOs.Permission;
 using Chet.Admin.DTOs.Role;
 using Chet.Admin.Shared;
 
@@ -51,25 +50,11 @@ namespace Chet.Admin.Contracts.Role
         Task DeleteRoleAsync(int id);
 
         /// <summary>
-        /// 为角色分配权限
-        /// </summary>
-        /// <param name="roleId">角色ID</param>
-        /// <param name="permissionIds">权限ID列表</param>
-        Task AssignPermissionsAsync(int roleId, List<int> permissionIds);
-
-        /// <summary>
         /// 为角色分配菜单
         /// </summary>
         /// <param name="roleId">角色ID</param>
         /// <param name="menuIds">菜单ID列表</param>
         Task AssignMenusAsync(int roleId, List<int> menuIds);
-
-        /// <summary>
-        /// 获取角色拥有的权限列表
-        /// </summary>
-        /// <param name="roleId">角色ID</param>
-        /// <returns>权限DTO集合</returns>
-        Task<IEnumerable<PermissionDto>> GetRolePermissionsAsync(int roleId);
 
         /// <summary>
         /// 获取角色拥有的菜单列表
