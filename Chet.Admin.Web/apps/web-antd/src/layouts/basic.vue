@@ -3,7 +3,6 @@ import { computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
-import { VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
 import { useWatermark } from '@vben/hooks';
 import { BookOpenText, CircleHelp, SvgGithubIcon } from '@vben/icons';
 import { BasicLayout, LockScreen, UserDropdown } from '@vben/layouts';
@@ -15,6 +14,11 @@ import { $t } from '#/locales';
 import NotificationBell from '#/layouts/components/notification-bell.vue';
 import { useAuthStore } from '#/store';
 import LoginForm from '#/views/_core/authentication/login.vue';
+
+// 项目相关外链（指向本仓库，而非 Vben 默认链接）
+const PROJECT_GITHUB_URL = 'https://github.com/qiect/Chet.Admin';
+const PROJECT_DOC_URL = `${PROJECT_GITHUB_URL}/tree/main/docs`;
+const PROJECT_ISSUES_URL = `${PROJECT_GITHUB_URL}/issues`;
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -33,7 +37,7 @@ const menus = computed(() => [
   },
   {
     handler: () => {
-      openWindow(VBEN_DOC_URL, {
+      openWindow(PROJECT_DOC_URL, {
         target: '_blank',
       });
     },
@@ -42,7 +46,7 @@ const menus = computed(() => [
   },
   {
     handler: () => {
-      openWindow(VBEN_GITHUB_URL, {
+      openWindow(PROJECT_GITHUB_URL, {
         target: '_blank',
       });
     },
@@ -51,7 +55,7 @@ const menus = computed(() => [
   },
   {
     handler: () => {
-      openWindow(`${VBEN_GITHUB_URL}/issues`, {
+      openWindow(PROJECT_ISSUES_URL, {
         target: '_blank',
       });
     },

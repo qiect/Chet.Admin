@@ -176,7 +176,7 @@ onMounted(async () => {
     const [statsRes, trendRes, logsRes] = await Promise.all([
       getDashboardStatsApi().catch(() => null),
       getDashboardTrendApi(7).catch(() => null),
-      getRecentLogsApi(5).catch(() => null),
+      getRecentLogsApi(10).catch(() => null),
     ]);
     if (statsRes) {
       stats.value = statsRes;
@@ -427,7 +427,7 @@ function goPage(path: string) {
       <div class="logs-card">
         <div class="card-header">
           <h3 class="card-title"><IconifyIcon icon="lucide:scroll-text" width="18" class="card-title-icon" /> 最近操作</h3>
-          <span class="card-subtitle">最近 5 条</span>
+          <span class="card-subtitle">最近 10 条</span>
         </div>
         <div class="logs-list">
           <div v-for="log in recentLogs" :key="log.id" class="log-item">
@@ -814,10 +814,39 @@ function goPage(path: string) {
 }
 
 /* ===== 最近操作 ===== */
+/* 限制高度与趋势图对齐，超出条目内部滚动，避免撑开整行高度 */
+.logs-card {
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+  overflow: hidden;
+}
+
 .logs-list {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow-y: auto;
+  min-height: 0;
+  margin-right: -8px;
+  padding-right: 8px;
+}
+
+/* 自定义滚动条 - 细线风格，与卡片设计语言一致 */
+.logs-list::-webkit-scrollbar {
+  width: 4px;
+}
+.logs-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.logs-list::-webkit-scrollbar-thumb {
+  background: var(--border-card-hover);
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+.logs-list::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .log-item {
