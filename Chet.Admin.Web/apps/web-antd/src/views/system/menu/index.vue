@@ -42,7 +42,7 @@ const typeMap: Record<string, { color: string; label: string }> = {
 };
 
 const columns: VxeTableGridColumns = [
-  { field: 'name', title: '菜单名称', minWidth: 180, treeNode: true },
+  { field: 'name', title: '菜单名称', minWidth: 180, treeNode: true, align: 'left' },
   { field: 'type', title: '类型', width: 80,
     slots: {
       default: ({ row }) => {
@@ -80,6 +80,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
     rowConfig: { keyField: 'id' },
     treeConfig: { parentField: 'parentId', rowField: 'id', transform: true, expandAll: true, indent: 20 },
+    // 菜单为树形结构，一次性加载所有节点构建树，禁用分页器
+    pagerConfig: { enabled: false },
     toolbarConfig: { custom: true, refresh: true, zoom: true },
   } as VxeTableGridOptions,
 });
@@ -215,27 +217,3 @@ function onDelete(row: any) {
     </Grid>
   </Page>
 </template>
-
-<style lang="scss" scoped>
-:deep(.vxe-tree--btn-wrapper) {
-  .vxe-tree-icon {
-    color: hsl(var(--muted-foreground));
-    transition: all 0.2s ease;
-
-    &:hover {
-      color: hsl(var(--primary));
-    }
-  }
-}
-
-:deep(.vxe-tree-cell) {
-  .vxe-tree-wrapper {
-    align-items: center;
-  }
-}
-
-/* 树形节点 hover 效果 */
-:deep(.vxe-body--row) {
-  transition: background-color 0.2s ease;
-}
-</style>

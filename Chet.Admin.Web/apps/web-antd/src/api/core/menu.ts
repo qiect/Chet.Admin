@@ -70,10 +70,19 @@ function transformMenuItem(
 }
 
 /**
- * 获取用户所有菜单
+ * 获取用户所有菜单（不过滤，包含全部菜单）
  */
 export async function getAllMenusApi() {
   const backendMenus =
     await requestClient.get<BackendMenuItem[]>('/menus/tree');
+  return transformMenuData(backendMenus);
+}
+
+/**
+ * 获取当前登录用户的菜单（按角色权限过滤）
+ */
+export async function getMyMenusApi() {
+  const backendMenus =
+    await requestClient.get<BackendMenuItem[]>('/menus/my-tree');
   return transformMenuData(backendMenus);
 }

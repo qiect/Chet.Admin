@@ -182,7 +182,6 @@ const assignLoading = ref(false);
 const assignRoleId = ref(0);
 const treeData = ref<TreeNode[]>([]);
 const checkedKeys = ref<number[]>([]);
-const halfCheckedKeys = ref<number[]>([]);
 
 // 构建菜单树数据
 function buildMenuTree(menus: any[]): TreeNode[] {
@@ -197,8 +196,8 @@ function buildMenuTree(menus: any[]): TreeNode[] {
 
 const [AssignModal, assignModalApi] = useVbenModal({
   onConfirm: async () => {
-    // 提交勾选的菜单ID(包含半选状态的父级菜单)
-    const menuIds = [...checkedKeys.value, ...halfCheckedKeys.value];
+    // checkStrictly 模式下父子不联动，checkedKeys 即为精确的已勾选菜单ID
+    const menuIds = [...checkedKeys.value];
     await assignRoleMenusApi(assignRoleId.value, menuIds);
     message.success('菜单分配成功');
     assignModalApi.close();
@@ -245,14 +244,14 @@ function onDelete(row: any) {
       <Spin :spinning="assignLoading">
         <Alert type="info" show-icon class="mb-3">
           <template #message>
-            <span class="text-xs">勾选菜单分配访问权限。半选状态的父级菜单也会被分配。</span>
+            <span class="text-xs">勾选菜单分配访问权限。父子节点独立勾选，可单独分配按钮权限。</span>
           </template>
         </Alert>
         <Tree
           v-model:checkedKeys="checkedKeys"
-          v-model:halfCheckedKeys="halfCheckedKeys"
           :tree-data="treeData"
           checkable
+          :check-strictly="true"
           default-expand-all
           :selectable="false"
           :field-names="{ key: 'key', title: 'title', children: 'children' }"

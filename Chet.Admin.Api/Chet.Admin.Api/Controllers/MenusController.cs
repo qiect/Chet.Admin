@@ -4,6 +4,7 @@ using Chet.Admin.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 
 namespace Chet.Admin.Api.Controllers;
 
@@ -52,6 +53,19 @@ public class MenusController : ControllerBase
     {
         var tree = await _menuService.GetMenuTreeAsync();
         return Ok(ApiResponse.Ok(tree, "Menu tree retrieved successfully"));
+    }
+
+    /// <summary>
+    /// 获取当前登录用户的菜单树形结构（按角色过滤）
+    /// </summary>
+    /// <returns>当前用户的菜单树</returns>
+    [HttpGet("my-tree")]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMyMenus()
+    {
+        var userId = GetUserId();
+        var tree = await _menuService.GetMyMenuTreeAsync(userId);
+        return Ok(ApiResponse.Ok(tree, "User menus retrieved successfully"));
     }
 
     /// <summary>
@@ -123,5 +137,19 @@ public class MenusController : ControllerBase
     {
         await _menuService.DeleteMenuAsync(id);
         return Ok(ApiResponse.NoContent("Menu deleted successfully"));
+    }
+
+    /// <summary>
+    /// 从JWT Claims中获取当前用户ID
+    /// </summary>
+    private int GetUserId()
+    {
+        var claim = User.FindFirst(ClaimTypes.NameIdentifier)
+                    ?? User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub);
+        if (claim == null || !int.TryParse(claim.Value, out var userId))
+        {
+            throw new UnauthorizedAccessException();
+        }
+        return userId;
     }
 }

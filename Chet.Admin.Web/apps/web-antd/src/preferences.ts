@@ -1,5 +1,4 @@
 import {
-  appCopyrightPreferences,
   defineOverridesPreferences,
   definePreferencesExtension,
 } from '@vben/preferences';
@@ -27,7 +26,13 @@ export const overridesPreferences = defineOverridesPreferences({
     // 默认首页路径
     defaultHomePath: '/dashboard',
   },
-  copyright: appCopyrightPreferences,
+  copyright: {
+    companyName: 'Chet Admin',
+    companySiteLink: '',
+    date: '2024-2026',
+    icp: '',
+    icpLink: '',
+  },
 });
 
 export const preferencesExtension =

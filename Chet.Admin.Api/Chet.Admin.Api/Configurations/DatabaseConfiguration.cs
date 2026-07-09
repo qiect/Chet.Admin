@@ -1,4 +1,5 @@
 using Chet.Admin.Data;
+using Chet.Admin.Domain.Audit;
 using Chet.Admin.Domain.Role;
 using Chet.Admin.Domain.Menu;
 using Chet.Admin.Domain.Department;
@@ -272,9 +273,24 @@ public static class DatabaseConfiguration
                 IsVisible = true
             };
             await dbContext.Menus.AddAsync(systemMenu);
+
+            // 系统运维目录：组织权限以外的系统辅助/运维功能
+            var opsMenu = new MenuEntity
+            {
+                Name = "系统运维",
+                Path = "/system-ops",
+                Component = "BasicLayout",
+                Icon = "lucide:wrench",
+                ParentId = 0,
+                Type = "Directory",
+                Sort = 2,
+                IsEnabled = true,
+                IsVisible = true
+            };
+            await dbContext.Menus.AddAsync(opsMenu);
             await dbContext.SaveChangesAsync();
 
-            // 系统管理下的菜单
+            // 系统管理下的菜单（组织与权限）
             var userMenu = new MenuEntity
             {
                 Name = "用户管理",
@@ -327,15 +343,17 @@ public static class DatabaseConfiguration
                 IsVisible = true,
                 Permission = "system:dept:list"
             };
+
+            // 系统运维下的菜单（辅助与运维功能）
             var dictMenu = new MenuEntity
             {
                 Name = "字典管理",
                 Path = "/system/dictionary",
                 Component = "/system/dictionary/index",
                 Icon = "lucide:book-open",
-                ParentId = systemMenu.Id,
+                ParentId = opsMenu.Id,
                 Type = "Menu",
-                Sort = 6,
+                Sort = 1,
                 IsEnabled = true,
                 IsVisible = true,
                 Permission = "system:dict:list"
@@ -346,9 +364,9 @@ public static class DatabaseConfiguration
                 Path = "/system/audit-log",
                 Component = "/system/audit-log/index",
                 Icon = "lucide:file-text",
-                ParentId = systemMenu.Id,
+                ParentId = opsMenu.Id,
                 Type = "Menu",
-                Sort = 7,
+                Sort = 2,
                 IsEnabled = true,
                 IsVisible = true,
                 Permission = "system:audit:list"
@@ -359,9 +377,9 @@ public static class DatabaseConfiguration
                 Path = "/system/notification",
                 Component = "/system/notification/index",
                 Icon = "lucide:bell",
-                ParentId = systemMenu.Id,
+                ParentId = opsMenu.Id,
                 Type = "Menu",
-                Sort = 8,
+                Sort = 3,
                 IsEnabled = true,
                 IsVisible = true,
                 Permission = "system:notification:list"
@@ -372,9 +390,9 @@ public static class DatabaseConfiguration
                 Path = "/system/file",
                 Component = "/system/file/index",
                 Icon = "lucide:folder",
-                ParentId = systemMenu.Id,
+                ParentId = opsMenu.Id,
                 Type = "Menu",
-                Sort = 9,
+                Sort = 4,
                 IsEnabled = true,
                 IsVisible = true,
                 Permission = "system:file:list"
@@ -385,9 +403,9 @@ public static class DatabaseConfiguration
                 Path = "/system/online-user",
                 Component = "/system/online-user/index",
                 Icon = "lucide:wifi",
-                ParentId = systemMenu.Id,
+                ParentId = opsMenu.Id,
                 Type = "Menu",
-                Sort = 10,
+                Sort = 5,
                 IsEnabled = true,
                 IsVisible = true,
                 Permission = "system:online:list"
@@ -482,19 +500,63 @@ public static class DatabaseConfiguration
             await dbContext.Dictionaries.AddRangeAsync(dictItems);
             await dbContext.SaveChangesAsync();
 
-            // 创建管理员用户
+            // 创建管理员用户（隶属总公司）
             var adminUser = new UserEntity
             {
                 Name = "超级管理员",
                 Email = "admin@example.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
-                DepartmentId = techDept.Id
+                DepartmentId = rootDept.Id
             };
             await dbContext.Users.AddAsync(adminUser);
             await dbContext.SaveChangesAsync();
 
             // 管理员用户分配管理员角色
             await dbContext.UserRoles.AddAsync(new UserRoleEntity { UserId = adminUser.Id, RoleId = adminRole.Id });
+            await dbContext.SaveChangesAsync();
+
+            // 创建普通用户（只有查看权限，无增删改按钮权限）
+            var normalUser = new UserEntity
+            {
+                Name = "普通用户",
+                Email = "user@example.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("User@123"),
+                DepartmentId = techDept.Id
+            };
+            await dbContext.Users.AddAsync(normalUser);
+            await dbContext.SaveChangesAsync();
+
+            // 普通用户分配普通用户角色（userRole 已只分配 Menu/Directory，不含按钮）
+            await dbContext.UserRoles.AddAsync(new UserRoleEntity { UserId = normalUser.Id, RoleId = userRole.Id });
+            await dbContext.SaveChangesAsync();
+
+            // 种子近 7 天登录审计日志，让仪表盘登录趋势图有数据展示
+            var rand = new Random(20260709);
+            var seedAuditLogs = new List<AuditLogEntity>();
+            for (int i = 6; i >= 0; i--)
+            {
+                var day = DateTime.UtcNow.Date.AddDays(-i);
+                // 每天随机 2-8 次登录，模拟真实使用情况
+                var count = rand.Next(2, 9);
+                for (int j = 0; j < count; j++)
+                {
+                    seedAuditLogs.Add(new AuditLogEntity
+                    {
+                        UserId = adminUser.Id,
+                        UserName = adminUser.Name,
+                        Action = "Login",
+                        Module = "Auth",
+                        Description = "用户登录",
+                        HttpMethod = "POST",
+                        RequestPath = "/api/v1/auth/login",
+                        StatusCode = 200,
+                        ClientIp = "127.0.0.1",
+                        OperatedAt = day.AddHours(rand.Next(8, 22)).AddMinutes(rand.Next(0, 60)),
+                        Duration = rand.Next(50, 300),
+                    });
+                }
+            }
+            await dbContext.AuditLogs.AddRangeAsync(seedAuditLogs);
             await dbContext.SaveChangesAsync();
 
             logger.LogInformation("Initial data seeded successfully");

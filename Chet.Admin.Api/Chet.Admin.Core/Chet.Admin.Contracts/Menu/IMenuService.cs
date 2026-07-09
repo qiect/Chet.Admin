@@ -28,6 +28,13 @@ namespace Chet.Admin.Contracts.Menu
         Task<IEnumerable<MenuTreeDto>> GetMenuTreeAsync();
 
         /// <summary>
+        /// 获取当前用户的菜单树形结构（仅包含用户被分配的菜单及其祖先菜单）
+        /// </summary>
+        /// <param name="userId">用户ID</param>
+        /// <returns>菜单树DTO集合</returns>
+        Task<IEnumerable<MenuTreeDto>> GetMyMenuTreeAsync(int userId);
+
+        /// <summary>
         /// 分页获取菜单列表
         /// </summary>
         /// <param name="request">分页请求参数</param>

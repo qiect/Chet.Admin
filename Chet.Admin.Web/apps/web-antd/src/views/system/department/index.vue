@@ -25,7 +25,7 @@ function buildTreeSelect(items: any[], excludeId?: number): any[] {
 }
 
 const columns: VxeTableGridColumns = [
-  { field: 'name', title: '部门名称', minWidth: 180, treeNode: true },
+  { field: 'name', title: '部门名称', minWidth: 180, treeNode: true, align: 'left' },
   { field: 'code', title: '编码', minWidth: 120 },
   { field: 'leader', title: '负责人', width: 100 },
   { field: 'phone', title: '电话', minWidth: 120 },
@@ -50,6 +50,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
     },
     rowConfig: { keyField: 'id' },
     treeConfig: { parentField: 'parentId', rowField: 'id', transform: true, expandAll: true, indent: 20 },
+    // 部门为树形结构，一次性加载所有节点构建树，禁用分页器
+    pagerConfig: { enabled: false },
     toolbarConfig: { custom: true, refresh: true, zoom: true },
   } as VxeTableGridOptions,
 });

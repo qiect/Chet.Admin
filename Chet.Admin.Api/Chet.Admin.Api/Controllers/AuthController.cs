@@ -199,7 +199,7 @@ public class AuthController : ControllerBase
         if (user != null && user.LockedUntil.HasValue && user.LockedUntil.Value > DateTime.UtcNow)
         {
             var remaining = user.LockedUntil.Value - DateTime.UtcNow;
-            return Ok(ApiResponse.Error($"Account is locked. Please try again in {Math.Ceiling(remaining.TotalMinutes)} minutes.", StatusCodes.Status401Unauthorized));
+            return Ok(ApiResponse.Error($"账号已锁定，请在 {Math.Ceiling(remaining.TotalMinutes)} 分钟后重试", StatusCodes.Status400BadRequest));
         }
 
         // 如果锁定时间已过，重置失败计数
@@ -260,22 +260,25 @@ public class AuthController : ControllerBase
         catch (UnauthorizedAccessException)
         {
             // 登录失败，增加失败计数
+            var accountLocked = false;
             if (user != null)
             {
                 user.LoginFailCount++;
                 if (user.LoginFailCount >= MaxLoginFailCount)
                 {
                     user.LockedUntil = DateTime.UtcNow.AddMinutes(LockoutMinutes);
+                    accountLocked = true;
                     _logger.LogWarning("Account locked for user: {Email} until {LockedUntil}", user.Email, user.LockedUntil);
                 }
                 _unitOfWork.Users.Update(user);
                 await _unitOfWork.SaveChangesAsync();
             }
 
-            return Ok(ApiResponse.Ok(new LoginResponseDto
-            {
-                LockedUntil = user?.LockedUntil
-            }, "Invalid email or password"));
+            var failMessage = accountLocked
+                ? $"密码错误次数过多，账户已锁定 {LockoutMinutes} 分钟"
+                : "邮箱或密码错误";
+
+            return Ok(ApiResponse.Error(failMessage, StatusCodes.Status400BadRequest));
         }
     }
 

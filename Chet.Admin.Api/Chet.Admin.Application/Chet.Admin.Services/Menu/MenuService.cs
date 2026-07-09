@@ -69,6 +69,50 @@ public class MenuService : IMenuService
     }
 
     /// <summary>
+    /// 获取当前用户的菜单树形结构
+    /// 仅包含用户被分配的菜单及其所有祖先菜单，确保树形层级完整
+    /// </summary>
+    /// <param name="userId">用户ID</param>
+    /// <returns>菜单树形结构集合</returns>
+    public async Task<IEnumerable<MenuTreeDto>> GetMyMenuTreeAsync(int userId)
+    {
+        _logger.LogInformation("Getting menu tree for user: {UserId}", userId);
+
+        var allMenus = (await _menuRepository.GetAllAsync()).ToList();
+        var userMenus = (await _menuRepository.GetMenusByUserIdAsync(userId)).ToList();
+
+        if (userMenus.Count == 0)
+        {
+            return [];
+        }
+
+        // 收集需要包含的菜单ID（被分配的菜单 + 其所有祖先菜单）
+        var includedIds = new HashSet<int>();
+        var menuById = allMenus.ToDictionary(m => m.Id);
+
+        foreach (var menu in userMenus)
+        {
+            var current = menu;
+            while (current != null && includedIds.Add(current.Id))
+            {
+                if (current.ParentId > 0
+                    && menuById.TryGetValue(current.ParentId, out var parent))
+                {
+                    current = parent;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        var filteredMenus = allMenus.Where(m => includedIds.Contains(m.Id)).ToList();
+        var menuDtos = _mapper.Map<List<MenuTreeDto>>(filteredMenus);
+        return BuildMenuTree(menuDtos, 0);
+    }
+
+    /// <summary>
     /// 分页查询菜单列表
     /// </summary>
     /// <param name="request">分页请求参数</param>
