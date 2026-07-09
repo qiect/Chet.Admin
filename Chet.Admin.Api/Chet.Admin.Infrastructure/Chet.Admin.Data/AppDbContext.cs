@@ -102,18 +102,18 @@ namespace Chet.Admin.Data
         /// <returns>影响的行数</returns>
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            // 自动设置创建和更新时间
+            // 自动设置创建和更新时间（统一用 UTC 存储，前端按本地时区显示）
             var entities = ChangeTracker.Entries()
                 .Where(e => e.Entity is BaseEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
 
             foreach (var entityEntry in entities)
             {
                 var entity = (BaseEntity)entityEntry.Entity;
-                entity.UpdatedAt = DateTime.Now; // 设置更新时间为当前 北京 时间
+                entity.UpdatedAt = DateTime.UtcNow;
 
                 if (entityEntry.State == EntityState.Added)
                 {
-                    entity.CreatedAt = DateTime.Now; // 新建实体时，设置创建时间为当前 北京 时间
+                    entity.CreatedAt = DateTime.UtcNow;
                 }
             }
 

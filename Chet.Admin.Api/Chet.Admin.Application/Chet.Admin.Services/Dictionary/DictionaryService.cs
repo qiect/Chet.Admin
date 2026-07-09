@@ -66,26 +66,32 @@ public class DictionaryService : IDictionaryService
         _logger.LogInformation("Getting paged dictionaries: Page {PageNumber}, Size {PageSize}", request.PageNumber, request.PageSize);
         request.Normalize();
 
-        if (!string.IsNullOrWhiteSpace(request.Keyword))
+        var dbContext = (AppDbContext)_unitOfWork.DbContext;
+        var query = dbContext.Dictionaries.AsNoTracking();
+
+        // 按字典类型精确过滤
+        if (!string.IsNullOrWhiteSpace(request.DictType))
         {
-            var dbContext = (AppDbContext)_unitOfWork.DbContext;
-            var keyword = request.Keyword.Trim();
-            var query = dbContext.Dictionaries.AsNoTracking()
-                .Where(d => d.DictType.Contains(keyword) || d.Name.Contains(keyword) || d.Label.Contains(keyword) || d.Value.Contains(keyword));
-
-            var totalCount = await query.CountAsync();
-            var items = await query
-                .Skip(request.Skip)
-                .Take(request.PageSize)
-                .ToListAsync();
-
-            var dictDtos = _mapper.Map<List<DictionaryDto>>(items);
-            return new PagedResult<DictionaryDto>(dictDtos, request.PageNumber, request.PageSize, totalCount);
+            var dictType = request.DictType.Trim();
+            query = query.Where(d => d.DictType == dictType);
         }
 
-        var pagedDicts = await _dictionaryRepository.GetPagedAsync(request);
-        var dictDtos2 = _mapper.Map<List<DictionaryDto>>(pagedDicts.Items);
-        return new PagedResult<DictionaryDto>(dictDtos2, request.PageNumber, request.PageSize, pagedDicts.Metadata.TotalCount);
+        // 关键字模糊匹配
+        if (!string.IsNullOrWhiteSpace(request.Keyword))
+        {
+            var keyword = request.Keyword.Trim();
+            query = query.Where(d => d.DictType.Contains(keyword) || d.Name.Contains(keyword) || d.Label.Contains(keyword) || d.Value.Contains(keyword));
+        }
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .OrderByDescending(d => d.CreatedAt)
+            .Skip(request.Skip)
+            .Take(request.PageSize)
+            .ToListAsync();
+
+        var dictDtos = _mapper.Map<List<DictionaryDto>>(items);
+        return new PagedResult<DictionaryDto>(dictDtos, request.PageNumber, request.PageSize, totalCount);
     }
 
     /// <summary>

@@ -197,7 +197,12 @@ function buildMenuTree(menus: any[]): TreeNode[] {
 const [AssignModal, assignModalApi] = useVbenModal({
   onConfirm: async () => {
     // checkStrictly 模式下父子不联动，checkedKeys 即为精确的已勾选菜单ID
-    const menuIds = [...checkedKeys.value];
+    // 注意：checkStrictly 为 true 时，Tree 的 v-model:checkedKeys 会被组件改写为
+    // { checked: number[], halfChecked: number[] } 对象，不再是最初的 number[]
+    const val = checkedKeys.value as
+      | number[]
+      | { checked: number[]; halfChecked: number[] };
+    const menuIds = Array.isArray(val) ? val : (val?.checked ?? []);
     await assignRoleMenusApi(assignRoleId.value, menuIds);
     message.success('菜单分配成功');
     assignModalApi.close();

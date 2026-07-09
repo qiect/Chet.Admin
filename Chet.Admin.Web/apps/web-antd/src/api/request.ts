@@ -111,6 +111,12 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         return;
       }
 
+      // 429错误：请求过于频繁（限流）
+      if (statusCode === 429) {
+        message.error(errorMessage || '请求过于频繁，请稍后再试');
+        return;
+      }
+
       // 403错误
       if (statusCode === 403) {
         message.error('没有操作权限');

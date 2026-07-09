@@ -268,7 +268,7 @@ public static class DatabaseConfiguration
                 Icon = "lucide:settings",
                 ParentId = 0,
                 Type = "Directory",
-                Sort = 1,
+                Sort = 98,
                 IsEnabled = true,
                 IsVisible = true
             };
@@ -283,7 +283,7 @@ public static class DatabaseConfiguration
                 Icon = "lucide:wrench",
                 ParentId = 0,
                 Type = "Directory",
-                Sort = 2,
+                Sort = 99,
                 IsEnabled = true,
                 IsVisible = true
             };

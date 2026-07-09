@@ -82,7 +82,12 @@ const columns: VxeTableGridColumns = [
     width: 70,
     cellRender: { name: 'CellTag' },
   },
-  { field: 'senderId', title: '发送者', width: 90 },
+  {
+    field: 'senderName',
+    title: '发送者',
+    width: 110,
+    slots: { default: ({ row }) => row.senderName ?? (row.senderId ? `用户${row.senderId}` : '系统') },
+  },
   { field: 'createdAt', title: '创建时间', minWidth: 170,
     slots: { default: ({ row }) => row.createdAt ? new Date(row.createdAt).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-' },
   },

@@ -11,7 +11,7 @@ import { Button, message, Tag } from 'ant-design-vue';
 import { useVbenForm } from '#/adapter/form';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import { createMenuApi, deleteMenuApi, getAllMenusApi, updateMenuApi } from '#/api/system/menu';
-import { h } from 'vue';
+import { h, ref } from 'vue';
 
 const { hasAccessByCodes } = useAccess();
 
@@ -127,7 +127,11 @@ const formSchema: VbenFormSchema[] = [
       if(values) { return values.type === 'Directory'; },
     },
   },
-  { component: 'Input', fieldName: 'icon', label: '图标',
+  { component: 'IconPicker', fieldName: 'icon', label: '图标',
+    componentProps: {
+      prefix: 'lucide',
+      autoFetchApi: false,
+    },
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type !== 'Button'; },
@@ -161,18 +165,26 @@ const formSchema: VbenFormSchema[] = [
 
 const [Form, formApi] = useVbenForm({ schema: formSchema, showDefaultActions: false });
 
+// 当前编辑的菜单ID，0 表示新增
+const editingId = ref(0);
+
 const [Modal, modalApi] = useVbenModal({
   onConfirm: async () => {
     const values = await formApi.getValues();
-    const id = values.id;
-    if (id) { await updateMenuApi(id, values); message.success('更新成功'); }
-    else { await createMenuApi(values); message.success('创建成功'); }
+    if (editingId.value) {
+      await updateMenuApi(editingId.value, values);
+      message.success('更新成功');
+    } else {
+      await createMenuApi(values);
+      message.success('创建成功');
+    }
     modalApi.close(); gridApi.query();
   },
   async onOpenChange(isOpen) {
     if (isOpen) {
       formApi.resetForm();
       const data = modalApi.getData<Record<string, any>>();
+      editingId.value = data?.id || 0;
       // 加载菜单树用于父级选择
       try {
         const menus: any[] = await getAllMenusApi() || [];

@@ -12,7 +12,7 @@ import type { UploadProps } from 'ant-design-vue';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import {
   deleteFileApi,
-  getFileDownloadUrl,
+  downloadFileApi,
   getFileListApi,
   uploadFileApi,
 } from '#/api/system/file';
@@ -107,9 +107,20 @@ const customUpload: UploadProps['customRequest'] = async (options) => {
   }
 };
 
-function onDownload(row: any) {
-  const url = getFileDownloadUrl(row.id);
-  window.open(url, '_blank');
+async function onDownload(row: any) {
+  try {
+    const blob = await downloadFileApi(row.id);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = row.fileName || `file-${row.id}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch {
+    message.error('下载失败');
+  }
 }
 
 function onDelete(row: any) {

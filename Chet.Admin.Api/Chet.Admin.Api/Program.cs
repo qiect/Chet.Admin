@@ -7,6 +7,7 @@ using Chet.Admin.Api.Filters;
 using Chet.Admin.Api.Middleware;
 using Chet.Admin.Configuration;
 using Chet.Admin.Mapping.User;
+using Chet.Admin.Shared.Api;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
 
@@ -58,6 +59,12 @@ builder.Services.AddSingleton(appSettings!);
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ApiExceptionFilter>();
+})
+.AddJsonOptions(options =>
+{
+    // SQLite 存储的 DateTime 读回时 Kind=Unspecified，System.Text.Json 默认序列化时不带 Z 后缀
+    // 这里统一指定 Kind=Utc，使输出带 Z，前端 new Date() 可正确按 UTC 解析并转本地时区显示
+    options.JsonSerializerOptions.Converters.Add(new UtcDateTimeJsonConverter());
 });
 
 builder.Services.ConfigureApiVersioning();

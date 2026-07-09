@@ -7,6 +7,7 @@ import { Plus } from '@vben/icons';
 import { useAccess } from '@vben/access';
 
 import { Button, message } from 'ant-design-vue';
+import { ref } from 'vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
@@ -58,16 +59,23 @@ const formSchema: VbenFormSchema[] = [
 
 const [Form, formApi] = useVbenForm({ schema: formSchema, showDefaultActions: false });
 
+// 当前编辑的字典ID，0 表示新增
+const editingId = ref(0);
+
 const [Modal, modalApi] = useVbenModal({
   onConfirm: async () => {
     const values = await formApi.getValues();
-    const id = values.id;
-    if (id) { await updateDictApi(id, values); message.success('更新成功'); }
+    if (editingId.value) { await updateDictApi(editingId.value, values); message.success('更新成功'); }
     else { await createDictApi(values); message.success('创建成功'); }
     modalApi.close(); gridApi.query();
   },
   onOpenChange(isOpen) {
-    if (isOpen) { formApi.resetForm(); const data = modalApi.getData<Record<string, any>>(); if (data) formApi.setValues(data); }
+    if (isOpen) {
+      formApi.resetForm();
+      const data = modalApi.getData<Record<string, any>>();
+      editingId.value = data?.id || 0;
+      if (data) formApi.setValues(data);
+    }
   },
 });
 

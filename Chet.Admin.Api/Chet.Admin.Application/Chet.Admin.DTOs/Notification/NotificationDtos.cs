@@ -36,6 +36,11 @@ public class NotificationDto
     public int? SenderId { get; set; }
 
     /// <summary>
+    /// 发送者用户名（null表示系统发送）
+    /// </summary>
+    public string? SenderName { get; set; }
+
+    /// <summary>
     /// 是否全局通知
     /// </summary>
     public bool IsGlobal { get; set; }

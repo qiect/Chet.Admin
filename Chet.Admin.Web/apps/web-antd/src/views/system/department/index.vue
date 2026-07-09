@@ -11,6 +11,7 @@ import { Button, message } from 'ant-design-vue';
 import { useVbenForm } from '#/adapter/form';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import { createDeptApi, deleteDeptApi, getAllDeptsApi, getDeptTreeApi, updateDeptApi } from '#/api/system/department';
+import { ref } from 'vue';
 
 const { hasAccessByCodes } = useAccess();
 
@@ -86,11 +87,13 @@ const formSchema: VbenFormSchema[] = [
 
 const [Form, formApi] = useVbenForm({ schema: formSchema, showDefaultActions: false });
 
+// 当前编辑的部门ID，0 表示新增
+const editingId = ref(0);
+
 const [Modal, modalApi] = useVbenModal({
   onConfirm: async () => {
     const values = await formApi.getValues();
-    const id = values.id;
-    if (id) { await updateDeptApi(id, values); message.success('更新成功'); }
+    if (editingId.value) { await updateDeptApi(editingId.value, values); message.success('更新成功'); }
     else { await createDeptApi(values); message.success('创建成功'); }
     modalApi.close(); gridApi.query();
   },
@@ -98,6 +101,7 @@ const [Modal, modalApi] = useVbenModal({
     if (isOpen) {
       formApi.resetForm();
       const data = modalApi.getData<Record<string, any>>();
+      editingId.value = data?.id || 0;
       const deptTree: any[] = await getDeptTreeApi() || [];
       const excludeId = data?.id;
       formApi.updateSchema([{

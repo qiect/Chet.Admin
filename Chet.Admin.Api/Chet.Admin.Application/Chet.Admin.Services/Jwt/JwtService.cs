@@ -109,7 +109,8 @@ public class JwtService : IJwtService
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // 主题，用户ID
             new Claim(JwtRegisteredClaimNames.Email, user.Email), // 邮箱
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // JWT ID，唯一标识符
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // JWT ID，唯一标识符
+            new Claim(ClaimTypes.Name, user.Name), // 用户名，供审计中间件读取
         };
 
         // 添加角色Claims
@@ -136,7 +137,8 @@ public class JwtService : IJwtService
             issuer: jwtSettings.Issuer, // 发行者
             audience: jwtSettings.Audience, // 受众
             claims: claims, // 声明
-            expires: DateTime.Now.AddMinutes(jwtSettings.AccessTokenExpirationMinutes > 0 ? jwtSettings.AccessTokenExpirationMinutes : 30), // 过期时间
+            notBefore: DateTime.UtcNow, // 生效时间（UTC），供强制下线黑名单比较使用
+            expires: DateTime.UtcNow.AddMinutes(jwtSettings.AccessTokenExpirationMinutes > 0 ? jwtSettings.AccessTokenExpirationMinutes : 30), // 过期时间（UTC）
             signingCredentials: creds); // 签名凭据
 
         // 生成 JWT 字符串
@@ -303,7 +305,7 @@ public class JwtService : IJwtService
             throw new SecurityTokenException("Invalid refresh token");
         }
 
-        if (user.RefreshTokenExpiryTime < DateTime.Now)
+        if (user.RefreshTokenExpiryTime < DateTime.UtcNow)
         {
             _logger.LogWarning("Refresh token failed: refresh token expired (userId: {UserId})", userId);
             throw new SecurityTokenException("Refresh token expired");
@@ -316,7 +318,7 @@ public class JwtService : IJwtService
         // 更新用户的刷新令牌和过期时间
         user.RefreshToken = newRefreshToken;
         var jwtSettings = _appSettings.Jwt ?? new JwtSettings();
-        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(jwtSettings.RefreshTokenExpirationDays > 0 ? jwtSettings.RefreshTokenExpirationDays : 7);
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(jwtSettings.RefreshTokenExpirationDays > 0 ? jwtSettings.RefreshTokenExpirationDays : 7);
         
         _userRepository.Update(user);
         await _userRepository.SaveChangesAsync();

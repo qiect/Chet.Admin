@@ -32,12 +32,15 @@ export async function getFileApi(id: number) {
 }
 
 /**
- * 获取文件下载地址
+ * 下载文件（携带 Token，返回 Blob）
+ * 后端返回的是原始文件流（非 ApiResponse JSON），需要用 responseReturn: 'body' 跳过 success 校验
  * @param id 文件ID
- * @returns 文件下载URL
  */
-export function getFileDownloadUrl(id: number) {
-  return `/files/${id}/download`;
+export async function downloadFileApi(id: number) {
+  return requestClient.get<Blob>(`/files/${id}/download`, {
+    responseType: 'blob',
+    responseReturn: 'body',
+  });
 }
 
 /**

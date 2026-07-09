@@ -43,23 +43,48 @@ function updateTime() {
 let timer: ReturnType<typeof setInterval>;
 
 // SVG line chart computed
-const chartWidth = 600;
-const chartHeight = 200;
-const chartPaddingX = 40;
-const chartPaddingY = 20;
+const chartWidth = 640;
+const chartHeight = 220;
+const chartPaddingX = 48;  // 左侧留出纵坐标标签空间
+const chartPaddingY = 24;
+const chartBottomPadding = 32; // 底部留出 X 轴标签空间
+
+// 计算图表最大值（向上取整到合适的刻度，让纵坐标更"友好"）
+const chartMaxVal = computed(() => {
+  const items = trendItems.value;
+  if (!items.length) return 10;
+  const rawMax = Math.max(...items.map((i) => i.loginCount), 1);
+  // 向上取整到 5 的倍数，避免数据点贴顶
+  return Math.max(5, Math.ceil(rawMax / 5) * 5);
+});
+
+const plotW = computed(() => chartWidth - chartPaddingX - 16);
+const plotH = computed(() => chartHeight - chartPaddingY - chartBottomPadding);
+
+// 纵坐标刻度（4 档：0, 25%, 50%, 75%, 100%）
+const yAxisTicks = computed(() => {
+  const max = chartMaxVal.value;
+  const ph = plotH.value;
+  const steps = 4;
+  return Array.from({ length: steps + 1 }, (_, i) => {
+    const ratio = i / steps;
+    const value = Math.round(max * ratio);
+    const y = chartPaddingY + ph - ratio * ph;
+    return { value, y };
+  });
+});
 
 const trendPoints = computed(() => {
   const items = trendItems.value;
   if (!items.length) return '';
-
-  const maxVal = Math.max(...items.map((i) => i.loginCount), 1);
-  const plotW = chartWidth - chartPaddingX * 2;
-  const plotH = chartHeight - chartPaddingY * 2;
+  const max = chartMaxVal.value;
+  const pw = plotW.value;
+  const ph = plotH.value;
 
   return items
     .map((item, idx) => {
-      const x = chartPaddingX + (idx / Math.max(items.length - 1, 1)) * plotW;
-      const y = chartPaddingY + plotH - (item.loginCount / maxVal) * plotH;
+      const x = chartPaddingX + (idx / Math.max(items.length - 1, 1)) * pw;
+      const y = chartPaddingY + ph - (item.loginCount / max) * ph;
       return `${x},${y}`;
     })
     .join(' ');
@@ -68,32 +93,45 @@ const trendPoints = computed(() => {
 const trendAreaPoints = computed(() => {
   const items = trendItems.value;
   if (!items.length) return '';
-
-  const maxVal = Math.max(...items.map((i) => i.loginCount), 1);
-  const plotW = chartWidth - chartPaddingX * 2;
-  const plotH = chartHeight - chartPaddingY * 2;
-  const bottomY = chartPaddingY + plotH;
+  const max = chartMaxVal.value;
+  const pw = plotW.value;
+  const ph = plotH.value;
+  const bottomY = chartPaddingY + ph;
 
   const points = items
     .map((item, idx) => {
-      const x = chartPaddingX + (idx / Math.max(items.length - 1, 1)) * plotW;
-      const y = chartPaddingY + plotH - (item.loginCount / maxVal) * plotH;
+      const x = chartPaddingX + (idx / Math.max(items.length - 1, 1)) * pw;
+      const y = chartPaddingY + ph - (item.loginCount / max) * ph;
       return `${x},${y}`;
     })
     .join(' ');
 
-  const lastX = chartPaddingX + plotW;
+  const lastX = chartPaddingX + pw;
   const firstX = chartPaddingX;
   return `${firstX},${bottomY} ${points} ${lastX},${bottomY}`;
+});
+
+// 数据点坐标，供 hover 交互使用
+const trendDataPoints = computed(() => {
+  const items = trendItems.value;
+  if (!items.length) return [];
+  const max = chartMaxVal.value;
+  const pw = plotW.value;
+  const ph = plotH.value;
+  return items.map((item, idx) => {
+    const x = chartPaddingX + (idx / Math.max(items.length - 1, 1)) * pw;
+    const y = chartPaddingY + ph - (item.loginCount / max) * ph;
+    return { x, y, ...item };
+  });
 });
 
 const trendLabels = computed(() => {
   const items = trendItems.value;
   if (!items.length) return [];
-  const plotW = chartWidth - chartPaddingX * 2;
+  const pw = plotW.value;
   return items.map((item, idx) => ({
     text: item.date,
-    x: chartPaddingX + (idx / Math.max(items.length - 1, 1)) * plotW,
+    x: chartPaddingX + (idx / Math.max(items.length - 1, 1)) * pw,
   }));
 });
 
@@ -166,6 +204,7 @@ const shortcuts = [
   { icon: 'lucide:menu', title: '菜单管理', desc: '菜单与路由配置', path: '/system/menu', color: '#10b981' },
   { icon: 'lucide:building', title: '部门管理', desc: '组织架构管理', path: '/system/department', color: '#3b82f6' },
   { icon: 'lucide:book-open', title: '字典管理', desc: '数据字典维护', path: '/system/dictionary', color: '#8b5cf6' },
+  { icon: 'lucide:bell', title: '通知管理', desc: '系统通知公告', path: '/system/notification', color: '#ef4444' },
 ];
 
 function goPage(path: string) {
@@ -251,50 +290,128 @@ function goPage(path: string) {
         </div>
         <div class="trend-chart-wrap">
           <svg :viewBox="`0 0 ${chartWidth} ${chartHeight}`" class="trend-svg">
-            <!-- Grid lines -->
+            <defs>
+              <!-- 曲线渐变 -->
+              <linearGradient :id="`trend-line-${isDark ? 'dark' : 'light'}`" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" :stop-color="isDark ? '#818cf8' : '#6366f1'" />
+                <stop offset="100%" :stop-color="isDark ? '#22d3ee' : '#0ea5e9'" />
+              </linearGradient>
+              <!-- 面积填充渐变 -->
+              <linearGradient :id="`trend-area-${isDark ? 'dark' : 'light'}`" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" :stop-color="isDark ? 'rgba(129,140,248,0.35)' : 'rgba(99,102,241,0.28)'" />
+                <stop offset="100%" :stop-color="isDark ? 'rgba(129,140,248,0.02)' : 'rgba(99,102,241,0.02)'" />
+              </linearGradient>
+            </defs>
+
+            <!-- 纵坐标网格线 + 刻度标签 -->
+            <g class="y-axis">
+              <template v-for="(tick, idx) in yAxisTicks" :key="`y-tick-${idx}`">
+                <line
+                  :x1="chartPaddingX"
+                  :y1="tick.y"
+                  :x2="chartPaddingX + plotW"
+                  :y2="tick.y"
+                  :stroke="isDark ? 'rgba(51,65,85,0.5)' : 'rgba(241,245,249,0.8)'"
+                  stroke-width="1"
+                  :stroke-dasharray="idx === 0 ? '0' : '3 4'"
+                />
+                <text
+                  :x="chartPaddingX - 8"
+                  :y="tick.y + 3"
+                  text-anchor="end"
+                  :fill="isDark ? '#64748b' : '#94a3b8'"
+                  font-size="10"
+                  font-weight="500"
+                >
+                  {{ tick.value }}
+                </text>
+              </template>
+            </g>
+
+            <!-- Y 轴主线 -->
             <line
-              v-for="i in 4"
-              :key="'grid-' + i"
               :x1="chartPaddingX"
-              :y1="chartPaddingY + ((chartHeight - chartPaddingY * 2) / 4) * (i - 1)"
-              :x2="chartWidth - chartPaddingX"
-              :y2="chartPaddingY + ((chartHeight - chartPaddingY * 2) / 4) * (i - 1)"
-              :stroke="isDark ? '#334155' : '#f1f5f9'"
-              stroke-width="1"
+              :y1="chartPaddingY"
+              :x2="chartPaddingX"
+              :y2="chartPaddingY + plotH"
+              :stroke="isDark ? '#334155' : '#e2e8f0'"
+              stroke-width="1.5"
             />
+
             <!-- Area fill -->
             <polygon
               v-if="trendAreaPoints"
               :points="trendAreaPoints"
-              :fill="isDark ? 'rgba(96,165,250,0.12)' : 'rgba(59,130,246,0.08)'"
+              :fill="`url(#trend-area-${isDark ? 'dark' : 'light'})`"
             />
+
             <!-- Line -->
             <polyline
               v-if="trendPoints"
               :points="trendPoints"
               fill="none"
-              :stroke="isDark ? '#60a5fa' : '#3b82f6'"
+              :stroke="`url(#trend-line-${isDark ? 'dark' : 'light'})`"
               stroke-width="2.5"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
-            <!-- Data points -->
-            <circle
-              v-for="(item, idx) in trendItems"
-              :key="'dot-' + idx"
-              :cx="chartPaddingX + (idx / Math.max(trendItems.length - 1, 1)) * (chartWidth - chartPaddingX * 2)"
-              :cy="chartPaddingY + (chartHeight - chartPaddingY * 2) - (item.loginCount / Math.max(...trendItems.map(i => i.loginCount), 1)) * (chartHeight - chartPaddingY * 2)"
-              r="4"
-              :fill="isDark ? '#60a5fa' : '#3b82f6'"
-              :stroke="isDark ? '#1e293b' : '#ffffff'"
-              stroke-width="2"
-            />
+
+            <!-- Data points with hover tooltip -->
+            <g v-for="(pt, idx) in trendDataPoints" :key="`dot-${idx}`" class="trend-dot-group">
+              <!-- 透明热区 -->
+              <circle :cx="pt.x" :cy="pt.y" r="14" fill="transparent" />
+              <!-- 可见点 -->
+              <circle
+                :cx="pt.x"
+                :cy="pt.y"
+                r="4"
+                :fill="isDark ? '#22d3ee' : '#0ea5e9'"
+                :stroke="isDark ? '#1e293b' : '#ffffff'"
+                stroke-width="2"
+                class="trend-dot"
+              />
+              <!-- 悬浮提示 -->
+              <g class="trend-tooltip">
+                <rect
+                  :x="pt.x - 32"
+                  :y="pt.y - 32"
+                  width="64"
+                  height="22"
+                  rx="6"
+                  :fill="isDark ? '#1e293b' : '#1f2937'"
+                  opacity="0.95"
+                />
+                <text
+                  :x="pt.x"
+                  :y="pt.y - 17"
+                  text-anchor="middle"
+                  fill="#ffffff"
+                  font-size="11"
+                  font-weight="600"
+                >
+                  {{ pt.loginCount }} 次
+                </text>
+              </g>
+              <!-- 垂直辅助线 -->
+              <line
+                :x1="pt.x"
+                :y1="pt.y"
+                :x2="pt.x"
+                :y2="chartPaddingY + plotH"
+                :stroke="isDark ? '#22d3ee' : '#0ea5e9'"
+                stroke-width="1"
+                stroke-dasharray="2 3"
+                opacity="0"
+                class="trend-guide-line"
+              />
+            </g>
+
             <!-- X axis labels -->
             <text
               v-for="(label, idx) in trendLabels"
-              :key="'label-' + idx"
+              :key="`label-${idx}`"
               :x="label.x"
-              :y="chartHeight - 2"
+              :y="chartHeight - 8"
               text-anchor="middle"
               :fill="isDark ? '#64748b' : '#94a3b8'"
               font-size="11"
@@ -662,7 +779,31 @@ function goPage(path: string) {
 
 .trend-svg {
   width: 100%;
-  height: 200px;
+  height: 220px;
+  overflow: visible;
+}
+
+/* 数据点 hover 交互 */
+.trend-dot-group {
+  cursor: pointer;
+}
+.trend-dot-group .trend-dot {
+  transition: r 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(0 0 0 transparent);
+}
+.trend-dot-group .trend-tooltip,
+.trend-dot-group .trend-guide-line {
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+.trend-dot-group:hover .trend-dot {
+  r: 5.5;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+.trend-dot-group:hover .trend-tooltip,
+.trend-dot-group:hover .trend-guide-line {
+  opacity: 1;
 }
 
 .trend-empty {

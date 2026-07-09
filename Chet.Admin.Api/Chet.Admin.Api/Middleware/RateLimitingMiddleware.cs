@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Net;
+using Chet.Admin.Shared;
 
 namespace Chet.Admin.Api.Middleware;
 
@@ -151,8 +152,9 @@ public class RateLimitingMiddleware
 
             context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
             context.Response.Headers["Retry-After"] = (60 - (int)(now - record.WindowStart).TotalSeconds).ToString();
-            
-            await context.Response.WriteAsJsonAsync(new { error = "Too many requests. Please try again later." });
+
+            await context.Response.WriteAsJsonAsync(
+                ApiResponse.Error("请求过于频繁，请稍后再试", 429));
             return;
         }
 

@@ -48,12 +48,13 @@ public class DictionariesController : ControllerBase
     /// <param name="pageNumber">页码</param>
     /// <param name="pageSize">每页条数</param>
     /// <param name="keyword">搜索关键词</param>
+    /// <param name="dictType">字典类型（精确匹配）</param>
     /// <returns>分页字典列表</returns>
     [HttpGet("paged")]
     [ProducesResponseType(typeof(PaginatedResponse<DictionaryDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetPagedDictionaries([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20, [FromQuery] string? keyword = null)
+    public async Task<IActionResult> GetPagedDictionaries([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 20, [FromQuery] string? keyword = null, [FromQuery] string? dictType = null)
     {
-        var request = new PagedRequest { PageNumber = pageNumber, PageSize = pageSize, Keyword = keyword };
+        var request = new PagedRequest { PageNumber = pageNumber, PageSize = pageSize, Keyword = keyword, DictType = dictType };
         var result = await _dictionaryService.GetPagedDictionariesAsync(request);
         return Ok(PaginatedResponse<DictionaryDto>.Ok(result.Items, result.Metadata.TotalCount, result.Metadata.PageNumber, result.Metadata.PageSize, "Dictionaries retrieved successfully"));
     }

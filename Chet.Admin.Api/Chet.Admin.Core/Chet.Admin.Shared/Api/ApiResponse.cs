@@ -179,6 +179,11 @@ public class PagedRequest
     public string? Keyword { get; set; }
 
     /// <summary>
+    /// 字典类型筛选（精确匹配，仅用于字典查询）
+    /// </summary>
+    public string? DictType { get; set; }
+
+    /// <summary>
     /// 跳过的记录数
     /// </summary>
     public int Skip => (PageNumber - 1) * PageSize;

@@ -93,6 +93,23 @@ public class NotificationService : INotificationService
             .ToListAsync();
 
         var dtos = _mapper.Map<List<NotificationDto>>(items);
+
+        // 批量回填发送者用户名，避免 N+1 查询
+        var senderIds = dtos.Where(d => d.SenderId.HasValue).Select(d => d.SenderId!.Value).Distinct().ToList();
+        if (senderIds.Count > 0)
+        {
+            var senderNames = await _dbContext.Users.AsNoTracking()
+                .Where(u => senderIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => u.Name);
+            foreach (var dto in dtos.Where(d => d.SenderId.HasValue))
+            {
+                if (senderNames.TryGetValue(dto.SenderId!.Value, out var name))
+                {
+                    dto.SenderName = name;
+                }
+            }
+        }
+
         return new PagedResult<NotificationDto>(dtos, request.PageNumber, request.PageSize, totalCount);
     }
 

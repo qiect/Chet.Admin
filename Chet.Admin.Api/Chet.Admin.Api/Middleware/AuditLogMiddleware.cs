@@ -13,23 +13,28 @@ public class AuditLogMiddleware
     private readonly RequestDelegate _next;
     private readonly ILogger<AuditLogMiddleware> _logger;
 
-    // Module mapping from controller name
+    // 模块名映射（控制器名 → 中文模块名）
     private static readonly Dictionary<string, string> ModuleMap = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "users", "User" },
-        { "roles", "Role" },
-        { "menus", "Menu" },
-        { "departments", "Department" },
-        { "dictionaries", "Dictionary" },
-        { "auth", "Auth" },
-        { "auditlogs", "AuditLog" },
+        { "users", "用户管理" },
+        { "roles", "角色管理" },
+        { "menus", "菜单管理" },
+        { "departments", "部门管理" },
+        { "dictionaries", "字典管理" },
+        { "auth", "认证授权" },
+        { "auditlogs", "审计日志" },
+        { "files", "文件管理" },
+        { "notifications", "通知管理" },
+        { "dashboard", "仪表盘" },
+        { "onlineusers", "在线用户" },
     };
 
+    // 操作动作映射（HTTP 方法 → 中文动作）
     private static readonly Dictionary<string, string> ActionMap = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "POST", "Create" },
-        { "PUT", "Update" },
-        { "DELETE", "Delete" },
+        { "POST", "新增" },
+        { "PUT", "修改" },
+        { "DELETE", "删除" },
     };
 
     /// <summary>
@@ -47,8 +52,8 @@ public class AuditLogMiddleware
     /// 处理HTTP请求，对API写操作进行审计日志记录
     /// </summary>
     /// <param name="context">HTTP上下文</param>
-    /// <param name="auditLogService">审计日志服务</param>
-    public async Task InvokeAsync(HttpContext context, IAuditLogService auditLogService)
+    /// <param name="scopeFactory">用于在后台线程创建独立DI作用域的服务工厂</param>
+    public async Task InvokeAsync(HttpContext context, IServiceScopeFactory scopeFactory)
     {
         var path = context.Request.Path.Value ?? "";
 
@@ -61,7 +66,7 @@ public class AuditLogMiddleware
 
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-        // Capture request body
+        // Capture request body（multipart/form-data 等不可 Seek 的流会被跳过，避免影响上传）
         string? requestData = null;
         if (context.Request.Body.CanSeek)
         {
@@ -84,48 +89,62 @@ public class AuditLogMiddleware
         await responseBody.CopyToAsync(originalBodyStream);
         context.Response.Body = originalBodyStream;
 
-        // Write audit log asynchronously (fire and forget)
+        // 在请求作用域结束前同步取出所有需要的数据，避免在后台线程访问已释放的 HttpContext
+        var userIdClaim = context.User.FindFirst(ClaimTypes.NameIdentifier);
+        var userNameClaim = context.User.FindFirst(ClaimTypes.Name);
+
+        if (userIdClaim == null) return; // 跳过未认证请求
+
+        var userId = int.Parse(userIdClaim.Value);
+        var userName = userNameClaim?.Value ?? $"用户{userIdClaim.Value}";
+        var httpMethod = context.Request.Method;
+        var statusCode = context.Response.StatusCode;
+        var clientIp = context.Connection.RemoteIpAddress?.ToString() ?? "";
+        var userAgent = context.Request.Headers.UserAgent.ToString();
+
+        // 提取模块名和动作（中文化）
+        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var controllerName = segments.Length >= 3 ? segments[2] : "";
+        var module = ModuleMap.TryGetValue(controllerName, out var m) ? m : controllerName;
+        var action = ActionMap.TryGetValue(httpMethod, out var a) ? a : httpMethod;
+
+        // 截断过长的请求数据
+        if (requestData != null && requestData.Length > 2000)
+            requestData = requestData[..2000] + "...(truncated)";
+
+        var duration = stopwatch.ElapsedMilliseconds;
+        var operatedAt = DateTime.UtcNow;
+
+        // fire-and-forget 写审计，但在独立 DI 作用域内解析服务，避免使用已释放的 scoped DbContext
         _ = Task.Run(async () =>
         {
             try
             {
-                var userIdClaim = context.User.FindFirst(ClaimTypes.NameIdentifier);
-                var userNameClaim = context.User.FindFirst(ClaimTypes.Name);
-
-                if (userIdClaim == null) return; // Skip unauthenticated requests
-
-                // Extract module from path: /api/v1/users/... → "users"
-                var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                var controllerName = segments.Length >= 3 ? segments[2] : "";
-                var module = ModuleMap.TryGetValue(controllerName, out var m) ? m : controllerName;
-                var action = ActionMap.TryGetValue(context.Request.Method, out var a) ? a : context.Request.Method;
-
-                // Truncate request data to prevent oversized logs
-                if (requestData != null && requestData.Length > 2000)
-                    requestData = requestData[..2000] + "...(truncated)";
+                using var scope = scopeFactory.CreateScope();
+                var auditLogService = scope.ServiceProvider.GetRequiredService<IAuditLogService>();
 
                 var auditLog = new AuditLogDto
                 {
-                    UserId = int.Parse(userIdClaim.Value),
-                    UserName = userNameClaim?.Value ?? "",
+                    UserId = userId,
+                    UserName = userName,
                     Action = action,
                     Module = module,
-                    Description = $"{action} {module}",
-                    HttpMethod = context.Request.Method,
+                    Description = $"{action}{module}",
+                    HttpMethod = httpMethod,
                     RequestPath = path,
                     RequestData = requestData,
-                    StatusCode = context.Response.StatusCode,
-                    ClientIp = context.Connection.RemoteIpAddress?.ToString() ?? "",
-                    UserAgent = context.Request.Headers.UserAgent.ToString(),
-                    Duration = stopwatch.ElapsedMilliseconds,
-                    OperatedAt = DateTime.UtcNow,
+                    StatusCode = statusCode,
+                    ClientIp = clientIp,
+                    UserAgent = userAgent,
+                    Duration = duration,
+                    OperatedAt = operatedAt,
                 };
 
                 await auditLogService.LogAsync(auditLog);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to write audit log");
+                _logger.LogError(ex, "Failed to write audit log for {Method} {Path}", httpMethod, path);
             }
         });
     }
