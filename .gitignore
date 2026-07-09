@@ -15,3 +15,7 @@ _rename_python.py
 
 # Keep sub-project .gitignore files
 !.gitignore
+
+# Vben Admin monorepo 核心包必须提交（覆盖全局 gitignore 的 packages/ 规则）
+!Chet.Admin.Web/packages/
+!Chet.Admin.Web/packages/**
