@@ -31,7 +31,7 @@
 
 ## 功能预览
 
-> 📌 以下为系统界面截图（请在 `docs/screenshots/` 目录放置对应图片）：
+> 📌 以下为系统界面截图：
 
 ### 登录页
 
@@ -57,9 +57,6 @@
 
 ![部门管理](./docs/screenshots/department.png)
 
-### 权限管理
-
-![权限管理](./docs/screenshots/permission.png)
 
 ### 字典管理
 
@@ -73,13 +70,6 @@
 
 ![通知公告](./docs/screenshots/notification.png)
 
-### 在线用户
-
-![在线用户](./docs/screenshots/online-user.png)
-
-### 个人中心
-
-![个人中心](./docs/screenshots/profile.png)
 
 ## 核心特性
 
@@ -273,30 +263,10 @@ pnpm build:antd
 
 详见 [前端开发指南](./docs/05-前端开发指南.md#12-新增业务模块完整流程)。
 
-## 截图说明
-
-本文档预留的截图位置对应 `docs/screenshots/` 目录下的图片文件，请按以下命名放置：
-
-| 文件名 | 对应章节 |
-| ---- | ---- |
-| `login.png` | 登录页 |
-| `dashboard.png` | 仪表盘 |
-| `user.png` | 用户管理 |
-| `role.png` | 角色管理 |
-| `menu.png` | 菜单管理 |
-| `department.png` | 部门管理 |
-| `permission.png` | 权限管理 |
-| `dictionary.png` | 字典管理 |
-| `audit-log.png` | 操作日志 |
-| `notification.png` | 通知公告 |
-| `online-user.png` | 在线用户 |
-| `profile.png` | 个人中心 |
-
-截图建议尺寸：宽度 1920px，PNG 格式，可通过浏览器 F12 → 设备工具栏 → 1280×800 截图后裁剪。
 
 ## 开源致谢
 
-- 后端架构参考：[Clean Architecture](https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures)
+- 后端架构参考：[Chet.WebApi.Template](https://github.com/qiect/Chet.WebApi.Template)
 - 前端框架：[Vue Vben Admin](https://github.com/vbenjs/vue-vben-admin)（MIT 协议）
 - UI 组件库：[Ant Design Vue](https://antdv.com/)
 
