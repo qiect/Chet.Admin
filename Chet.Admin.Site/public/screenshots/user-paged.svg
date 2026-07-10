@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#11151F"/>
+  <rect x="1" y="1" width="798" height="498" fill="none" stroke="#0066FF" stroke-width="2" stroke-dasharray="6 4"/>
+  <circle cx="24" cy="24" r="5" fill="#3B82F6"/>
+  <text x="400" y="245" text-anchor="middle" fill="#E8ECF4" font-family="monospace" font-size="24" font-weight="500">user-paged</text>
+  <text x="400" y="280" text-anchor="middle" fill="#4A5366" font-family="monospace" font-size="13">Chet.Admin · 示意图</text>
+</svg>

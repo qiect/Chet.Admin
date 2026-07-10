@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <!-- 沿用 vben 主色：HSL(212,100%,45%) ≈ #0066FF -->
+    <linearGradient id="gradB" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#0066FF"/>
+    </linearGradient>
+    <!-- 发光滤镜：向外延申的蓝色光晕 -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 三段式 C 形支架：隐喻 Clean Architecture 分层 -->
+  <g filter="url(#glow)">
+    <!-- 上横梁 -->
+    <path d="M14 14 L40 14 A6 6 0 0 1 46 20 L46 24 A6 6 0 0 1 40 30 L14 30 Z" fill="url(#gradB)"/>
+    <!-- 左竖梁（连接，构成 C 主体） -->
+    <path d="M14 14 L26 14 L26 50 L14 50 A6 6 0 0 1 8 44 L8 20 A6 6 0 0 1 14 14 Z" fill="url(#gradB)"/>
+    <!-- 下横梁 -->
+    <path d="M14 34 L40 34 A6 6 0 0 1 46 40 L46 44 A6 6 0 0 1 40 50 L14 50 Z" fill="url(#gradB)"/>
+  </g>
+</svg>
