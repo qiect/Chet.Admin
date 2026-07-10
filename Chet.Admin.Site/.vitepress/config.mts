@@ -12,6 +12,9 @@ export default defineConfig({
   lastUpdated: true,
   cleanUrls: true,
 
+  // 忽略 localhost 开发地址的死链接检查
+  ignoreDeadLinks: 'localhostLinks',
+
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/Chet.Admin/logo.svg' }],
     ['meta', { name: 'theme-color', content: '#0066FF' }],

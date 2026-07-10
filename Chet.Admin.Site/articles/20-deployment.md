@@ -851,15 +851,15 @@ location /uploads/ {
 
 ## 系列目录
 
-- [01 - 开篇总览](./01-Chet.Admin开篇总览.md)
-- [02 - 快速上手]()
-- [03 - 项目结构]()
-- [04 - 后端分层架构]()
-- [05 - JWT 认证与安全]()
-- [06 - RBAC 权限模型]()
-- [07-17 - 13 个功能模块详解]()
-- [18 - 时间时区统一方案](./18-Chet.Admin时间时区统一方案.md)
-- [19 - 项目重命名指南](./19-Chet.Admin项目重命名指南.md)
+- [01 - 开篇总览](/articles/01-overview)
+- [02 - 快速上手](/articles/02-quick-start)
+- [03 - 项目结构](/articles/03-project-structure)
+- [04 - 后端分层架构](/articles/04-backend-architecture)
+- [05 - JWT 认证与安全](/articles/05-jwt-auth)
+- [06 - RBAC 权限模型](/articles/06-rbac)
+- [07-17 - 13 个功能模块详解](/articles/overview)
+- [18 - 时间时区统一方案](/articles/18-timezone)
+- [19 - 项目重命名指南](/articles/19-rename)
 - **20 - 部署上线（本篇）**
 
 ---
