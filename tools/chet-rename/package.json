@@ -1,0 +1,16 @@
+{
+  "name": "chet-rename",
+  "version": "1.0.0",
+  "description": "Chet.Admin 项目重命名工具，一键替换所有命名风格",
+  "type": "module",
+  "bin": {
+    "chet-rename": "bin.mjs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node bin.mjs",
+    "dry-run": "node bin.mjs --dry-run"
+  }
+}

@@ -1,0 +1,31 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/.docs/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Chet.Admin.Application/">
+    <Project Path="Chet.Admin.Application/Chet.Admin.DTOs/Chet.Admin.DTOs.csproj" />
+    <Project Path="Chet.Admin.Application/Chet.Admin.Mapping/Chet.Admin.Mapping.csproj" />
+    <Project Path="Chet.Admin.Application/Chet.Admin.Services/Chet.Admin.Services.csproj" />
+  </Folder>
+  <Folder Name="/Chet.Admin.Core/">
+    <Project Path="Chet.Admin.Core/Chet.Admin.Contracts/Chet.Admin.Contracts.csproj" />
+    <Project Path="Chet.Admin.Core/Chet.Admin.Domain/Chet.Admin.Domain.csproj" />
+    <Project Path="Chet.Admin.Core/Chet.Admin.Shared/Chet.Admin.Shared.csproj" />
+  </Folder>
+  <Folder Name="/Chet.Admin.Infrastructure/">
+    <Project Path="Chet.Admin.Infrastructure/Chet.Admin.Caching/Chet.Admin.Caching.csproj" />
+    <Project Path="Chet.Admin.Infrastructure/Chet.Admin.Configuration/Chet.Admin.Configuration.csproj" />
+    <Project Path="Chet.Admin.Infrastructure/Chet.Admin.Data/Chet.Admin.Data.csproj" />
+    <Project Path="Chet.Admin.Infrastructure/Chet.Admin.Logging/Chet.Admin.Logging.csproj" />
+  </Folder>
+  <Folder Name="/Chet.Admin.Tests/">
+    <Project Path="Chet.Admin.Tests/Chet.Admin.IntegrationTests/Chet.Admin.IntegrationTests.csproj" />
+    <Project Path="Chet.Admin.Tests/Chet.Admin.UnitTests/Chet.Admin.UnitTests.csproj" />
+  </Folder>
+  <Project Path="Chet.Admin.Api/Chet.Admin.Api.csproj" />
+</Solution>
