@@ -217,6 +217,7 @@ Chet.Admin/
 | [07-数据库设计](./docs/07-数据库设计.md) | RBAC 模型、ER 图、数据表结构 |
 | [08-部署指南](./docs/08-部署指南.md) | Docker 部署、Nginx 配置、生产清单 |
 | [09-功能模块说明](./docs/09-功能模块说明.md) | 各模块功能、接口、实现细节 |
+| [10-项目重命名指南](./docs/10-项目重命名指南.md) | GitHub Template + chet-rename 脚本，一键构建新项目 |
 
 更多后端设计文档见 [`Chet.Admin.Api/.docs/`](./Chet.Admin.Api/.docs/)。
 
