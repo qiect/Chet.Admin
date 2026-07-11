@@ -28,13 +28,13 @@ export default defineConfig({
     nav: [
       { text: '指南', link: '/guide/introduction', activeMatch: '/guide/' },
       { text: '功能模块', link: '/modules/overview', activeMatch: '/modules/' },
-      { text: 'API 文档', link: '/api/response-format', activeMatch: '/api/' },
+      { text: '📘 API 文档', link: '/api/response-format', activeMatch: '/api/' },
       {
-        text: '文章',
+        text: '📝 文章',
         link: '/articles/overview',
         activeMatch: '/articles/',
       },
-      { text: '赞助', link: '/sponsor', activeMatch: '/sponsor' },
+      { text: '💖 赞助', link: '/sponsor', activeMatch: '/sponsor' },
     ],
 
     sidebar: {

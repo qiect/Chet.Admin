@@ -4,27 +4,29 @@
 
 你的支持是项目持续维护的动力。
 
----
-
-## 微信赞助
-
 <div align="center">
 
-<!-- 替换为你的微信收款码图片 -->
-![微信收款码](/screenshots/wechat-qr.svg)
+<table>
+  <tr>
+    <td align="center" valign="center">
+      <h3>💚 微信赞助</h3>
+      <img src="/screenshots/wechat-qr.jpg" alt="微信收款码" width="240" />
+    </td>
+    <td align="center" valign="center">
+      <h3>💙 支付宝赞助</h3>
+      <img src="/screenshots/alipay-qr.jpg" alt="支付宝收款码" width="240" />
+    </td>
+  </tr>
+</table>
 
 </div>
 
-## 支付宝赞助
+您的赞助将帮助我们：
 
-<div align="center">
+- 维持项目的基础设施，如服务器、域名、社群费用。
+- 支持开发者的贡献和加快新功能的开发。
 
-<!-- 替换为你的支付宝收款码图片 -->
-![支付宝收款码](/screenshots/alipay-qr.svg)
-
-</div>
-
----
+感谢所有现有的和未来的赞助者，您的支持对我们来说至关重要，让我们一起推动项目继续前行。
 
 ## 其他方式
 
