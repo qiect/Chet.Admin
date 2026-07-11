@@ -11,8 +11,7 @@ export const VBEN_DOC_URL = 'https://doc.vben.pro';
 /**
  * @zh_CN Vben Logo
  */
-export const VBEN_LOGO_URL =
-  'https://unpkg.com/@vbenjs/static-source@0.1.7/source/logo-v1.webp';
+export const VBEN_LOGO_URL = '/logo.svg';
 
 /**
  * @zh_CN Vben Admin 首页地址

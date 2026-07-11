@@ -14,15 +14,24 @@
   --vp-button-brand-active-bg: #0044b3;
   --vp-button-brand-border: transparent;
 
-  /* 首页 hero 名字渐变 */
+  /* 首页 hero 名字渐变（紫→蓝→青，呼应 logo 配色） */
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #3b82f6, #0066ff);
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #a76beb 10%, #6a9ce8 50%, #2adeff 90%);
 
-  /* hero 图片发光（向外延伸的蓝色光晕） */
+  /* hero 图片发光（紫青多色光晕向外扩散） */
   --vp-home-hero-image-background-image: radial-gradient(
+    ellipse at 30% 30%,
+    rgba(167, 107, 235, 0.45) 0%,
+    transparent 50%
+  ),
+  radial-gradient(
+    ellipse at 70% 70%,
+    rgba(42, 222, 255, 0.45) 0%,
+    transparent 50%
+  ),
+  radial-gradient(
     ellipse at center,
-    rgba(0, 102, 255, 0.35) 0%,
-    rgba(0, 102, 255, 0.12) 40%,
+    rgba(106, 156, 232, 0.3) 0%,
     transparent 70%
   );
   --vp-home-hero-image-filter: blur(44px);
@@ -38,7 +47,7 @@
   --vp-button-brand-hover-bg: #3b82f6;
   --vp-button-brand-active-bg: #0052cc;
 
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #60a5fa, #3b82f6);
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #c89af0 10%, #6a9ce8 50%, #5be8ff 90%);
 }
 
 /* 导航栏 logo 不发光 */
@@ -46,12 +55,14 @@
   filter: none;
 }
 
-/* 首页 hero logo 放大 + 发光 */
+/* 首页 hero logo 放大 + 紫青多色光晕向外扩散 */
 .VPImage.image-src {
-  width: 220px !important;
-  height: 220px !important;
-  filter: drop-shadow(0 0 14px rgba(0, 102, 255, 0.55))
-          drop-shadow(0 0 28px rgba(0, 102, 255, 0.3));
+  width: 260px !important;
+  height: 260px !important;
+  filter: drop-shadow(0 0 20px rgba(167, 107, 235, 0.7))
+          drop-shadow(0 0 40px rgba(106, 156, 232, 0.5))
+          drop-shadow(0 0 60px rgba(42, 222, 255, 0.4))
+          drop-shadow(0 0 80px rgba(167, 107, 235, 0.25));
 }
 
 /* 自定义容器边框色 */

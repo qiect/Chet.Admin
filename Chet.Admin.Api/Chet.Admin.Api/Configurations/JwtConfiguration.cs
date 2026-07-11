@@ -75,33 +75,25 @@ public static class JwtConfiguration
 
                             return Task.CompletedTask;
                         },
-                        OnAuthenticationFailed = context =>
-                        {
-                            // Token过期
-                            if (context.Exception is SecurityTokenExpiredException)
-                            {
-                                context.Response.StatusCode = 401;
-                                context.Response.ContentType = "application/json";
-                                var response = new { success = false, message = "登录已过期，请重新登录", statusCode = 401 };
-                                return context.Response.WriteAsJsonAsync(response);
-                            }
-                            // Token无效
-                            if (context.Exception is SecurityTokenException)
-                            {
-                                context.Response.StatusCode = 401;
-                                context.Response.ContentType = "application/json";
-                                var response = new { success = false, message = "认证失败，请重新登录", statusCode = 401 };
-                                return context.Response.WriteAsJsonAsync(response);
-                            }
-                            return Task.CompletedTask;
-                        },
                         OnChallenge = context =>
                         {
-                            // 未携带Token时返回401
+                            // 统一在 Challenge 阶段处理 401 响应，避免 OnAuthenticationFailed 已写入响应后再次写入导致异常
                             context.HandleResponse();
                             context.Response.StatusCode = 401;
                             context.Response.ContentType = "application/json";
-                            var response = new { success = false, message = "未授权访问，请先登录", statusCode = 401 };
+
+                            // 根据 AuthenticateFailure 区分具体的认证失败原因
+                            var message = "未授权访问，请先登录";
+                            if (context.AuthenticateFailure is SecurityTokenExpiredException)
+                            {
+                                message = "登录已过期，请重新登录";
+                            }
+                            else if (context.AuthenticateFailure is SecurityTokenException)
+                            {
+                                message = "认证失败，请重新登录";
+                            }
+
+                            var response = new { success = false, message, statusCode = 401 };
                             return context.Response.WriteAsJsonAsync(response);
                         }
                     };
