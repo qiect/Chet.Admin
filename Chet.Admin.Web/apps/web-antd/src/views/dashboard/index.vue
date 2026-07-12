@@ -235,7 +235,10 @@ function goPage(path: string) {
   <div class="dashboard-root" :class="{ 'is-dark': isDark }">
     <!-- 英雄区域 -->
     <div class="hero-section">
-      <div class="hero-bg"></div>
+      <div class="hero-bg">
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+      </div>
       <div class="hero-content">
         <div class="hero-greeting">
           <IconifyIcon icon="lucide:hand-metal" class="hero-wave-icon" />
@@ -519,15 +522,21 @@ function goPage(path: string) {
   --border-card-hover: #e5e7eb;
   --stat-icon-bg-opacity: 0.1;
 
-  /* hero 主题变量（亮色）：干净留白，logo 紫青作为单点点缀 */
-  --hero-bg: linear-gradient(135deg, #fafafe 0%, #f4f1fb 100%);
+  /* hero 主题变量（亮色）：柔和紫青光晕 + 干净渐变 */
+  --hero-bg:
+    radial-gradient(ellipse 600px 300px at 85% -10%, rgba(167, 107, 235, 0.14) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 280px at 15% 110%, rgba(42, 222, 255, 0.12) 0%, transparent 70%),
+    linear-gradient(135deg, #fafafe 0%, #f5f1fb 50%, #eef6fc 100%);
   --hero-text: #1e1b2e;
-  --hero-subtitle: rgba(30, 27, 46, 0.55);
-  --hero-date: rgba(30, 27, 46, 0.45);
-  --hero-accent: linear-gradient(90deg, #a76beb 0%, #2adeff 100%);
+  --hero-subtitle: rgba(30, 27, 46, 0.6);
+  --hero-date: rgba(30, 27, 46, 0.5);
+  --hero-orb-1-color: rgba(167, 107, 235, 0.22);
+  --hero-orb-2-color: rgba(42, 222, 255, 0.18);
   --hero-wave-color: #a76beb;
-  --hero-highlight-gradient: linear-gradient(120deg, #a76beb 0%, #6a9ce8 60%, #2adeff 100%);
+  --hero-highlight-gradient: linear-gradient(120deg, #a76beb 0%, #6a9ce8 55%, #2adeff 100%);
   --hero-time-color: #1e1b2e;
+  --hero-time-accent: #0891b2;
+  --hero-grid-line: rgba(30, 27, 46, 0.035);
 }
 
 /* ===== 暗色变量 ===== */
@@ -542,15 +551,21 @@ function goPage(path: string) {
   --border-card-hover: #475569;
   --stat-icon-bg-opacity: 0.15;
 
-  /* hero 主题变量（暗色）：深色基底，accent 线发光 */
-  --hero-bg: linear-gradient(135deg, #16101f 0%, #0f172a 100%);
+  /* hero 主题变量（暗色）：深邃夜空 + 紫青光晕 */
+  --hero-bg:
+    radial-gradient(ellipse 600px 300px at 85% -10%, rgba(167, 107, 235, 0.28) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 280px at 15% 110%, rgba(42, 222, 255, 0.22) 0%, transparent 70%),
+    linear-gradient(135deg, #16101f 0%, #1a1340 50%, #0f1f33 100%);
   --hero-text: #f1f5f9;
-  --hero-subtitle: rgba(241, 245, 249, 0.6);
-  --hero-date: rgba(241, 245, 249, 0.45);
-  --hero-accent: linear-gradient(90deg, #a76beb 0%, #2adeff 100%);
+  --hero-subtitle: rgba(241, 245, 249, 0.65);
+  --hero-date: rgba(241, 245, 249, 0.5);
+  --hero-orb-1-color: rgba(200, 154, 240, 0.35);
+  --hero-orb-2-color: rgba(91, 232, 255, 0.3);
   --hero-wave-color: #c89af0;
-  --hero-highlight-gradient: linear-gradient(120deg, #c89af0 0%, #a76beb 40%, #2adeff 100%);
+  --hero-highlight-gradient: linear-gradient(120deg, #c89af0 0%, #a76beb 35%, #6a9ce8 65%, #2adeff 100%);
   --hero-time-color: #5be8ff;
+  --hero-time-accent: #5be8ff;
+  --hero-grid-line: rgba(255, 255, 255, 0.02);
 }
 
 .dashboard-root {
@@ -560,7 +575,7 @@ function goPage(path: string) {
 }
 
 /* ===== 英雄区域 ===== */
-/* 极简版：安静渐变 + 一条 accent 线，排版即视觉 */
+/* 柔和光晕 + 极淡网格 + logo 紫青配色，精致但不喧宾夺主 */
 .hero-section {
   position: relative;
   overflow: hidden;
@@ -570,16 +585,68 @@ function goPage(path: string) {
   transition: background 0.4s ease, color 0.4s ease;
 }
 
-/* 一条从紫到青的细线作为 logo 配色的唯一视觉锚点 */
 .hero-bg {
   position: absolute;
-  left: 40px;
-  bottom: 0;
-  width: 64px;
-  height: 3px;
-  background: var(--hero-accent);
-  border-radius: 2px;
-  opacity: 0.9;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+/* 极淡网格纹理：增加层次感而不抢视觉 */
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--hero-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hero-grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 20%, transparent 80%);
+}
+
+/* 两个柔和光球：呼应 logo 紫青双色，缓慢呼吸 */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform, opacity;
+}
+.hero-orb-1 {
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, var(--hero-orb-1-color) 0%, transparent 70%);
+  top: -120px;
+  right: -40px;
+  animation: orbF1 14s ease-in-out infinite;
+}
+.hero-orb-2 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, var(--hero-orb-2-color) 0%, transparent 70%);
+  bottom: -100px;
+  left: 5%;
+  animation: orbF2 18s ease-in-out infinite;
+}
+
+@keyframes orbF1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(-30px, 25px) scale(1.08);
+    opacity: 1;
+  }
+}
+@keyframes orbF2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(25px, -30px) scale(1.1);
+    opacity: 1;
+  }
 }
 
 .hero-content {
@@ -594,16 +661,16 @@ function goPage(path: string) {
 
 .hero-greeting {
   .hero-wave-icon {
-    font-size: 32px;
+    font-size: 34px;
     color: var(--hero-wave-color);
     display: inline-block;
     animation: wave 2.5s ease-in-out infinite;
     transform-origin: 70% 70%;
   }
   .hero-title {
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 700;
-    margin: 10px 0 6px;
+    margin: 12px 0 8px;
     letter-spacing: -0.5px;
   }
   .hero-highlight {
@@ -646,17 +713,28 @@ function goPage(path: string) {
   text-align: right;
   flex-shrink: 0;
   .time-display {
-    font-size: 52px;
+    font-size: 54px;
     font-weight: 200;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     font-variant-numeric: tabular-nums;
     line-height: 1;
     color: var(--hero-time-color);
   }
+  .time-display::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    margin-top: 10px;
+    margin-left: auto;
+    background: var(--hero-highlight-gradient);
+    border-radius: 2px;
+    opacity: 0.7;
+  }
   .date-display {
     font-size: 13px;
     color: var(--hero-date);
-    margin-top: 8px;
+    margin-top: 10px;
   }
 }
 
