@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
-  <rect width="300" height="300" fill="#11151F"/>
-  <rect x="1" y="1" width="298" height="298" fill="none" stroke="#0066FF" stroke-width="2" stroke-dasharray="6 4"/>
-  <circle cx="24" cy="24" r="5" fill="#3B82F6"/>
-  <text x="150" y="145" text-anchor="middle" fill="#E8ECF4" font-family="monospace" font-size="18" font-weight="500">微信收款码</text>
-  <text x="150" y="175" text-anchor="middle" fill="#4A5366" font-family="monospace" font-size="13">替换为真实图片</text>
-  <text x="150" y="200" text-anchor="middle" fill="#4A5366" font-family="monospace" font-size="11">Chet.Admin</text>
-</svg>
