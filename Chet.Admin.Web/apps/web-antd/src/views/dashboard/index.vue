@@ -235,11 +235,7 @@ function goPage(path: string) {
   <div class="dashboard-root" :class="{ 'is-dark': isDark }">
     <!-- 英雄区域 -->
     <div class="hero-section">
-      <div class="hero-bg">
-        <div class="hero-orb hero-orb-1"></div>
-        <div class="hero-orb hero-orb-2"></div>
-        <div class="hero-orb hero-orb-3"></div>
-      </div>
+      <div class="hero-bg"></div>
       <div class="hero-content">
         <div class="hero-greeting">
           <IconifyIcon icon="lucide:hand-metal" class="hero-wave-icon" />
@@ -523,21 +519,15 @@ function goPage(path: string) {
   --border-card-hover: #e5e7eb;
   --stat-icon-bg-opacity: 0.1;
 
-  /* hero 主题变量（亮色）：柔和明亮风格 */
-  --hero-bg:
-    radial-gradient(ellipse at 80% 0%, rgba(167, 107, 235, 0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 20% 100%, rgba(42, 222, 255, 0.16) 0%, transparent 55%),
-    linear-gradient(135deg, #faf8ff 0%, #f3eeff 30%, #eaf4ff 70%, #e8fbff 100%);
+  /* hero 主题变量（亮色）：干净留白，logo 紫青作为单点点缀 */
+  --hero-bg: linear-gradient(135deg, #fafafe 0%, #f4f1fb 100%);
   --hero-text: #1e1b2e;
-  --hero-subtitle: rgba(30, 27, 46, 0.6);
-  --hero-date: rgba(30, 27, 46, 0.5);
-  --hero-grid-line: rgba(30, 27, 46, 0.04);
-  --hero-orb-opacity: 0.5;
-  --hero-orb-blend: multiply;
+  --hero-subtitle: rgba(30, 27, 46, 0.55);
+  --hero-date: rgba(30, 27, 46, 0.45);
+  --hero-accent: linear-gradient(90deg, #a76beb 0%, #2adeff 100%);
   --hero-wave-color: #a76beb;
-  --hero-wave-shadow: drop-shadow(0 0 8px rgba(167, 107, 235, 0.35));
-  --hero-highlight-gradient: linear-gradient(120deg, #a76beb 0%, #8b5cf6 25%, #6a9ce8 60%, #2adeff 100%);
-  --hero-time-gradient: linear-gradient(180deg, #1e1b2e 0%, #0891b2 100%);
+  --hero-highlight-gradient: linear-gradient(120deg, #a76beb 0%, #6a9ce8 60%, #2adeff 100%);
+  --hero-time-color: #1e1b2e;
 }
 
 /* ===== 暗色变量 ===== */
@@ -552,21 +542,15 @@ function goPage(path: string) {
   --border-card-hover: #475569;
   --stat-icon-bg-opacity: 0.15;
 
-  /* hero 主题变量（暗色）：深邃通透风格 */
-  --hero-bg:
-    radial-gradient(ellipse at 80% 0%, rgba(167, 107, 235, 0.35) 0%, transparent 55%),
-    radial-gradient(ellipse at 20% 100%, rgba(42, 222, 255, 0.28) 0%, transparent 55%),
-    linear-gradient(135deg, #1a0f2e 0%, #2a1857 35%, #1e3a5f 75%, #0f2b3a 100%);
-  --hero-text: #ffffff;
-  --hero-subtitle: rgba(255, 255, 255, 0.7);
-  --hero-date: rgba(255, 255, 255, 0.55);
-  --hero-grid-line: rgba(255, 255, 255, 0.025);
-  --hero-orb-opacity: 0.45;
-  --hero-orb-blend: screen;
+  /* hero 主题变量（暗色）：深色基底，accent 线发光 */
+  --hero-bg: linear-gradient(135deg, #16101f 0%, #0f172a 100%);
+  --hero-text: #f1f5f9;
+  --hero-subtitle: rgba(241, 245, 249, 0.6);
+  --hero-date: rgba(241, 245, 249, 0.45);
+  --hero-accent: linear-gradient(90deg, #a76beb 0%, #2adeff 100%);
   --hero-wave-color: #c89af0;
-  --hero-wave-shadow: drop-shadow(0 0 8px rgba(167, 107, 235, 0.5));
-  --hero-highlight-gradient: linear-gradient(120deg, #c89af0 0%, #a76beb 30%, #6a9ce8 65%, #2adeff 100%);
-  --hero-time-gradient: linear-gradient(180deg, #ffffff 0%, #5be8ff 100%);
+  --hero-highlight-gradient: linear-gradient(120deg, #c89af0 0%, #a76beb 40%, #2adeff 100%);
+  --hero-time-color: #5be8ff;
 }
 
 .dashboard-root {
@@ -576,93 +560,26 @@ function goPage(path: string) {
 }
 
 /* ===== 英雄区域 ===== */
-/* 配色源自 logo：紫 #A76BEB / 浅紫 #C89AF0 / 过渡蓝 #6A9CE8 / 青 #2ADEFF */
+/* 极简版：安静渐变 + 一条 accent 线，排版即视觉 */
 .hero-section {
   position: relative;
   overflow: hidden;
-  padding: 48px 40px 40px;
+  padding: 48px 40px 44px;
   background: var(--hero-bg);
   color: var(--hero-text);
   transition: background 0.4s ease, color 0.4s ease;
 }
 
+/* 一条从紫到青的细线作为 logo 配色的唯一视觉锚点 */
 .hero-bg {
   position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-/* 细网格纹理：呼应 logo 的几何梁柱结构，增加技术感与层次 */
-.hero-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--hero-grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--hero-grid-line) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
-  pointer-events: none;
-}
-
-.hero-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(70px);
-  opacity: var(--hero-orb-opacity);
-  mix-blend-mode: var(--hero-orb-blend);
-}
-.hero-orb-1 {
-  width: 420px;
-  height: 420px;
-  background: radial-gradient(circle, #c89af0 0%, #a76beb 60%, transparent 100%);
-  top: -160px;
-  right: -60px;
-  animation: orbF1 9s ease-in-out infinite;
-}
-.hero-orb-2 {
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle, #6a9ce8 0%, #4a7ed8 60%, transparent 100%);
-  bottom: -120px;
-  left: 8%;
-  animation: orbF2 11s ease-in-out infinite;
-}
-.hero-orb-3 {
-  width: 260px;
-  height: 260px;
-  background: radial-gradient(circle, #5be8ff 0%, #2adeff 60%, transparent 100%);
-  top: 25%;
-  left: 48%;
-  animation: orbF3 13s ease-in-out infinite;
-}
-
-@keyframes orbF1 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-50px, 35px) scale(1.12);
-  }
-}
-@keyframes orbF2 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(40px, -50px) scale(1.18);
-  }
-}
-@keyframes orbF3 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-25px, 25px) scale(0.88);
-  }
+  left: 40px;
+  bottom: 0;
+  width: 64px;
+  height: 3px;
+  background: var(--hero-accent);
+  border-radius: 2px;
+  opacity: 0.9;
 }
 
 .hero-content {
@@ -677,17 +594,16 @@ function goPage(path: string) {
 
 .hero-greeting {
   .hero-wave-icon {
-    font-size: 36px;
+    font-size: 32px;
     color: var(--hero-wave-color);
     display: inline-block;
     animation: wave 2.5s ease-in-out infinite;
     transform-origin: 70% 70%;
-    filter: var(--hero-wave-shadow);
   }
   .hero-title {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 700;
-    margin: 12px 0 8px;
+    margin: 10px 0 6px;
     letter-spacing: -0.5px;
   }
   .hero-highlight {
@@ -697,7 +613,7 @@ function goPage(path: string) {
     background-clip: text;
   }
   .hero-subtitle {
-    font-size: 16px;
+    font-size: 15px;
     color: var(--hero-subtitle);
     margin: 0;
     font-weight: 400;
@@ -730,18 +646,15 @@ function goPage(path: string) {
   text-align: right;
   flex-shrink: 0;
   .time-display {
-    font-size: 56px;
+    font-size: 52px;
     font-weight: 200;
-    letter-spacing: 4px;
+    letter-spacing: 2px;
     font-variant-numeric: tabular-nums;
     line-height: 1;
-    background: var(--hero-time-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--hero-time-color);
   }
   .date-display {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--hero-date);
     margin-top: 8px;
   }
