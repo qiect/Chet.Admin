@@ -269,16 +269,23 @@ public class JwtService : IJwtService
     {
         _logger.LogInformation("Refreshing token");
 
+        // 空令牌直接拒绝，避免 ValidateToken 抛出 ArgumentException 导致 500
+        if (string.IsNullOrWhiteSpace(accessToken) || string.IsNullOrWhiteSpace(refreshToken))
+        {
+            _logger.LogWarning("Refresh token failed: empty access or refresh token");
+            throw new UnauthorizedAccessException("Invalid token");
+        }
+
         ClaimsPrincipal principal;
         try
         {
             // 从过期令牌获取声明主体
             principal = GetPrincipalFromExpiredToken(accessToken);
         }
-        catch (SecurityTokenException)
+        catch (Exception ex) when (ex is SecurityTokenException or ArgumentException)
         {
             _logger.LogWarning("Refresh token failed: invalid access token");
-            throw new SecurityTokenException("Invalid access token");
+            throw new UnauthorizedAccessException("Invalid access token");
         }
 
         // 获取用户ID
@@ -286,7 +293,7 @@ public class JwtService : IJwtService
         if (string.IsNullOrEmpty(subClaim) || !int.TryParse(subClaim, out var userId) || userId <= 0)
         {
             _logger.LogWarning("Refresh token failed: invalid user id in access token");
-            throw new SecurityTokenException("Invalid access token");
+            throw new UnauthorizedAccessException("Invalid access token");
         }
 
         // 获取用户信息
@@ -296,19 +303,19 @@ public class JwtService : IJwtService
         if (user == null)
         {
             _logger.LogWarning("Refresh token failed: user not found (userId: {UserId})", userId);
-            throw new SecurityTokenException("User not found");
+            throw new UnauthorizedAccessException("User not found");
         }
 
         if (user.RefreshToken != refreshToken)
         {
             _logger.LogWarning("Refresh token failed: refresh token mismatch (userId: {UserId})", userId);
-            throw new SecurityTokenException("Invalid refresh token");
+            throw new UnauthorizedAccessException("Invalid refresh token");
         }
 
         if (user.RefreshTokenExpiryTime < DateTime.UtcNow)
         {
             _logger.LogWarning("Refresh token failed: refresh token expired (userId: {UserId})", userId);
-            throw new SecurityTokenException("Refresh token expired");
+            throw new UnauthorizedAccessException("Refresh token expired");
         }
 
         // 生成新的访问令牌和刷新令牌
