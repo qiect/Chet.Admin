@@ -3,7 +3,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page, useVbenModal } from '@vben/common-ui';
-import { Plus } from '@vben/icons';
+import { LockKeyhole, Pencil, Plus, Trash2 } from '@vben/icons';
 import { useAccess } from '@vben/access';
 import { formatDateTime } from '@vben/utils';
 
@@ -67,7 +67,7 @@ const columns: VxeTableGridColumns = [
   { field: 'createdAt', title: $t('system.common.columns.createdAt'), minWidth: 180,
     slots: { default: ({ row }) => row.createdAt ? formatDateTime(row.createdAt) : $t('system.common.empty') },
   },
-  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 180 },
+  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 120 },
 ];
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -102,11 +102,18 @@ const editFormSchema: VbenFormSchema[] = [
   },
 ];
 
-const [EditForm, editFormApi] = useVbenForm({ schema: editFormSchema, showDefaultActions: false });
+const [EditForm, editFormApi] = useVbenForm({
+  schema: editFormSchema,
+  showDefaultActions: false,
+  commonConfig: {
+    labelWidth: 140, labelClass: 'whitespace-nowrap',
+  },
+});
 const isEdit = ref(false);
 const editingId = ref(0);
 
 const [EditModal, editModalApi] = useVbenModal({
+  draggable: true,
   onConfirm: async () => {
     const values = await editFormApi.getValues();
 
@@ -165,9 +172,16 @@ const createFormSchema: VbenFormSchema[] = [
   },
 ];
 
-const [CreateForm, createFormApi] = useVbenForm({ schema: createFormSchema, showDefaultActions: false });
+const [CreateForm, createFormApi] = useVbenForm({
+  schema: createFormSchema,
+  showDefaultActions: false,
+  commonConfig: {
+    labelWidth: 140, labelClass: 'whitespace-nowrap',
+  },
+});
 
 const [CreateModal, createModalApi] = useVbenModal({
+  draggable: true,
   onConfirm: async () => {
     const values = await createFormApi.getValues();
     if (!values.password || values.password.length < 6) {
@@ -204,10 +218,17 @@ const pwdFormSchema: VbenFormSchema[] = [
   },
 ];
 
-const [PwdForm, pwdFormApi] = useVbenForm({ schema: pwdFormSchema, showDefaultActions: false });
+const [PwdForm, pwdFormApi] = useVbenForm({
+  schema: pwdFormSchema,
+  showDefaultActions: false,
+  commonConfig: {
+    labelWidth: 140, labelClass: 'whitespace-nowrap',
+  },
+});
 const pwdUserId = ref(0);
 
 const [PwdModal, pwdModalApi] = useVbenModal({
+  draggable: true,
   onConfirm: async () => {
     const values = await pwdFormApi.getValues();
     if (!values.newPassword || values.newPassword.length < 6) {
@@ -259,10 +280,10 @@ function onDelete(row: any) {
       <template #action="{ row }">
         <VbenTableAction
           :actions="[
-            { text: $t('system.common.actions.edit'), auth: 'system:user:update', onClick: () => onEdit(row) },
-            { text: $t('system.user.actions.changePassword'), auth: 'system:user:update', onClick: () => onChangePwd(row) },
+            { icon: Pencil, auth: 'system:user:update', tooltip: $t('system.common.actions.edit'), onClick: () => onEdit(row) },
+            { icon: LockKeyhole, auth: 'system:user:update', tooltip: $t('system.user.actions.changePassword'), onClick: () => onChangePwd(row) },
           ]"
-          :dropdown-actions="[{ text: $t('system.common.actions.delete'), auth: 'system:user:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
+          :dropdown-actions="[{ icon: Trash2, text: $t('system.common.actions.delete'), auth: 'system:user:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
         />
       </template>
     </Grid>

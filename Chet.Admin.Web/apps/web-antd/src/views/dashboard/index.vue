@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { usePreferences } from '@vben/preferences';
+import { useTimezoneStore } from '@vben/stores';
 import { IconifyIcon } from '@vben/icons';
 import { $t } from '#/locales';
+import dayjs from 'dayjs';
 import { getDashboardStatsApi, getDashboardTrendApi, getRecentLogsApi } from '#/api/system/dashboard';
 
 const router = useRouter();
@@ -21,8 +23,10 @@ const trendItems = ref<{ date: string; loginCount: number; registerCount: number
 const recentLogs = ref<{ id: number; userName: string; action: string; module: string; description: string; operatedAt: string }[]>([]);
 const loading = ref(true);
 
+const timezoneStore = useTimezoneStore();
+
 const greeting = computed(() => {
-  const h = new Date().getHours();
+  const h = dayjs().tz(timezoneStore.timezone).hour();
   if (h < 6) return $t('dashboard.greeting.lateNight');
   if (h < 9) return $t('dashboard.greeting.morning');
   if (h < 12) return $t('dashboard.greeting.forenoon');
@@ -35,8 +39,8 @@ const currentTime = ref('');
 const currentDate = ref('');
 
 function updateTime() {
-  const now = new Date();
-  currentTime.value = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const now = dayjs().tz(timezoneStore.timezone);
+  currentTime.value = now.format('HH:mm:ss');
   const weekDays = [
     $t('dashboard.weekdays.sunday'),
     $t('dashboard.weekdays.monday'),
@@ -46,7 +50,7 @@ function updateTime() {
     $t('dashboard.weekdays.friday'),
     $t('dashboard.weekdays.saturday'),
   ];
-  currentDate.value = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ' ' + weekDays[now.getDay()];
+  currentDate.value = now.format('YYYY-MM-DD') + ' ' + weekDays[now.day()];
 }
 
 let timer: ReturnType<typeof setInterval>;
@@ -145,9 +149,10 @@ const trendLabels = computed(() => {
 });
 
 function formatTime(dateStr: string) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  const diff = now.getTime() - d.getTime();
+  const tz = timezoneStore.timezone;
+  const d = dayjs(dateStr).tz(tz);
+  const now = dayjs().tz(tz);
+  const diff = now.valueOf() - d.valueOf();
   if (diff < 60000) return $t('dashboard.relativeTime.justNow');
   if (diff < 3600000) return $t('dashboard.relativeTime.minutesAgo', { n: Math.floor(diff / 60000) });
   if (diff < 86400000) return $t('dashboard.relativeTime.hoursAgo', { n: Math.floor(diff / 3600000) });
@@ -203,6 +208,11 @@ onMounted(async () => {
   }
 });
 
+// 时区切换后立即更新时间显示
+watch(() => timezoneStore.timezone, () => {
+  updateTime();
+});
+
 onUnmounted(() => {
   clearInterval(timer);
 });
@@ -228,7 +238,6 @@ function goPage(path: string) {
       <div class="hero-bg">
         <div class="hero-orb hero-orb-1"></div>
         <div class="hero-orb hero-orb-2"></div>
-        <div class="hero-orb hero-orb-3"></div>
       </div>
       <div class="hero-content">
         <div class="hero-greeting">
@@ -512,6 +521,22 @@ function goPage(path: string) {
   --border-card: #f3f4f6;
   --border-card-hover: #e5e7eb;
   --stat-icon-bg-opacity: 0.1;
+
+  /* hero 主题变量（亮色）：柔和紫青光晕 + 干净渐变 */
+  --hero-bg:
+    radial-gradient(ellipse 600px 300px at 85% -10%, rgba(167, 107, 235, 0.14) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 280px at 15% 110%, rgba(42, 222, 255, 0.12) 0%, transparent 70%),
+    linear-gradient(135deg, #fafafe 0%, #f5f1fb 50%, #eef6fc 100%);
+  --hero-text: #1e1b2e;
+  --hero-subtitle: rgba(30, 27, 46, 0.6);
+  --hero-date: rgba(30, 27, 46, 0.5);
+  --hero-orb-1-color: rgba(167, 107, 235, 0.22);
+  --hero-orb-2-color: rgba(42, 222, 255, 0.18);
+  --hero-wave-color: #a76beb;
+  --hero-highlight-gradient: linear-gradient(120deg, #a76beb 0%, #6a9ce8 55%, #2adeff 100%);
+  --hero-time-color: #1e1b2e;
+  --hero-time-accent: #0891b2;
+  --hero-grid-line: rgba(30, 27, 46, 0.035);
 }
 
 /* ===== 暗色变量 ===== */
@@ -525,6 +550,22 @@ function goPage(path: string) {
   --border-card: #334155;
   --border-card-hover: #475569;
   --stat-icon-bg-opacity: 0.15;
+
+  /* hero 主题变量（暗色）：深邃夜空 + 紫青光晕 */
+  --hero-bg:
+    radial-gradient(ellipse 600px 300px at 85% -10%, rgba(167, 107, 235, 0.28) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 280px at 15% 110%, rgba(42, 222, 255, 0.22) 0%, transparent 70%),
+    linear-gradient(135deg, #16101f 0%, #1a1340 50%, #0f1f33 100%);
+  --hero-text: #f1f5f9;
+  --hero-subtitle: rgba(241, 245, 249, 0.65);
+  --hero-date: rgba(241, 245, 249, 0.5);
+  --hero-orb-1-color: rgba(200, 154, 240, 0.35);
+  --hero-orb-2-color: rgba(91, 232, 255, 0.3);
+  --hero-wave-color: #c89af0;
+  --hero-highlight-gradient: linear-gradient(120deg, #c89af0 0%, #a76beb 35%, #6a9ce8 65%, #2adeff 100%);
+  --hero-time-color: #5be8ff;
+  --hero-time-accent: #5be8ff;
+  --hero-grid-line: rgba(255, 255, 255, 0.02);
 }
 
 .dashboard-root {
@@ -534,75 +575,77 @@ function goPage(path: string) {
 }
 
 /* ===== 英雄区域 ===== */
+/* 柔和光晕 + 极淡网格 + logo 紫青配色，精致但不喧宾夺主 */
 .hero-section {
   position: relative;
   overflow: hidden;
-  padding: 48px 40px 40px;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
-  color: #fff;
+  padding: 48px 40px 44px;
+  background: var(--hero-bg);
+  color: var(--hero-text);
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
 .hero-bg {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  pointer-events: none;
 }
+/* 极淡网格纹理：增加层次感而不抢视觉 */
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--hero-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hero-grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 20%, transparent 80%);
+}
+
+/* 两个柔和光球：呼应 logo 紫青双色，缓慢呼吸 */
 .hero-orb {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.3;
+  will-change: transform, opacity;
 }
 .hero-orb-1 {
-  width: 400px;
-  height: 400px;
-  background: #818cf8;
-  top: -150px;
-  right: -50px;
-  animation: orbF1 8s ease-in-out infinite;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, var(--hero-orb-1-color) 0%, transparent 70%);
+  top: -120px;
+  right: -40px;
+  animation: orbF1 14s ease-in-out infinite;
 }
 .hero-orb-2 {
   width: 300px;
   height: 300px;
-  background: #a78bfa;
+  background: radial-gradient(circle, var(--hero-orb-2-color) 0%, transparent 70%);
   bottom: -100px;
-  left: 10%;
-  animation: orbF2 10s ease-in-out infinite;
-}
-.hero-orb-3 {
-  width: 200px;
-  height: 200px;
-  background: #6366f1;
-  top: 20%;
-  left: 50%;
-  animation: orbF3 12s ease-in-out infinite;
+  left: 5%;
+  animation: orbF2 18s ease-in-out infinite;
 }
 
 @keyframes orbF1 {
-  0%,
-  100% {
+  0%, 100% {
     transform: translate(0, 0) scale(1);
+    opacity: 0.85;
   }
   50% {
-    transform: translate(-40px, 30px) scale(1.1);
+    transform: translate(-30px, 25px) scale(1.08);
+    opacity: 1;
   }
 }
 @keyframes orbF2 {
-  0%,
-  100% {
+  0%, 100% {
     transform: translate(0, 0) scale(1);
+    opacity: 0.8;
   }
   50% {
-    transform: translate(30px, -40px) scale(1.15);
-  }
-}
-@keyframes orbF3 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-20px, 20px) scale(0.9);
+    transform: translate(25px, -30px) scale(1.1);
+    opacity: 1;
   }
 }
 
@@ -612,12 +655,14 @@ function goPage(path: string) {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
 .hero-greeting {
   .hero-wave-icon {
-    font-size: 36px;
-    color: #a5b4fc;
+    font-size: 34px;
+    color: var(--hero-wave-color);
     display: inline-block;
     animation: wave 2.5s ease-in-out infinite;
     transform-origin: 70% 70%;
@@ -629,14 +674,14 @@ function goPage(path: string) {
     letter-spacing: -0.5px;
   }
   .hero-highlight {
-    background: linear-gradient(135deg, #a5b4fc, #818cf8);
+    background: var(--hero-highlight-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .hero-subtitle {
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.65);
+    font-size: 15px;
+    color: var(--hero-subtitle);
     margin: 0;
     font-weight: 400;
   }
@@ -666,17 +711,30 @@ function goPage(path: string) {
 
 .hero-time {
   text-align: right;
+  flex-shrink: 0;
   .time-display {
-    font-size: 56px;
+    font-size: 54px;
     font-weight: 200;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     font-variant-numeric: tabular-nums;
     line-height: 1;
+    color: var(--hero-time-color);
+  }
+  .time-display::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    margin-top: 10px;
+    margin-left: auto;
+    background: var(--hero-highlight-gradient);
+    border-radius: 2px;
+    opacity: 0.7;
   }
   .date-display {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.5);
-    margin-top: 8px;
+    font-size: 13px;
+    color: var(--hero-date);
+    margin-top: 10px;
   }
 }
 
@@ -726,6 +784,7 @@ function goPage(path: string) {
 }
 
 .stat-info {
+  min-width: 0;
   .stat-value {
     font-size: 28px;
     font-weight: 700;
@@ -737,6 +796,9 @@ function goPage(path: string) {
     font-size: 13px;
     color: var(--text-muted);
     margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

@@ -3,7 +3,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page } from '@vben/common-ui';
-import { Plus } from '@vben/icons';
+import { Download, Plus, Trash2 } from '@vben/icons';
 import { useAccess } from '@vben/access';
 import { formatDateTime } from '@vben/utils';
 
@@ -59,7 +59,7 @@ const columns: VxeTableGridColumns = [
     fixed: 'right',
     slots: { default: 'action' },
     title: $t('system.common.columns.operation'),
-    width: 180,
+    width: 100,
   },
 ];
 
@@ -151,10 +151,10 @@ function onDelete(row: any) {
       <template #action="{ row }">
         <VbenTableAction
           :actions="[
-            { text: $t('system.file.actions.download'), onClick: () => onDownload(row) },
+            { icon: Download, tooltip: $t('system.file.actions.download'), onClick: () => onDownload(row) },
           ]"
           :dropdown-actions="[
-            { text: $t('system.common.actions.delete'), auth: 'system:file:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } },
+            { icon: Trash2, text: $t('system.common.actions.delete'), auth: 'system:file:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } },
           ]"
         />
       </template>

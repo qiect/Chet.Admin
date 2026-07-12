@@ -28,7 +28,7 @@ export function formatDate(time?: FormatDate, format: Format = 'YYYY-MM-DD') {
     if (!date.isValid()) {
       throw new Error('Invalid date');
     }
-    return date.tz().format(format);
+    return date.tz(currentTimezone).format(format);
   } catch (error) {
     console.error(`Error formatting date: ${error}`);
     return String(time ?? '');

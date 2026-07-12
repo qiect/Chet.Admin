@@ -1,0 +1,14 @@
+{
+  "dashboard": "仪表盘",
+  "system": "系统管理",
+  "system-ops": "系统运维",
+  "system-user": "用户管理",
+  "system-role": "角色管理",
+  "system-menu": "菜单管理",
+  "system-department": "部门管理",
+  "system-dictionary": "字典管理",
+  "system-audit-log": "操作日志",
+  "system-notification": "通知管理",
+  "system-file": "文件管理",
+  "system-online-user": "在线用户"
+}

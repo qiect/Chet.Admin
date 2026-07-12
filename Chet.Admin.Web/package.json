@@ -82,6 +82,7 @@
     "tsdown": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:",
+    "unrun": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "vue": "catalog:",

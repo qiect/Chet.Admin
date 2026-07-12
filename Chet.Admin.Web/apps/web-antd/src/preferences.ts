@@ -33,6 +33,10 @@ export const overridesPreferences = defineOverridesPreferences({
     icp: '',
     icpLink: '',
   },
+  widget: {
+    languageToggle: true,
+    timezone: true,
+  },
 });
 
 export const preferencesExtension =
