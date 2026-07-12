@@ -3,7 +3,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page, useVbenModal } from '@vben/common-ui';
-import { Plus } from '@vben/icons';
+import { Plus, Trash2 } from '@vben/icons';
 import { useAccess } from '@vben/access';
 import { formatDateTime } from '@vben/utils';
 
@@ -99,7 +99,7 @@ const columns: VxeTableGridColumns = [
     fixed: 'right',
     slots: { default: 'action' },
     title: $t('system.common.columns.operation'),
-    width: 120,
+    width: 80,
   },
 ];
 
@@ -174,9 +174,16 @@ const formSchema: VbenFormSchema[] = [
   },
 ];
 
-const [Form, formApi] = useVbenForm({ schema: formSchema, showDefaultActions: false });
+const [Form, formApi] = useVbenForm({
+  schema: formSchema,
+  showDefaultActions: false,
+  commonConfig: {
+    labelWidth: 140, labelClass: 'whitespace-nowrap',
+  },
+});
 
 const [Modal, modalApi] = useVbenModal({
+  draggable: true,
   onConfirm: async () => {
     const values = await formApi.getValues();
     const { ...submitData } = values;
@@ -251,6 +258,7 @@ function onDelete(row: any) {
         <VbenTableAction
           :dropdown-actions="[
             {
+              icon: Trash2,
               text: $t('system.common.actions.delete'),
               auth: 'system:notification:delete',
               danger: true,

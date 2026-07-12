@@ -22,7 +22,18 @@ interface BackendMenuItem {
 }
 
 /**
+ * 将菜单路径转换为i18n key(扁平key,避免嵌套冲突)
+ * /system/user → menu.system-user
+ * /dashboard → menu.dashboard
+ */
+export function pathToI18nKey(path: string): string {
+  const key = path.split('/').filter(Boolean).join('-');
+  return `menu.${key}`;
+}
+
+/**
  * 将后端菜单数据转换为Vben Admin路由格式
+ * 菜单标题使用path生成的i18n key,支持多语言切换
  */
 function transformMenuData(
   menus: BackendMenuItem[],
@@ -44,7 +55,7 @@ function transformMenuItem(
     path: item.path,
     component: item.component || undefined,
     meta: {
-      title: item.name,
+      title: item.path ? pathToI18nKey(item.path) : item.name,
       icon: item.icon || undefined,
       order: item.sort,
       hideInMenu: !item.isVisible,

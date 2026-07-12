@@ -2,6 +2,7 @@
 import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page } from '@vben/common-ui';
+import { LogOut } from '@vben/icons';
 import { useAccess } from '@vben/access';
 import { formatDateTime } from '@vben/utils';
 
@@ -41,7 +42,7 @@ const columns: VxeTableGridColumns<any> = [
     fixed: 'right',
     slots: { default: 'action' },
     title: $t('system.common.columns.operation'),
-    width: 120,
+    width: 80,
   },
 ];
 
@@ -87,7 +88,7 @@ async function onForceOffline(userId: number) {
         <VbenTableAction
           v-if="hasAccessByCodes(['system:online:force-offline'])"
           :actions="[
-            { text: $t('system.onlineUser.actions.forceOffline'), danger: true, onClick: () => onForceOffline(row.userId) },
+            { icon: LogOut, danger: true, tooltip: $t('system.onlineUser.actions.forceOffline'), onClick: () => onForceOffline(row.userId) },
           ]"
         />
       </template>

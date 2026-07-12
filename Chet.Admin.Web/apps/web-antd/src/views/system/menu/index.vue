@@ -3,7 +3,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page, useVbenModal } from '@vben/common-ui';
-import { Plus } from '@vben/icons';
+import { Pencil, Plus, Trash2 } from '@vben/icons';
 import { useAccess } from '@vben/access';
 
 import { Button, message, Tag } from 'ant-design-vue';
@@ -11,6 +11,7 @@ import { Button, message, Tag } from 'ant-design-vue';
 import { useVbenForm } from '#/adapter/form';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import { createMenuApi, deleteMenuApi, getAllMenusApi, updateMenuApi } from '#/api/system/menu';
+import { pathToI18nKey } from '#/api/core/menu';
 import { $t } from '#/locales';
 import { h, ref } from 'vue';
 
@@ -27,7 +28,7 @@ function buildMenuTreeSelect(flatMenus: any[], excludeId?: number): any[] {
       .map((m: any) => {
         const children = build(m.id);
         return {
-          label: m.name,
+          label: m.path ? $t(pathToI18nKey(m.path)) : m.name,
           value: m.id,
           children: children.length > 0 ? children : undefined,
         };
@@ -43,7 +44,11 @@ const typeMap: Record<string, { color: string; label: string }> = {
 };
 
 const columns: VxeTableGridColumns = [
-  { field: 'name', title: $t('system.menu.columns.name'), minWidth: 180, treeNode: true, align: 'left' },
+  { field: 'name', title: $t('system.menu.columns.name'), minWidth: 180, treeNode: true, align: 'left',
+    slots: {
+      default: ({ row }) => row.path ? $t(pathToI18nKey(row.path)) : row.name,
+    },
+  },
   { field: 'type', title: $t('system.menu.columns.type'), width: 80,
     slots: {
       default: ({ row }) => {
@@ -62,7 +67,7 @@ const columns: VxeTableGridColumns = [
   { field: 'isVisible', title: $t('system.menu.columns.isVisible'), width: 70,
     formatter: ({ cellValue }) => cellValue ? $t('system.common.yes') : $t('system.common.no'),
   },
-  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 180 },
+  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 120 },
 ];
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -164,12 +169,19 @@ const formSchema: VbenFormSchema[] = [
   },
 ];
 
-const [Form, formApi] = useVbenForm({ schema: formSchema, showDefaultActions: false });
+const [Form, formApi] = useVbenForm({
+  schema: formSchema,
+  showDefaultActions: false,
+  commonConfig: {
+    labelWidth: 140, labelClass: 'whitespace-nowrap',
+  },
+});
 
 // 当前编辑的菜单ID，0 表示新增
 const editingId = ref(0);
 
 const [Modal, modalApi] = useVbenModal({
+  draggable: true,
   onConfirm: async () => {
     const values = await formApi.getValues();
     if (editingId.value) {
@@ -221,10 +233,10 @@ function onDelete(row: any) {
       <template #action="{ row }">
         <VbenTableAction
           :actions="[
-            { text: $t('system.common.actions.create'), auth: 'system:menu:create', onClick: () => onCreate(row.id) },
-            { text: $t('system.common.actions.edit'), auth: 'system:menu:update', onClick: () => onEdit(row) },
+            { icon: Plus, auth: 'system:menu:create', tooltip: $t('system.common.actions.create'), onClick: () => onCreate(row.id) },
+            { icon: Pencil, auth: 'system:menu:update', tooltip: $t('system.common.actions.edit'), onClick: () => onEdit(row) },
           ]"
-          :dropdown-actions="[{ text: $t('system.common.actions.delete'), auth: 'system:menu:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
+          :dropdown-actions="[{ icon: Trash2, text: $t('system.common.actions.delete'), auth: 'system:menu:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
         />
       </template>
     </Grid>

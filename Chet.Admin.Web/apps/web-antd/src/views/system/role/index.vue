@@ -3,7 +3,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page, useVbenModal } from '@vben/common-ui';
-import { Plus } from '@vben/icons';
+import { ListTree, Pencil, Plus, Trash2 } from '@vben/icons';
 import { useAccess } from '@vben/access';
 import { formatDateTime } from '@vben/utils';
 
@@ -21,6 +21,7 @@ import {
   updateDataScopeApi,
 } from '#/api/system/role';
 import { getMenuTreeApi } from '#/api/system/menu';
+import { pathToI18nKey } from '#/api/core/menu';
 import { getDeptTreeApi } from '#/api/system/department';
 import { $t } from '#/locales';
 import { ref, watch } from 'vue';
@@ -50,7 +51,7 @@ const columns: VxeTableGridColumns = [
   { field: 'createdAt', title: $t('system.common.columns.createdAt'), minWidth: 180,
     slots: { default: ({ row }) => row.createdAt ? formatDateTime(row.createdAt) : $t('system.common.empty') },
   },
-  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 200 },
+  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 120 },
 ];
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -127,9 +128,16 @@ const formSchema: VbenFormSchema[] = [
   },
 ];
 
-const [Form, formApi] = useVbenForm({ schema: formSchema, showDefaultActions: false });
+const [Form, formApi] = useVbenForm({
+  schema: formSchema,
+  showDefaultActions: false,
+  commonConfig: {
+    labelWidth: 140, labelClass: 'whitespace-nowrap',
+  },
+});
 
 const [Modal, modalApi] = useVbenModal({
+  draggable: true,
   onConfirm: async () => {
     const values = await formApi.getValues();
     const id = values.id;
@@ -187,16 +195,22 @@ const checkedKeys = ref<number[]>([]);
 
 // 构建菜单树数据
 function buildMenuTree(menus: any[]): TreeNode[] {
-  return (menus || []).map((m: any) => ({
-    key: m.id,
-    title: m.type === 'Button' ? `${m.name} ${$t('system.role.buttonSuffix')}` : m.name,
-    value: m.id,
-    children: m.children && m.children.length > 0 ? buildMenuTree(m.children) : undefined,
-    selectable: false,
-  }));
+  return (menus || []).map((m: any) => {
+    const title = m.type === 'Button'
+      ? `${m.name} ${$t('system.role.buttonSuffix')}`
+      : $t(pathToI18nKey(m.path));
+    return {
+      key: m.id,
+      title,
+      value: m.id,
+      children: m.children && m.children.length > 0 ? buildMenuTree(m.children) : undefined,
+      selectable: false,
+    };
+  });
 }
 
 const [AssignModal, assignModalApi] = useVbenModal({
+  draggable: true,
   onConfirm: async () => {
     // checkStrictly 模式下父子不联动，checkedKeys 即为精确的已勾选菜单ID
     // 注意：checkStrictly 为 true 时，Tree 的 v-model:checkedKeys 会被组件改写为
@@ -272,10 +286,10 @@ function onDelete(row: any) {
       <template #action="{ row }">
         <VbenTableAction
           :actions="[
-            { text: $t('system.common.actions.edit'), auth: 'system:role:update', onClick: () => onEdit(row) },
-            { text: $t('system.role.actions.assignMenu'), auth: 'system:role:update', onClick: () => onAssign(row) },
+            { icon: Pencil, auth: 'system:role:update', tooltip: $t('system.common.actions.edit'), onClick: () => onEdit(row) },
+            { icon: ListTree, auth: 'system:role:update', tooltip: $t('system.role.actions.assignMenu'), onClick: () => onAssign(row) },
           ]"
-          :dropdown-actions="[{ text: $t('system.common.actions.delete'), auth: 'system:role:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
+          :dropdown-actions="[{ icon: Trash2, text: $t('system.common.actions.delete'), auth: 'system:role:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
         />
       </template>
     </Grid>

@@ -188,6 +188,7 @@ catalog:
   unplugin-dts: ^1.0.2
   unplugin-element-plus: ^0.11.2
   unplugin-vue: ^7.2.0
+  unrun: ^0.3.0
   vee-validate: ^4.15.1
   vite: 8.0.10
   vite-plugin-compression: ^0.5.1

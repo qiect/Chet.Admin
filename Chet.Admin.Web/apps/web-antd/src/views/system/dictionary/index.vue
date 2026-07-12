@@ -3,7 +3,7 @@ import type { VbenFormSchema } from '#/adapter/form';
 import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-table';
 
 import { Page, useVbenModal } from '@vben/common-ui';
-import { Plus } from '@vben/icons';
+import { Pencil, Plus, Trash2 } from '@vben/icons';
 import { useAccess } from '@vben/access';
 
 import { Button, message } from 'ant-design-vue';
@@ -30,7 +30,7 @@ const columns: VxeTableGridColumns = [
   { field: 'sort', title: $t('system.common.columns.sort'), width: 80 },
   { field: 'isEnabled', title: $t('system.common.columns.isEnabled'), width: 80, cellRender: { name: 'CellTag' } },
   { field: 'remark', title: $t('system.dictionary.columns.remark'), minWidth: 150 },
-  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 160 },
+  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 100 },
 ];
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -58,12 +58,19 @@ const formSchema: VbenFormSchema[] = [
   { component: 'InputNumber', fieldName: 'parentId', label: $t('system.dictionary.form.parentId'), defaultValue: 0, componentProps: { style: { width: '100%' } } },
 ];
 
-const [Form, formApi] = useVbenForm({ schema: formSchema, showDefaultActions: false });
+const [Form, formApi] = useVbenForm({
+  schema: formSchema,
+  showDefaultActions: false,
+  commonConfig: {
+    labelWidth: 140, labelClass: 'whitespace-nowrap',
+  },
+});
 
 // 当前编辑的字典ID，0 表示新增
 const editingId = ref(0);
 
 const [Modal, modalApi] = useVbenModal({
+  draggable: true,
   onConfirm: async () => {
     const values = await formApi.getValues();
     if (editingId.value) { await updateDictApi(editingId.value, values); message.success($t('system.common.messages.updateSuccess')); }
@@ -98,8 +105,8 @@ function onDelete(row: any) {
       </template>
       <template #action="{ row }">
         <VbenTableAction
-          :actions="[{ text: $t('system.common.actions.edit'), auth: 'system:dict:update', onClick: () => onEdit(row) }]"
-          :dropdown-actions="[{ text: $t('system.common.actions.delete'), auth: 'system:dict:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
+          :actions="[{ icon: Pencil, auth: 'system:dict:update', tooltip: $t('system.common.actions.edit'), onClick: () => onEdit(row) }]"
+          :dropdown-actions="[{ icon: Trash2, text: $t('system.common.actions.delete'), auth: 'system:dict:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
         />
       </template>
     </Grid>

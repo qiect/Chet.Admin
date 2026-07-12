@@ -1,0 +1,14 @@
+{
+  "dashboard": "Dashboard",
+  "system": "System",
+  "system-ops": "Operations",
+  "system-user": "User Management",
+  "system-role": "Role Management",
+  "system-menu": "Menu Management",
+  "system-department": "Department",
+  "system-dictionary": "Dictionary",
+  "system-audit-log": "Audit Log",
+  "system-notification": "Notifications",
+  "system-file": "File Management",
+  "system-online-user": "Online Users"
+}
