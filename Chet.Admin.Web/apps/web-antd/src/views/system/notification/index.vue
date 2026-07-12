@@ -5,6 +5,7 @@ import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-tab
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 import { useAccess } from '@vben/access';
+import { formatDateTime } from '@vben/utils';
 
 import { Button, message, Tag } from 'ant-design-vue';
 
@@ -16,6 +17,7 @@ import {
   getNotificationListApi,
 } from '#/api/system/notification';
 import { getUserListApi } from '#/api/system/user';
+import { $t } from '#/locales';
 import { h, ref } from 'vue';
 
 const { hasAccessByCodes } = useAccess();
@@ -32,27 +34,27 @@ const priorityColorMap: Record<string, string> = {
   Urgent: 'red',
 };
 const typeLabelMap: Record<string, string> = {
-  Announcement: '公告',
-  Notification: '通知',
-  Todo: '待办',
+  Announcement: $t('system.notification.type.Announcement'),
+  Notification: $t('system.notification.type.Notification'),
+  Todo: $t('system.notification.type.Todo'),
 };
 const priorityLabelMap: Record<string, string> = {
-  Low: '低',
-  Normal: '普通',
-  High: '高',
-  Urgent: '紧急',
+  Low: $t('system.notification.priority.Low'),
+  Normal: $t('system.notification.priority.Normal'),
+  High: $t('system.notification.priority.High'),
+  Urgent: $t('system.notification.priority.Urgent'),
 };
 
 const searchSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'keyword', label: '关键字' },
+  { component: 'Input', fieldName: 'keyword', label: $t('system.common.search.keyword') },
 ];
 
 const columns: VxeTableGridColumns = [
-  { field: 'id', title: 'ID', width: 70 },
-  { field: 'title', title: '标题', minWidth: 180 },
+  { field: 'id', title: $t('system.common.columns.id'), width: 70 },
+  { field: 'title', title: $t('system.notification.columns.title'), minWidth: 180 },
   {
     field: 'type',
-    title: '类型',
+    title: $t('system.notification.columns.type'),
     width: 90,
     slots: {
       default: ({ row }) =>
@@ -65,7 +67,7 @@ const columns: VxeTableGridColumns = [
   },
   {
     field: 'priority',
-    title: '优先级',
+    title: $t('system.notification.columns.priority'),
     width: 90,
     slots: {
       default: ({ row }) =>
@@ -78,25 +80,25 @@ const columns: VxeTableGridColumns = [
   },
   {
     field: 'isGlobal',
-    title: '全局',
+    title: $t('system.notification.columns.isGlobal'),
     width: 70,
     cellRender: { name: 'CellTag' },
   },
   {
     field: 'senderName',
-    title: '发送者',
+    title: $t('system.notification.columns.senderName'),
     width: 110,
-    slots: { default: ({ row }) => row.senderName ?? (row.senderId ? `用户${row.senderId}` : '系统') },
+    slots: { default: ({ row }) => row.senderName ?? (row.senderId ? `${$t('system.notification.columns.userPrefix')}${row.senderId}` : $t('system.notification.columns.systemSender')) },
   },
-  { field: 'createdAt', title: '创建时间', minWidth: 170,
-    slots: { default: ({ row }) => row.createdAt ? new Date(row.createdAt).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-' },
+  { field: 'createdAt', title: $t('system.common.columns.createdAt'), minWidth: 170,
+    slots: { default: ({ row }) => row.createdAt ? formatDateTime(row.createdAt) : $t('system.common.empty') },
   },
   {
     align: 'center',
     field: 'operation',
     fixed: 'right',
     slots: { default: 'action' },
-    title: '操作',
+    title: $t('system.common.columns.operation'),
     width: 120,
   },
 ];
@@ -126,18 +128,18 @@ const [Grid, gridApi] = useVbenVxeGrid({
 const userOptions = ref<{ label: string; value: number }[]>([]);
 
 const formSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'title', label: '标题', rules: 'required' },
-  { component: 'Textarea', fieldName: 'content', label: '内容', rules: 'required', componentProps: { rows: 4 } },
+  { component: 'Input', fieldName: 'title', label: $t('system.notification.form.title'), rules: 'required' },
+  { component: 'Textarea', fieldName: 'content', label: $t('system.notification.form.content'), rules: 'required', componentProps: { rows: 4 } },
   {
     component: 'Select',
     fieldName: 'type',
-    label: '类型',
+    label: $t('system.notification.form.type'),
     defaultValue: 'Notification',
     componentProps: {
       options: [
-        { label: '公告', value: 'Announcement' },
-        { label: '通知', value: 'Notification' },
-        { label: '待办', value: 'Todo' },
+        { label: $t('system.notification.type.Announcement'), value: 'Announcement' },
+        { label: $t('system.notification.type.Notification'), value: 'Notification' },
+        { label: $t('system.notification.type.Todo'), value: 'Todo' },
       ],
       style: { width: '100%' },
     },
@@ -145,27 +147,27 @@ const formSchema: VbenFormSchema[] = [
   {
     component: 'Select',
     fieldName: 'priority',
-    label: '优先级',
+    label: $t('system.notification.form.priority'),
     defaultValue: 'Normal',
     componentProps: {
       options: [
-        { label: '低', value: 'Low' },
-        { label: '普通', value: 'Normal' },
-        { label: '高', value: 'High' },
-        { label: '紧急', value: 'Urgent' },
+        { label: $t('system.notification.priority.Low'), value: 'Low' },
+        { label: $t('system.notification.priority.Normal'), value: 'Normal' },
+        { label: $t('system.notification.priority.High'), value: 'High' },
+        { label: $t('system.notification.priority.Urgent'), value: 'Urgent' },
       ],
       style: { width: '100%' },
     },
   },
-  { component: 'Switch', fieldName: 'isGlobal', label: '全局通知', defaultValue: false },
+  { component: 'Switch', fieldName: 'isGlobal', label: $t('system.notification.form.isGlobal'), defaultValue: false },
   {
     component: 'Select',
     fieldName: 'recipientUserIds',
-    label: '接收者',
+    label: $t('system.notification.form.recipientUserIds'),
     dependencies: {
       triggerFields: ['isGlobal'],
       rule: (values) => {
-        return { componentProps: { mode: 'multiple', options: userOptions.value, placeholder: '选择接收用户', allowClear: true, style: { width: '100%' } } };
+        return { componentProps: { mode: 'multiple', options: userOptions.value, placeholder: $t('system.notification.form.recipientUserIdsPlaceholder'), allowClear: true, style: { width: '100%' } } };
       },
       if: (values) => !values.isGlobal,
     },
@@ -179,14 +181,14 @@ const [Modal, modalApi] = useVbenModal({
     const values = await formApi.getValues();
     const { ...submitData } = values;
     if (!submitData.isGlobal && (!submitData.recipientUserIds || submitData.recipientUserIds.length === 0)) {
-      message.warning('非全局通知请选择接收者');
+      message.warning($t('system.notification.messages.selectRecipients'));
       return;
     }
     if (submitData.isGlobal) {
       delete submitData.recipientUserIds;
     }
     await createNotificationApi(submitData);
-    message.success('创建成功');
+    message.success($t('system.common.messages.createSuccess'));
     modalApi.close();
     gridApi.query();
   },
@@ -206,7 +208,7 @@ const [Modal, modalApi] = useVbenModal({
             componentProps: {
               mode: 'multiple',
               options: userOptions.value,
-              placeholder: '选择接收用户',
+              placeholder: $t('system.notification.form.recipientUserIdsPlaceholder'),
               allowClear: true,
               style: { width: '100%' },
             },
@@ -224,7 +226,7 @@ function onCreate() {
 }
 function onDelete(row: any) {
   deleteNotificationApi(row.id).then(() => {
-    message.success('删除成功');
+    message.success($t('system.common.messages.deleteSuccess'));
     gridApi.query();
   });
 }
@@ -232,27 +234,27 @@ function onDelete(row: any) {
 
 <template>
   <Page auto-content-height>
-    <Modal title="新增通知">
+    <Modal :title="$t('system.notification.modals.create')">
       <Form />
     </Modal>
-    <Grid table-title="通知公告列表">
+    <Grid :table-title="$t('system.notification.tableTitle')">
       <template #toolbar-tools>
         <Button
           v-if="hasAccessByCodes(['system:notification:create'])"
           type="primary"
           @click="onCreate"
         >
-          <Plus class="mr-2 size-4" />新增
+          <Plus class="mr-2 size-4" />{{ $t('system.common.actions.create') }}
         </Button>
       </template>
       <template #action="{ row }">
         <VbenTableAction
           :dropdown-actions="[
             {
-              text: '删除',
+              text: $t('system.common.actions.delete'),
               auth: 'system:notification:delete',
               danger: true,
-              popConfirm: { title: '确认删除？', confirm: () => onDelete(row) },
+              popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) },
             },
           ]"
         />

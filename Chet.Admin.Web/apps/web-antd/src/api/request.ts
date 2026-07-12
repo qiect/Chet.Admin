@@ -15,6 +15,7 @@ import { useAccessStore } from '@vben/stores';
 
 import { message } from 'ant-design-vue';
 
+import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 
 import { refreshTokenApi } from './core';
@@ -117,30 +118,30 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 
       // 429错误：请求过于频繁（限流）
       if (statusCode === 429) {
-        message.error(errorMessage || '请求过于频繁，请稍后再试');
+        message.error(errorMessage || $t('common.http.tooManyRequests'));
         return;
       }
 
       // 403错误
       if (statusCode === 403) {
-        message.error('没有操作权限');
+        message.error($t('common.http.forbidden'));
         return;
       }
 
       // 404错误
       if (statusCode === 404) {
-        message.error('请求的资源不存在');
+        message.error($t('common.http.notFound'));
         return;
       }
 
       // 500错误
       if (statusCode === 500) {
-        message.error('服务器内部错误，请稍后重试');
+        message.error($t('common.http.internalError'));
         return;
       }
 
       // 其他错误：显示后端返回的消息，或默认提示
-      message.error(errorMessage || msg || '请求失败');
+      message.error(errorMessage || msg || $t('common.http.requestFailed'));
     }),
   );
 

@@ -11,6 +11,7 @@ import { Button, message, Tag } from 'ant-design-vue';
 import { useVbenForm } from '#/adapter/form';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import { createMenuApi, deleteMenuApi, getAllMenusApi, updateMenuApi } from '#/api/system/menu';
+import { $t } from '#/locales';
 import { h, ref } from 'vue';
 
 const { hasAccessByCodes } = useAccess();
@@ -36,14 +37,14 @@ function buildMenuTreeSelect(flatMenus: any[], excludeId?: number): any[] {
 }
 
 const typeMap: Record<string, { color: string; label: string }> = {
-  Directory: { color: 'processing', label: '目录' },
-  Menu: { color: 'success', label: '菜单' },
-  Button: { color: 'warning', label: '按钮' },
+  Directory: { color: 'processing', label: $t('system.menu.type.Directory') },
+  Menu: { color: 'success', label: $t('system.menu.type.Menu') },
+  Button: { color: 'warning', label: $t('system.menu.type.Button') },
 };
 
 const columns: VxeTableGridColumns = [
-  { field: 'name', title: '菜单名称', minWidth: 180, treeNode: true, align: 'left' },
-  { field: 'type', title: '类型', width: 80,
+  { field: 'name', title: $t('system.menu.columns.name'), minWidth: 180, treeNode: true, align: 'left' },
+  { field: 'type', title: $t('system.menu.columns.type'), width: 80,
     slots: {
       default: ({ row }) => {
         const t = typeMap[row.type];
@@ -51,17 +52,17 @@ const columns: VxeTableGridColumns = [
       },
     },
   },
-  { field: 'permission', title: '权限标识', minWidth: 180 },
-  { field: 'description', title: '描述', minWidth: 150 },
-  { field: 'path', title: '路径', minWidth: 160 },
-  { field: 'component', title: '组件', minWidth: 160 },
-  { field: 'icon', title: '图标', width: 90 },
-  { field: 'sort', title: '排序', width: 70 },
-  { field: 'isEnabled', title: '状态', width: 70, cellRender: { name: 'CellTag' } },
-  { field: 'isVisible', title: '可见', width: 70,
-    formatter: ({ cellValue }) => cellValue ? '是' : '否',
+  { field: 'permission', title: $t('system.menu.columns.permission'), minWidth: 180 },
+  { field: 'description', title: $t('system.common.columns.description'), minWidth: 150 },
+  { field: 'path', title: $t('system.menu.columns.path'), minWidth: 160 },
+  { field: 'component', title: $t('system.menu.columns.component'), minWidth: 160 },
+  { field: 'icon', title: $t('system.menu.columns.icon'), width: 90 },
+  { field: 'sort', title: $t('system.common.columns.sort'), width: 70 },
+  { field: 'isEnabled', title: $t('system.common.columns.isEnabled'), width: 70, cellRender: { name: 'CellTag' } },
+  { field: 'isVisible', title: $t('system.menu.columns.isVisible'), width: 70,
+    formatter: ({ cellValue }) => cellValue ? $t('system.common.yes') : $t('system.common.no'),
   },
-  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: '操作', width: 180 },
+  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 180 },
 ];
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -90,44 +91,44 @@ function expandAll() { gridApi.grid?.setAllTreeExpand(true); }
 function collapseAll() { gridApi.grid?.setAllTreeExpand(false); }
 
 const formSchema: VbenFormSchema[] = [
-  { component: 'Select', fieldName: 'type', label: '类型', defaultValue: 'Menu', rules: 'required',
-    componentProps: { options: [{ label: '目录', value: 'Directory' }, { label: '菜单', value: 'Menu' }, { label: '按钮', value: 'Button' }] },
-    help: '目录=一级分组, 菜单=页面, 按钮=操作权限',
+  { component: 'Select', fieldName: 'type', label: $t('system.menu.form.type'), defaultValue: 'Menu', rules: 'required',
+    componentProps: { options: [{ label: $t('system.menu.type.Directory'), value: 'Directory' }, { label: $t('system.menu.type.Menu'), value: 'Menu' }, { label: $t('system.menu.type.Button'), value: 'Button' }] },
+    help: $t('system.menu.form.typeHelp'),
   },
-  { component: 'Input', fieldName: 'name', label: '名称', rules: 'required' },
-  { component: 'Input', fieldName: 'permission', label: '权限标识',
-    help: '如 system:user:list',
+  { component: 'Input', fieldName: 'name', label: $t('system.menu.form.name'), rules: 'required' },
+  { component: 'Input', fieldName: 'permission', label: $t('system.menu.form.permission'),
+    help: $t('system.menu.form.permissionHelp'),
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type === 'Menu' || values.type === 'Button'; },
     },
   },
-  { component: 'Input', fieldName: 'description', label: '描述',
-    help: '按钮/权限的说明描述',
+  { component: 'Input', fieldName: 'description', label: $t('system.common.form.description'),
+    help: $t('system.menu.form.descriptionHelp'),
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type === 'Button'; },
     },
   },
-  { component: 'Input', fieldName: 'path', label: '路由路径',
+  { component: 'Input', fieldName: 'path', label: $t('system.menu.form.path'),
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type === 'Directory' || values.type === 'Menu'; },
     },
   },
-  { component: 'Input', fieldName: 'component', label: '组件路径',
+  { component: 'Input', fieldName: 'component', label: $t('system.menu.form.component'),
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type === 'Menu'; },
     },
   },
-  { component: 'Input', fieldName: 'redirect', label: '重定向',
+  { component: 'Input', fieldName: 'redirect', label: $t('system.menu.form.redirect'),
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type === 'Directory'; },
     },
   },
-  { component: 'IconPicker', fieldName: 'icon', label: '图标',
+  { component: 'IconPicker', fieldName: 'icon', label: $t('system.menu.form.icon'),
     componentProps: {
       prefix: 'lucide',
       autoFetchApi: false,
@@ -137,25 +138,25 @@ const formSchema: VbenFormSchema[] = [
       if(values) { return values.type !== 'Button'; },
     },
   },
-  { component: 'TreeSelect', fieldName: 'parentId', label: '父级菜单', defaultValue: 0,
-    componentProps: { treeData: [], placeholder: '留空为顶级菜单', allowClear: true, showSearch: true, treeNodeFilterProp: 'label', treeLine: true, treeDefaultExpandAll: true, dropdownStyle: { maxHeight: '400px' }, style: { width: '100%' } },
+  { component: 'TreeSelect', fieldName: 'parentId', label: $t('system.menu.form.parentId'), defaultValue: 0,
+    componentProps: { treeData: [], placeholder: $t('system.menu.form.parentIdPlaceholder'), allowClear: true, showSearch: true, treeNodeFilterProp: 'label', treeLine: true, treeDefaultExpandAll: true, dropdownStyle: { maxHeight: '400px' }, style: { width: '100%' } },
   },
-  { component: 'InputNumber', fieldName: 'sort', label: '排序', defaultValue: 0, componentProps: { style: { width: '100%' } } },
-  { component: 'Switch', fieldName: 'isEnabled', label: '启用', defaultValue: true },
-  { component: 'Switch', fieldName: 'isVisible', label: '菜单可见', defaultValue: true,
-    help: '关闭后菜单中不显示，但路由仍可访问',
+  { component: 'InputNumber', fieldName: 'sort', label: $t('system.common.form.sort'), defaultValue: 0, componentProps: { style: { width: '100%' } } },
+  { component: 'Switch', fieldName: 'isEnabled', label: $t('system.common.form.isEnabled'), defaultValue: true },
+  { component: 'Switch', fieldName: 'isVisible', label: $t('system.menu.form.isVisible'), defaultValue: true,
+    help: $t('system.menu.form.isVisibleHelp'),
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type !== 'Button'; },
     },
   },
-  { component: 'Switch', fieldName: 'isCache', label: '缓存', defaultValue: false,
+  { component: 'Switch', fieldName: 'isCache', label: $t('system.menu.form.isCache'), defaultValue: false,
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type === 'Menu'; },
     },
   },
-  { component: 'Switch', fieldName: 'isExternal', label: '外链', defaultValue: false,
+  { component: 'Switch', fieldName: 'isExternal', label: $t('system.menu.form.isExternal'), defaultValue: false,
     dependencies: {
       triggerFields: ['type'],
       if(values) { return values.type === 'Menu'; },
@@ -173,10 +174,10 @@ const [Modal, modalApi] = useVbenModal({
     const values = await formApi.getValues();
     if (editingId.value) {
       await updateMenuApi(editingId.value, values);
-      message.success('更新成功');
+      message.success($t('system.common.messages.updateSuccess'));
     } else {
       await createMenuApi(values);
-      message.success('创建成功');
+      message.success($t('system.common.messages.createSuccess'));
     }
     modalApi.close(); gridApi.query();
   },
@@ -202,28 +203,28 @@ const [Modal, modalApi] = useVbenModal({
 function onCreate(parentId = 0) { modalApi.setData({ parentId }).open(); }
 function onEdit(row: any) { modalApi.setData(row).open(); }
 function onDelete(row: any) {
-  deleteMenuApi(row.id).then(() => { message.success('删除成功'); gridApi.query(); });
+  deleteMenuApi(row.id).then(() => { message.success($t('system.common.messages.deleteSuccess')); gridApi.query(); });
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Modal title="菜单管理">
+    <Modal :title="$t('system.menu.title')">
       <Form />
     </Modal>
-    <Grid table-title="菜单列表">
+    <Grid :table-title="$t('system.menu.tableTitle')">
       <template #toolbar-tools>
-        <Button class="mr-2" @click="expandAll">展开全部</Button>
-        <Button class="mr-2" @click="collapseAll">折叠全部</Button>
-        <Button v-if="hasAccessByCodes(['system:menu:create'])" type="primary" @click="onCreate(0)"><Plus class="mr-2 size-4" />新增</Button>
+        <Button class="mr-2" @click="expandAll">{{ $t('system.common.actions.expandAll') }}</Button>
+        <Button class="mr-2" @click="collapseAll">{{ $t('system.common.actions.collapseAll') }}</Button>
+        <Button v-if="hasAccessByCodes(['system:menu:create'])" type="primary" @click="onCreate(0)"><Plus class="mr-2 size-4" />{{ $t('system.common.actions.create') }}</Button>
       </template>
       <template #action="{ row }">
         <VbenTableAction
           :actions="[
-            { text: '新增', auth: 'system:menu:create', onClick: () => onCreate(row.id) },
-            { text: '编辑', auth: 'system:menu:update', onClick: () => onEdit(row) },
+            { text: $t('system.common.actions.create'), auth: 'system:menu:create', onClick: () => onCreate(row.id) },
+            { text: $t('system.common.actions.edit'), auth: 'system:menu:update', onClick: () => onEdit(row) },
           ]"
-          :dropdown-actions="[{ text: '删除', auth: 'system:menu:delete', danger: true, popConfirm: { title: '确认删除？', confirm: () => onDelete(row) } }]"
+          :dropdown-actions="[{ text: $t('system.common.actions.delete'), auth: 'system:menu:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
         />
       </template>
     </Grid>

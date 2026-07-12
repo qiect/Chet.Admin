@@ -1,0 +1,316 @@
+{
+  "common": {
+    "search": {
+      "keyword": "Keyword"
+    },
+    "columns": {
+      "id": "ID",
+      "operation": "Action",
+      "createdAt": "Created At",
+      "status": "Status",
+      "sort": "Sort",
+      "description": "Description",
+      "isEnabled": "Status"
+    },
+    "form": {
+      "sort": "Sort",
+      "description": "Description",
+      "isEnabled": "Enabled",
+      "remark": "Remark"
+    },
+    "actions": {
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "expandAll": "Expand All",
+      "collapseAll": "Collapse All",
+      "confirmDelete": "Confirm delete?"
+    },
+    "messages": {
+      "createSuccess": "Created successfully",
+      "updateSuccess": "Updated successfully",
+      "deleteSuccess": "Deleted successfully"
+    },
+    "empty": "-",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All"
+  },
+  "user": {
+    "title": "User Management",
+    "tableTitle": "User List",
+    "columns": {
+      "username": "Username",
+      "email": "Email",
+      "department": "Department",
+      "roles": "Roles"
+    },
+    "form": {
+      "username": "Username",
+      "email": "Email",
+      "department": "Department",
+      "roles": "Roles",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "newPassword": "New Password",
+      "emailHelp": "Email is the unique login credential and cannot be modified",
+      "emailPlaceholder": "Email is a unique credential and cannot be modified",
+      "departmentPlaceholder": "Select department",
+      "rolesPlaceholder": "Select roles",
+      "passwordPlaceholder": "Please enter password",
+      "confirmPasswordPlaceholder": "Enter password again",
+      "newPasswordPlaceholder": "Please enter new password",
+      "confirmNewPasswordPlaceholder": "Enter new password again"
+    },
+    "actions": {
+      "changePassword": "Change Password"
+    },
+    "messages": {
+      "passwordMinLength": "Password must be at least 6 characters",
+      "passwordMismatch": "The two passwords do not match",
+      "passwordChanged": "Password changed successfully"
+    },
+    "modals": {
+      "create": "Create User",
+      "edit": "Edit User",
+      "changePassword": "Change Password"
+    }
+  },
+  "role": {
+    "title": "Role Management",
+    "tableTitle": "Role List",
+    "columns": {
+      "code": "Role Code",
+      "name": "Role Name",
+      "dataScope": "Data Scope"
+    },
+    "form": {
+      "code": "Role Code",
+      "name": "Role Name",
+      "dataScope": "Data Scope",
+      "customDeptIds": "Custom Departments",
+      "dataScopePlaceholder": "Select data scope",
+      "customDeptIdsPlaceholder": "Select department"
+    },
+    "dataScope": {
+      "All": "All Data",
+      "Dept": "Current Department",
+      "DeptAndChild": "Dept & Subordinates",
+      "Self": "Self Only",
+      "Custom": "Custom"
+    },
+    "dataScopeForm": {
+      "All": "All Data",
+      "Dept": "Current Department Data",
+      "DeptAndChild": "Current Department & Subordinates",
+      "Self": "Self Data Only",
+      "Custom": "Custom Departments"
+    },
+    "actions": {
+      "assignMenu": "Assign Menus"
+    },
+    "messages": {
+      "assignMenuSuccess": "Menu assignment successful"
+    },
+    "modals": {
+      "edit": "Role Management",
+      "assignMenu": "Assign Menus",
+      "assignMenuAlert": "Check menus to assign access permissions. Parent and child nodes are selected independently; button permissions can be assigned separately."
+    },
+    "buttonSuffix": "[Button]"
+  },
+  "menu": {
+    "title": "Menu Management",
+    "tableTitle": "Menu List",
+    "columns": {
+      "name": "Menu Name",
+      "type": "Type",
+      "permission": "Permission",
+      "path": "Path",
+      "component": "Component",
+      "icon": "Icon",
+      "isVisible": "Visible"
+    },
+    "form": {
+      "type": "Type",
+      "name": "Name",
+      "permission": "Permission",
+      "path": "Route Path",
+      "component": "Component Path",
+      "redirect": "Redirect",
+      "icon": "Icon",
+      "parentId": "Parent Menu",
+      "isCache": "Cache",
+      "isExternal": "External",
+      "isVisible": "Menu Visible",
+      "parentIdPlaceholder": "Leave empty for top-level menu",
+      "typeHelp": "Directory=top-level group, Menu=page, Button=action permission",
+      "permissionHelp": "e.g. system:user:list",
+      "descriptionHelp": "Description for button/permission",
+      "isVisibleHelp": "When disabled, the menu is hidden but the route is still accessible"
+    },
+    "type": {
+      "Directory": "Directory",
+      "Menu": "Menu",
+      "Button": "Button"
+    }
+  },
+  "department": {
+    "title": "Department Management",
+    "tableTitle": "Department List",
+    "columns": {
+      "name": "Department Name",
+      "code": "Code",
+      "leader": "Leader",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "form": {
+      "name": "Department Name",
+      "code": "Department Code",
+      "parentId": "Parent Department",
+      "leader": "Leader",
+      "phone": "Contact Phone",
+      "email": "Email",
+      "codeHelp": "e.g. TECH, HR, FIN",
+      "parentIdPlaceholder": "Leave empty for top-level department"
+    }
+  },
+  "dictionary": {
+    "title": "Dictionary Management",
+    "tableTitle": "Dictionary List",
+    "columns": {
+      "dictType": "Dictionary Type",
+      "name": "Name",
+      "value": "Value",
+      "label": "Label",
+      "remark": "Remark"
+    },
+    "search": {
+      "dictType": "Dictionary Type"
+    },
+    "form": {
+      "dictType": "Dictionary Type",
+      "name": "Name",
+      "value": "Dictionary Value",
+      "label": "Label",
+      "remark": "Remark",
+      "parentId": "Parent ID"
+    }
+  },
+  "notification": {
+    "title": "Notifications",
+    "tableTitle": "Notification List",
+    "columns": {
+      "title": "Title",
+      "type": "Type",
+      "priority": "Priority",
+      "isGlobal": "Global",
+      "senderName": "Sender",
+      "systemSender": "System",
+      "userPrefix": "User"
+    },
+    "form": {
+      "title": "Title",
+      "content": "Content",
+      "type": "Type",
+      "priority": "Priority",
+      "isGlobal": "Global Notification",
+      "recipientUserIds": "Recipients",
+      "recipientUserIdsPlaceholder": "Select recipients"
+    },
+    "type": {
+      "Announcement": "Announcement",
+      "Notification": "Notification",
+      "Todo": "Todo"
+    },
+    "priority": {
+      "Low": "Low",
+      "Normal": "Normal",
+      "High": "High",
+      "Urgent": "Urgent"
+    },
+    "messages": {
+      "selectRecipients": "Please select recipients for non-global notification"
+    },
+    "modals": {
+      "create": "Create Notification"
+    }
+  },
+  "onlineUser": {
+    "title": "Online Users",
+    "columns": {
+      "userName": "Username",
+      "clientIp": "Login IP",
+      "loginTime": "Login Time",
+      "lastActiveTime": "Last Active"
+    },
+    "actions": {
+      "forceOffline": "Force Offline"
+    },
+    "messages": {
+      "forceOfflineSuccess": "Forced offline",
+      "forceOfflineFailed": "Operation failed"
+    }
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "tableTitle": "Operation Log",
+    "search": {
+      "module": "Module",
+      "action": "Action Type",
+      "timeRange": "Operation Time"
+    },
+    "columns": {
+      "userName": "Operator",
+      "module": "Module",
+      "action": "Action",
+      "requestPath": "Request Path",
+      "clientIp": "IP",
+      "duration": "Duration",
+      "operatedAt": "Operated At"
+    },
+    "module": {
+      "User": "User",
+      "Role": "Role",
+      "Menu": "Menu",
+      "Department": "Department",
+      "Permission": "Permission",
+      "Dictionary": "Dictionary",
+      "Auth": "Auth"
+    },
+    "action": {
+      "Create": "Create",
+      "Update": "Update",
+      "Delete": "Delete",
+      "Login": "Login",
+      "Logout": "Logout",
+      "Assign": "Assign"
+    },
+    "messages": {
+      "selectClearDate": "Please select a clear date",
+      "clearSuccess": "Cleared successfully"
+    },
+    "clearBeforeDatePlaceholder": "Clear before this date",
+    "clearButton": "Clear"
+  },
+  "file": {
+    "title": "File Management",
+    "tableTitle": "File List",
+    "columns": {
+      "fileName": "File Name",
+      "fileSize": "Size",
+      "contentType": "Type",
+      "createdAt": "Upload Time"
+    },
+    "actions": {
+      "upload": "Upload File",
+      "download": "Download"
+    },
+    "messages": {
+      "uploadSuccess": "Uploaded successfully",
+      "uploadFailed": "Upload failed",
+      "downloadFailed": "Download failed"
+    }
+  }
+}

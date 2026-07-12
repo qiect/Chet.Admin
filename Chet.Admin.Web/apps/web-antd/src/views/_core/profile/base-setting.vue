@@ -10,6 +10,7 @@ import { message, Upload, Avatar } from 'ant-design-vue';
 
 import { getProfileApi, updateProfileApi } from '#/api';
 import { uploadFileApi } from '#/api/system/file';
+import { $t } from '#/locales';
 
 const profileBaseSettingRef = ref();
 const userStore = useUserStore();
@@ -26,20 +27,20 @@ const formSchema = computed((): VbenFormSchema[] => {
     {
       fieldName: 'realName',
       component: 'Input',
-      label: '姓名',
+      label: $t('profile.baseSetting.realName'),
       rules: 'required',
     },
     {
       fieldName: 'username',
       component: 'Input',
-      label: '邮箱',
+      label: $t('profile.baseSetting.email'),
       componentProps: { disabled: true },
-      help: '邮箱为登录唯一凭证，不可修改',
+      help: $t('profile.baseSetting.emailHelp'),
     },
     {
       fieldName: 'introduction',
       component: 'Textarea',
-      label: '个人简介',
+      label: $t('profile.baseSetting.introduction'),
     },
   ];
 });
@@ -55,7 +56,7 @@ onMounted(async () => {
       introduction: data?.introduction,
     });
   } catch {
-    message.error('获取个人信息失败');
+    message.error($t('profile.baseSetting.getProfileFailed'));
   }
 });
 
@@ -63,12 +64,12 @@ onMounted(async () => {
 function beforeUpload(file: File) {
   const isImage = /^image\/(jpeg|png|gif|webp|bmp)$/i.test(file.type);
   if (!isImage) {
-    message.error('只能上传 JPG/PNG/GIF/WEBP/BMP 格式的图片');
+    message.error($t('profile.baseSetting.invalidImageFormat'));
     return false;
   }
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isLt2M) {
-    message.error('头像图片大小不能超过 2MB');
+    message.error($t('profile.baseSetting.avatarSizeExceeded'));
     return false;
   }
   // 返回 true（或不返回），交给 custom-request 处理
@@ -84,7 +85,7 @@ async function handleCustomUpload(options: { file: File }) {
     // 后端返回 { filePath: 'uploads/xxx.jpg' }
     const filePath = res?.filePath || res?.data?.filePath;
     if (!filePath) {
-      message.error('头像上传失败：未获取到文件地址');
+      message.error($t('profile.baseSetting.avatarUploadFailedNoPath'));
       return;
     }
     // 更新个人资料中的头像字段
@@ -94,9 +95,9 @@ async function handleCustomUpload(options: { file: File }) {
     if (userStore.userInfo) {
       userStore.setUserInfo({ ...userStore.userInfo, avatar: filePath });
     }
-    message.success('头像更新成功');
+    message.success($t('profile.baseSetting.avatarUpdateSuccess'));
   } catch (error) {
-    message.error('头像上传失败');
+    message.error($t('profile.baseSetting.avatarUploadFailed'));
   } finally {
     uploading.value = false;
   }
@@ -106,9 +107,9 @@ async function handleCustomUpload(options: { file: File }) {
 async function handleSubmit(values: Record<string, any>) {
   try {
     await updateProfileApi({ name: values.realName });
-    message.success('个人信息更新成功');
+    message.success($t('profile.baseSetting.profileUpdateSuccess'));
   } catch {
-    message.error('个人信息更新失败');
+    message.error($t('profile.baseSetting.profileUpdateFailed'));
   }
 }
 </script>
@@ -116,7 +117,7 @@ async function handleSubmit(values: Record<string, any>) {
   <div class="profile-container">
     <!-- 头像上传区域 -->
     <div class="avatar-section">
-      <div class="avatar-label">头像</div>
+      <div class="avatar-label">{{ $t('profile.baseSetting.avatar') }}</div>
       <div class="avatar-content">
         <Avatar
               :size="96"
@@ -132,10 +133,10 @@ async function handleSubmit(values: Record<string, any>) {
           accept="image/jpeg,image/png,image/gif,image/webp,image/bmp"
         >
           <a-button type="primary" :loading="uploading" ghost>
-            {{ uploading ? '上传中...' : '更换头像' }}
+            {{ uploading ? $t('profile.baseSetting.uploading') : $t('profile.baseSetting.changeAvatar') }}
           </a-button>
         </Upload>
-        <div class="avatar-tip">支持 JPG/PNG/GIF/WEBP/BMP，大小不超过 2MB</div>
+        <div class="avatar-tip">{{ $t('profile.baseSetting.avatarTip') }}</div>
       </div>
     </div>
 

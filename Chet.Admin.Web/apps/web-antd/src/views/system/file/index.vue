@@ -5,6 +5,7 @@ import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-tab
 import { Page } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 import { useAccess } from '@vben/access';
+import { formatDateTime } from '@vben/utils';
 
 import { Button, message, Upload } from 'ant-design-vue';
 import type { UploadProps } from 'ant-design-vue';
@@ -16,39 +17,40 @@ import {
   getFileListApi,
   uploadFileApi,
 } from '#/api/system/file';
+import { $t } from '#/locales';
 import { ref } from 'vue';
 
 const { hasAccessByCodes } = useAccess();
 
 const searchSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'keyword', label: '关键字' },
+  { component: 'Input', fieldName: 'keyword', label: $t('system.common.search.keyword') },
 ];
 
 // 文件大小格式化
 function formatFileSize(size: number) {
-  if (!size) return '-';
+  if (!size) return $t('system.common.empty');
   if (size < 1024) return `${size} B`;
   if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
   return `${(size / (1024 * 1024)).toFixed(2)} MB`;
 }
 
 const columns: VxeTableGridColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'fileName', title: '文件名', minWidth: 200 },
+  { field: 'id', title: $t('system.common.columns.id'), width: 80 },
+  { field: 'fileName', title: $t('system.file.columns.fileName'), minWidth: 200 },
   {
     field: 'fileSize',
-    title: '大小',
+    title: $t('system.file.columns.fileSize'),
     width: 120,
     slots: { default: ({ row }) => formatFileSize(row.fileSize) },
   },
-  { field: 'contentType', title: '类型', width: 150 },
+  { field: 'contentType', title: $t('system.file.columns.contentType'), width: 150 },
   {
     field: 'createdAt',
-    title: '上传时间',
+    title: $t('system.file.columns.createdAt'),
     minWidth: 180,
     slots: {
       default: ({ row }) =>
-        row.createdAt ? new Date(row.createdAt).toLocaleString('zh-CN') : '-',
+        row.createdAt ? formatDateTime(row.createdAt) : $t('system.common.empty'),
     },
   },
   {
@@ -56,7 +58,7 @@ const columns: VxeTableGridColumns = [
     field: 'operation',
     fixed: 'right',
     slots: { default: 'action' },
-    title: '操作',
+    title: $t('system.common.columns.operation'),
     width: 180,
   },
 ];
@@ -97,11 +99,11 @@ const customUpload: UploadProps['customRequest'] = async (options) => {
   try {
     await uploadFileApi(file as File);
     onSuccess?.({}, file);
-    message.success(`${(file as File).name} 上传成功`);
+    message.success(`${(file as File).name} ${$t('system.file.messages.uploadSuccess')}`);
     gridApi.query();
   } catch (error) {
     onError?.(error as Error);
-    message.error(`${(file as File).name} 上传失败`);
+    message.error(`${(file as File).name} ${$t('system.file.messages.uploadFailed')}`);
   } finally {
     uploading.value = false;
   }
@@ -119,13 +121,13 @@ async function onDownload(row: any) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   } catch {
-    message.error('下载失败');
+    message.error($t('system.file.messages.downloadFailed'));
   }
 }
 
 function onDelete(row: any) {
   deleteFileApi(row.id).then(() => {
-    message.success('删除成功');
+    message.success($t('system.common.messages.deleteSuccess'));
     gridApi.query();
   });
 }
@@ -133,7 +135,7 @@ function onDelete(row: any) {
 
 <template>
   <Page auto-content-height>
-    <Grid table-title="文件列表">
+    <Grid :table-title="$t('system.file.tableTitle')">
       <template #toolbar-tools>
         <Upload
           v-if="hasAccessByCodes(['system:file:upload'])"
@@ -142,17 +144,17 @@ function onDelete(row: any) {
           :show-button="false"
         >
           <Button type="primary" :loading="uploading">
-            <Plus class="mr-2 size-4" />上传文件
+            <Plus class="mr-2 size-4" />{{ $t('system.file.actions.upload') }}
           </Button>
         </Upload>
       </template>
       <template #action="{ row }">
         <VbenTableAction
           :actions="[
-            { text: '下载', onClick: () => onDownload(row) },
+            { text: $t('system.file.actions.download'), onClick: () => onDownload(row) },
           ]"
           :dropdown-actions="[
-            { text: '删除', auth: 'system:file:delete', danger: true, popConfirm: { title: '确认删除？', confirm: () => onDelete(row) } },
+            { text: $t('system.common.actions.delete'), auth: 'system:file:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } },
           ]"
         />
       </template>

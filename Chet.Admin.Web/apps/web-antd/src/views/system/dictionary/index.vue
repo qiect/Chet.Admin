@@ -12,24 +12,25 @@ import { ref } from 'vue';
 import { useVbenForm } from '#/adapter/form';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import { createDictApi, deleteDictApi, getDictListApi, updateDictApi } from '#/api/system/dictionary';
+import { $t } from '#/locales';
 
 const { hasAccessByCodes } = useAccess();
 
 const searchSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'keyword', label: '关键字' },
-  { component: 'Input', fieldName: 'dictType', label: '字典类型' },
+  { component: 'Input', fieldName: 'keyword', label: $t('system.common.search.keyword') },
+  { component: 'Input', fieldName: 'dictType', label: $t('system.dictionary.search.dictType') },
 ];
 
 const columns: VxeTableGridColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'dictType', title: '字典类型', minWidth: 120 },
-  { field: 'name', title: '名称', minWidth: 150 },
-  { field: 'value', title: '值', minWidth: 100 },
-  { field: 'label', title: '标签', minWidth: 120 },
-  { field: 'sort', title: '排序', width: 80 },
-  { field: 'isEnabled', title: '状态', width: 80, cellRender: { name: 'CellTag' } },
-  { field: 'remark', title: '备注', minWidth: 150 },
-  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: '操作', width: 160 },
+  { field: 'id', title: $t('system.common.columns.id'), width: 80 },
+  { field: 'dictType', title: $t('system.dictionary.columns.dictType'), minWidth: 120 },
+  { field: 'name', title: $t('system.dictionary.columns.name'), minWidth: 150 },
+  { field: 'value', title: $t('system.dictionary.columns.value'), minWidth: 100 },
+  { field: 'label', title: $t('system.dictionary.columns.label'), minWidth: 120 },
+  { field: 'sort', title: $t('system.common.columns.sort'), width: 80 },
+  { field: 'isEnabled', title: $t('system.common.columns.isEnabled'), width: 80, cellRender: { name: 'CellTag' } },
+  { field: 'remark', title: $t('system.dictionary.columns.remark'), minWidth: 150 },
+  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 160 },
 ];
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -47,14 +48,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
 });
 
 const formSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'dictType', label: '字典类型', rules: 'required' },
-  { component: 'Input', fieldName: 'name', label: '名称', rules: 'required' },
-  { component: 'Input', fieldName: 'value', label: '字典值', rules: 'required' },
-  { component: 'Input', fieldName: 'label', label: '标签', rules: 'required' },
-  { component: 'InputNumber', fieldName: 'sort', label: '排序', defaultValue: 0, componentProps: { style: { width: '100%' } } },
-  { component: 'Switch', fieldName: 'isEnabled', label: '启用', defaultValue: true },
-  { component: 'Textarea', fieldName: 'remark', label: '备注' },
-  { component: 'InputNumber', fieldName: 'parentId', label: '父级ID', defaultValue: 0, componentProps: { style: { width: '100%' } } },
+  { component: 'Input', fieldName: 'dictType', label: $t('system.dictionary.form.dictType'), rules: 'required' },
+  { component: 'Input', fieldName: 'name', label: $t('system.dictionary.form.name'), rules: 'required' },
+  { component: 'Input', fieldName: 'value', label: $t('system.dictionary.form.value'), rules: 'required' },
+  { component: 'Input', fieldName: 'label', label: $t('system.dictionary.form.label'), rules: 'required' },
+  { component: 'InputNumber', fieldName: 'sort', label: $t('system.common.form.sort'), defaultValue: 0, componentProps: { style: { width: '100%' } } },
+  { component: 'Switch', fieldName: 'isEnabled', label: $t('system.common.form.isEnabled'), defaultValue: true },
+  { component: 'Textarea', fieldName: 'remark', label: $t('system.common.form.remark') },
+  { component: 'InputNumber', fieldName: 'parentId', label: $t('system.dictionary.form.parentId'), defaultValue: 0, componentProps: { style: { width: '100%' } } },
 ];
 
 const [Form, formApi] = useVbenForm({ schema: formSchema, showDefaultActions: false });
@@ -65,8 +66,8 @@ const editingId = ref(0);
 const [Modal, modalApi] = useVbenModal({
   onConfirm: async () => {
     const values = await formApi.getValues();
-    if (editingId.value) { await updateDictApi(editingId.value, values); message.success('更新成功'); }
-    else { await createDictApi(values); message.success('创建成功'); }
+    if (editingId.value) { await updateDictApi(editingId.value, values); message.success($t('system.common.messages.updateSuccess')); }
+    else { await createDictApi(values); message.success($t('system.common.messages.createSuccess')); }
     modalApi.close(); gridApi.query();
   },
   onOpenChange(isOpen) {
@@ -82,23 +83,23 @@ const [Modal, modalApi] = useVbenModal({
 function onCreate() { modalApi.setData({}).open(); }
 function onEdit(row: any) { modalApi.setData(row).open(); }
 function onDelete(row: any) {
-  deleteDictApi(row.id).then(() => { message.success('删除成功'); gridApi.query(); });
+  deleteDictApi(row.id).then(() => { message.success($t('system.common.messages.deleteSuccess')); gridApi.query(); });
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Modal title="字典管理">
+    <Modal :title="$t('system.dictionary.title')">
       <Form />
     </Modal>
-    <Grid table-title="字典列表">
+    <Grid :table-title="$t('system.dictionary.tableTitle')">
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes(['system:dict:create'])" type="primary" @click="onCreate"><Plus class="mr-2 size-4" />新增</Button>
+        <Button v-if="hasAccessByCodes(['system:dict:create'])" type="primary" @click="onCreate"><Plus class="mr-2 size-4" />{{ $t('system.common.actions.create') }}</Button>
       </template>
       <template #action="{ row }">
         <VbenTableAction
-          :actions="[{ text: '编辑', auth: 'system:dict:update', onClick: () => onEdit(row) }]"
-          :dropdown-actions="[{ text: '删除', auth: 'system:dict:delete', danger: true, popConfirm: { title: '确认删除？', confirm: () => onDelete(row) } }]"
+          :actions="[{ text: $t('system.common.actions.edit'), auth: 'system:dict:update', onClick: () => onEdit(row) }]"
+          :dropdown-actions="[{ text: $t('system.common.actions.delete'), auth: 'system:dict:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
         />
       </template>
     </Grid>

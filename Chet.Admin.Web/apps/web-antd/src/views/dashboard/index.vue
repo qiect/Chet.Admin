@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { usePreferences } from '@vben/preferences';
 import { IconifyIcon } from '@vben/icons';
+import { $t } from '#/locales';
 import { getDashboardStatsApi, getDashboardTrendApi, getRecentLogsApi } from '#/api/system/dashboard';
 
 const router = useRouter();
@@ -22,12 +23,12 @@ const loading = ref(true);
 
 const greeting = computed(() => {
   const h = new Date().getHours();
-  if (h < 6) return '夜深了';
-  if (h < 9) return '早上好';
-  if (h < 12) return '上午好';
-  if (h < 14) return '中午好';
-  if (h < 18) return '下午好';
-  return '晚上好';
+  if (h < 6) return $t('dashboard.greeting.lateNight');
+  if (h < 9) return $t('dashboard.greeting.morning');
+  if (h < 12) return $t('dashboard.greeting.forenoon');
+  if (h < 14) return $t('dashboard.greeting.noon');
+  if (h < 18) return $t('dashboard.greeting.afternoon');
+  return $t('dashboard.greeting.evening');
 });
 
 const currentTime = ref('');
@@ -35,9 +36,17 @@ const currentDate = ref('');
 
 function updateTime() {
   const now = new Date();
-  currentTime.value = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-  currentDate.value = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }) + ' ' + weekDays[now.getDay()];
+  currentTime.value = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const weekDays = [
+    $t('dashboard.weekdays.sunday'),
+    $t('dashboard.weekdays.monday'),
+    $t('dashboard.weekdays.tuesday'),
+    $t('dashboard.weekdays.wednesday'),
+    $t('dashboard.weekdays.thursday'),
+    $t('dashboard.weekdays.friday'),
+    $t('dashboard.weekdays.saturday'),
+  ];
+  currentDate.value = now.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ' ' + weekDays[now.getDay()];
 }
 
 let timer: ReturnType<typeof setInterval>;
@@ -139,10 +148,10 @@ function formatTime(dateStr: string) {
   const d = new Date(dateStr);
   const now = new Date();
   const diff = now.getTime() - d.getTime();
-  if (diff < 60000) return '刚刚';
-  if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)} 小时前`;
-  return `${Math.floor(diff / 86400000)} 天前`;
+  if (diff < 60000) return $t('dashboard.relativeTime.justNow');
+  if (diff < 3600000) return $t('dashboard.relativeTime.minutesAgo', { n: Math.floor(diff / 60000) });
+  if (diff < 86400000) return $t('dashboard.relativeTime.hoursAgo', { n: Math.floor(diff / 3600000) });
+  return $t('dashboard.relativeTime.daysAgo', { n: Math.floor(diff / 86400000) });
 }
 
 const actionIconMap: Record<string, string> = {
@@ -199,12 +208,12 @@ onUnmounted(() => {
 });
 
 const shortcuts = [
-  { icon: 'lucide:users', title: '用户管理', desc: '管理系统用户', path: '/system/user', color: '#6366f1' },
-  { icon: 'lucide:shield', title: '角色管理', desc: '角色与权限配置', path: '/system/role', color: '#f59e0b' },
-  { icon: 'lucide:menu', title: '菜单管理', desc: '菜单与路由配置', path: '/system/menu', color: '#10b981' },
-  { icon: 'lucide:building', title: '部门管理', desc: '组织架构管理', path: '/system/department', color: '#3b82f6' },
-  { icon: 'lucide:book-open', title: '字典管理', desc: '数据字典维护', path: '/system/dictionary', color: '#8b5cf6' },
-  { icon: 'lucide:bell', title: '通知管理', desc: '系统通知公告', path: '/system/notification', color: '#ef4444' },
+  { icon: 'lucide:users', titleKey: 'dashboard.shortcuts.user.title', descKey: 'dashboard.shortcuts.user.desc', path: '/system/user', color: '#6366f1' },
+  { icon: 'lucide:shield', titleKey: 'dashboard.shortcuts.role.title', descKey: 'dashboard.shortcuts.role.desc', path: '/system/role', color: '#f59e0b' },
+  { icon: 'lucide:menu', titleKey: 'dashboard.shortcuts.menu.title', descKey: 'dashboard.shortcuts.menu.desc', path: '/system/menu', color: '#10b981' },
+  { icon: 'lucide:building', titleKey: 'dashboard.shortcuts.department.title', descKey: 'dashboard.shortcuts.department.desc', path: '/system/department', color: '#3b82f6' },
+  { icon: 'lucide:book-open', titleKey: 'dashboard.shortcuts.dictionary.title', descKey: 'dashboard.shortcuts.dictionary.desc', path: '/system/dictionary', color: '#8b5cf6' },
+  { icon: 'lucide:bell', titleKey: 'dashboard.shortcuts.notification.title', descKey: 'dashboard.shortcuts.notification.desc', path: '/system/notification', color: '#ef4444' },
 ];
 
 function goPage(path: string) {
@@ -224,8 +233,8 @@ function goPage(path: string) {
       <div class="hero-content">
         <div class="hero-greeting">
           <IconifyIcon icon="lucide:hand-metal" class="hero-wave-icon" />
-          <h1 class="hero-title">{{ greeting }}，<span class="hero-highlight">管理员</span></h1>
-          <p class="hero-subtitle">欢迎回到 Chet Admin 管理系统</p>
+          <h1 class="hero-title">{{ greeting }}，<span class="hero-highlight">{{ $t('dashboard.hero.admin') }}</span></h1>
+          <p class="hero-subtitle">{{ $t('dashboard.hero.welcome') }}</p>
         </div>
         <div class="hero-time">
           <div class="time-display">{{ currentTime }}</div>
@@ -240,42 +249,42 @@ function goPage(path: string) {
         <div class="stat-icon"><IconifyIcon icon="lucide:users" width="24" /></div>
         <div class="stat-info">
           <div class="stat-value">{{ stats.userCount }}</div>
-          <div class="stat-label">用户总数</div>
+          <div class="stat-label">{{ $t('dashboard.stat.userCount') }}</div>
         </div>
       </div>
       <div class="stat-card" style="--accent: #f59e0b">
         <div class="stat-icon"><IconifyIcon icon="lucide:shield" width="24" /></div>
         <div class="stat-info">
           <div class="stat-value">{{ stats.roleCount }}</div>
-          <div class="stat-label">角色数量</div>
+          <div class="stat-label">{{ $t('dashboard.stat.roleCount') }}</div>
         </div>
       </div>
       <div class="stat-card" style="--accent: #10b981">
         <div class="stat-icon"><IconifyIcon icon="lucide:menu" width="24" /></div>
         <div class="stat-info">
           <div class="stat-value">{{ stats.menuCount }}</div>
-          <div class="stat-label">菜单项数</div>
+          <div class="stat-label">{{ $t('dashboard.stat.menuCount') }}</div>
         </div>
       </div>
       <div class="stat-card" style="--accent: #3b82f6">
         <div class="stat-icon"><IconifyIcon icon="lucide:building" width="24" /></div>
         <div class="stat-info">
           <div class="stat-value">{{ stats.departmentCount }}</div>
-          <div class="stat-label">部门数量</div>
+          <div class="stat-label">{{ $t('dashboard.stat.departmentCount') }}</div>
         </div>
       </div>
       <div class="stat-card" style="--accent: #ef4444">
         <div class="stat-icon"><IconifyIcon icon="lucide:log-in" width="24" /></div>
         <div class="stat-info">
           <div class="stat-value">{{ stats.todayLoginCount }}</div>
-          <div class="stat-label">今日登录</div>
+          <div class="stat-label">{{ $t('dashboard.stat.todayLogin') }}</div>
         </div>
       </div>
       <div class="stat-card" style="--accent: #8b5cf6">
         <div class="stat-icon"><IconifyIcon icon="lucide:activity" width="24" /></div>
         <div class="stat-info">
           <div class="stat-value">{{ stats.activeUserCount }}</div>
-          <div class="stat-label">7日活跃</div>
+          <div class="stat-label">{{ $t('dashboard.stat.active7d') }}</div>
         </div>
       </div>
     </div>
@@ -285,8 +294,8 @@ function goPage(path: string) {
       <!-- 趋势图 -->
       <div class="trend-card">
         <div class="card-header">
-          <h3 class="card-title"><IconifyIcon icon="lucide:trending-up" width="18" class="card-title-icon" /> 登录趋势</h3>
-          <span class="card-subtitle">近 7 日</span>
+          <h3 class="card-title"><IconifyIcon icon="lucide:trending-up" width="18" class="card-title-icon" /> {{ $t('dashboard.trend.title') }}</h3>
+          <span class="card-subtitle">{{ $t('dashboard.trend.recent7days') }}</span>
         </div>
         <div class="trend-chart-wrap">
           <svg :viewBox="`0 0 ${chartWidth} ${chartHeight}`" class="trend-svg">
@@ -389,7 +398,7 @@ function goPage(path: string) {
                   font-size="11"
                   font-weight="600"
                 >
-                  {{ pt.loginCount }} 次
+                  {{ $t('dashboard.trend.times', { n: pt.loginCount }) }}
                 </text>
               </g>
               <!-- 垂直辅助线 -->
@@ -419,15 +428,15 @@ function goPage(path: string) {
               {{ label.text }}
             </text>
           </svg>
-          <div v-if="!trendItems.length" class="trend-empty">暂无趋势数据</div>
+          <div v-if="!trendItems.length" class="trend-empty">{{ $t('dashboard.trend.empty') }}</div>
         </div>
       </div>
 
       <!-- 最近操作 -->
       <div class="logs-card">
         <div class="card-header">
-          <h3 class="card-title"><IconifyIcon icon="lucide:scroll-text" width="18" class="card-title-icon" /> 最近操作</h3>
-          <span class="card-subtitle">最近 10 条</span>
+          <h3 class="card-title"><IconifyIcon icon="lucide:scroll-text" width="18" class="card-title-icon" /> {{ $t('dashboard.logs.title') }}</h3>
+          <span class="card-subtitle">{{ $t('dashboard.logs.recent10') }}</span>
         </div>
         <div class="logs-list">
           <div v-for="log in recentLogs" :key="log.id" class="log-item">
@@ -446,7 +455,7 @@ function goPage(path: string) {
           </div>
           <div v-if="!recentLogs.length" class="logs-empty">
             <IconifyIcon icon="lucide:inbox" width="32" />
-            <span>暂无操作记录</span>
+            <span>{{ $t('dashboard.logs.empty') }}</span>
           </div>
         </div>
       </div>
@@ -454,8 +463,8 @@ function goPage(path: string) {
 
     <!-- 快捷入口 -->
     <div class="section-header">
-      <h2 class="section-title">快捷入口</h2>
-      <p class="section-desc">快速访问常用功能模块</p>
+      <h2 class="section-title">{{ $t('dashboard.shortcuts.sectionTitle') }}</h2>
+      <p class="section-desc">{{ $t('dashboard.shortcuts.sectionDesc') }}</p>
     </div>
     <div class="shortcuts-grid">
       <div
@@ -467,8 +476,8 @@ function goPage(path: string) {
       >
         <div class="shortcut-icon"><IconifyIcon :icon="item.icon" width="22" /></div>
         <div class="shortcut-info">
-          <div class="shortcut-title">{{ item.title }}</div>
-          <div class="shortcut-desc">{{ item.desc }}</div>
+          <div class="shortcut-title">{{ $t(item.titleKey) }}</div>
+          <div class="shortcut-desc">{{ $t(item.descKey) }}</div>
         </div>
         <div class="shortcut-arrow"><IconifyIcon icon="lucide:arrow-right" width="16" /></div>
       </div>
@@ -477,14 +486,14 @@ function goPage(path: string) {
     <!-- 系统信息 -->
     <div class="system-info">
       <div class="info-card">
-        <h3 class="info-title">系统信息</h3>
+        <h3 class="info-title">{{ $t('dashboard.systemInfo.title') }}</h3>
         <div class="info-grid">
-          <div class="info-item"><span class="info-label">系统名称</span><span class="info-value">Chet Admin</span></div>
-          <div class="info-item"><span class="info-label">框架版本</span><span class="info-value">Vben Admin v5.7</span></div>
-          <div class="info-item"><span class="info-label">前端框架</span><span class="info-value">Vue 3 + TypeScript</span></div>
-          <div class="info-item"><span class="info-label">UI 组件库</span><span class="info-value">Ant Design Vue</span></div>
-          <div class="info-item"><span class="info-label">后端框架</span><span class="info-value">.NET Core WebAPI</span></div>
-          <div class="info-item"><span class="info-label">数据库</span><span class="info-value">SQLite (EF Core)</span></div>
+          <div class="info-item"><span class="info-label">{{ $t('dashboard.systemInfo.systemName') }}</span><span class="info-value">Chet Admin</span></div>
+          <div class="info-item"><span class="info-label">{{ $t('dashboard.systemInfo.frameworkVersion') }}</span><span class="info-value">Vben Admin v5.7</span></div>
+          <div class="info-item"><span class="info-label">{{ $t('dashboard.systemInfo.frontendFramework') }}</span><span class="info-value">Vue 3 + TypeScript</span></div>
+          <div class="info-item"><span class="info-label">{{ $t('dashboard.systemInfo.uiLibrary') }}</span><span class="info-value">Ant Design Vue</span></div>
+          <div class="info-item"><span class="info-label">{{ $t('dashboard.systemInfo.backendFramework') }}</span><span class="info-value">.NET Core WebAPI</span></div>
+          <div class="info-item"><span class="info-label">{{ $t('dashboard.systemInfo.database') }}</span><span class="info-value">SQLite (EF Core)</span></div>
         </div>
       </div>
     </div>

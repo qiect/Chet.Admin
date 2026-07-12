@@ -1,0 +1,35 @@
+{
+  "http": {
+    "tooManyRequests": "请求过于频繁，请稍后再试",
+    "forbidden": "没有操作权限",
+    "notFound": "请求的资源不存在",
+    "internalError": "服务器内部错误，请稍后重试",
+    "requestFailed": "请求失败"
+  },
+  "notification": {
+    "title": "通知",
+    "markAllRead": "全部已读",
+    "empty": "暂无通知",
+    "viewAll": "查看全部",
+    "detailTitle": "通知详情",
+    "noContent": "（无内容）",
+    "priorityLabel": "优先级",
+    "type": {
+      "Announcement": "公告",
+      "Notification": "通知",
+      "Todo": "待办"
+    },
+    "priority": {
+      "Low": "低",
+      "Normal": "普通",
+      "High": "高",
+      "Urgent": "紧急"
+    },
+    "time": {
+      "justNow": "刚刚",
+      "minutesAgo": "{count}分钟前",
+      "hoursAgo": "{count}小时前",
+      "daysAgo": "{count}天前"
+    }
+  }
+}

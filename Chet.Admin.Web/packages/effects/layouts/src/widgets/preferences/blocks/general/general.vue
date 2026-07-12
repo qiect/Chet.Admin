@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref, unref } from 'vue';
+import { onMounted, ref, unref, watch } from 'vue';
 
 import { SUPPORT_LANGUAGES } from '@vben/constants';
-import { $t } from '@vben/locales';
+import { $t, loadLocaleMessages } from '@vben/locales';
 import { useTimezoneStore } from '@vben/stores';
 
 import InputItem from '../input-item.vue';
@@ -39,6 +39,26 @@ onMounted(async () => {
     appTimezone.value = timezoneValue;
   }
 });
+
+// 语言切换时立即加载语言包，使切换即时生效
+watch(
+  appLocale,
+  (val) => {
+    if (val) {
+      loadLocaleMessages(val as any);
+    }
+  },
+);
+
+// 时区切换时同步到 timezoneStore，使 dayjs 默认时区立即更新
+watch(
+  appTimezone,
+  (val) => {
+    if (val && val !== unref(timezoneStore.timezone)) {
+      timezoneStore.setTimezone(val);
+    }
+  },
+);
 </script>
 
 <template>

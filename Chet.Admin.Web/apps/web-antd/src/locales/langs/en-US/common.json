@@ -1,0 +1,35 @@
+{
+  "http": {
+    "tooManyRequests": "Too many requests, please try again later",
+    "forbidden": "No permission to perform this action",
+    "notFound": "The requested resource was not found",
+    "internalError": "Internal server error, please try again later",
+    "requestFailed": "Request failed"
+  },
+  "notification": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications",
+    "viewAll": "View all",
+    "detailTitle": "Notification Details",
+    "noContent": "(No content)",
+    "priorityLabel": "Priority",
+    "type": {
+      "Announcement": "Announcement",
+      "Notification": "Notification",
+      "Todo": "Todo"
+    },
+    "priority": {
+      "Low": "Low",
+      "Normal": "Normal",
+      "High": "High",
+      "Urgent": "Urgent"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{count} minutes ago",
+      "hoursAgo": "{count} hours ago",
+      "daysAgo": "{count} days ago"
+    }
+  }
+}

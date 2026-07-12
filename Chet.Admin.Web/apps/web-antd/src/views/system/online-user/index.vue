@@ -3,42 +3,35 @@ import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-tab
 
 import { Page } from '@vben/common-ui';
 import { useAccess } from '@vben/access';
+import { formatDateTime } from '@vben/utils';
 
 import { Button, message } from 'ant-design-vue';
 
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import { getOnlineUsersApi, forceOfflineApi } from '#/api/system/online-user';
+import { $t } from '#/locales';
 
 const { hasAccessByCodes } = useAccess();
 
 // 时间格式化
 function formatTime(value: string) {
-  if (!value) return '-';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '-';
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
+  if (!value) return $t('system.common.empty');
+  return formatDateTime(value);
 }
 
 const columns: VxeTableGridColumns<any> = [
-  { field: 'userId', title: 'ID', width: 70 },
-  { field: 'userName', title: '用户名', minWidth: 120 },
-  { field: 'clientIp', title: '登录IP', minWidth: 140 },
+  { field: 'userId', title: $t('system.common.columns.id'), width: 70 },
+  { field: 'userName', title: $t('system.onlineUser.columns.userName'), minWidth: 120 },
+  { field: 'clientIp', title: $t('system.onlineUser.columns.clientIp'), minWidth: 140 },
   {
     field: 'loginTime',
-    title: '登录时间',
+    title: $t('system.onlineUser.columns.loginTime'),
     minWidth: 180,
     slots: { default: ({ row }) => formatTime(row.loginTime) },
   },
   {
     field: 'lastActiveTime',
-    title: '最后活跃',
+    title: $t('system.onlineUser.columns.lastActiveTime'),
     minWidth: 180,
     slots: { default: ({ row }) => formatTime(row.lastActiveTime) },
   },
@@ -47,7 +40,7 @@ const columns: VxeTableGridColumns<any> = [
     field: 'operation',
     fixed: 'right',
     slots: { default: 'action' },
-    title: '操作',
+    title: $t('system.common.columns.operation'),
     width: 120,
   },
 ];
@@ -79,10 +72,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
 async function onForceOffline(userId: number) {
   try {
     await forceOfflineApi(userId);
-    message.success('已强制下线');
+    message.success($t('system.onlineUser.messages.forceOfflineSuccess'));
     gridApi.query();
   } catch {
-    message.error('操作失败');
+    message.error($t('system.onlineUser.messages.forceOfflineFailed'));
   }
 }
 </script>
@@ -94,7 +87,7 @@ async function onForceOffline(userId: number) {
         <VbenTableAction
           v-if="hasAccessByCodes(['system:online:force-offline'])"
           :actions="[
-            { text: '强制下线', danger: true, onClick: () => onForceOffline(row.userId) },
+            { text: $t('system.onlineUser.actions.forceOffline'), danger: true, onClick: () => onForceOffline(row.userId) },
           ]"
         />
       </template>

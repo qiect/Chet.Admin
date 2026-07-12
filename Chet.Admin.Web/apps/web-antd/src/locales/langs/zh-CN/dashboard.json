@@ -1,0 +1,67 @@
+{
+  "greeting": {
+    "lateNight": "夜深了",
+    "morning": "早上好",
+    "forenoon": "上午好",
+    "noon": "中午好",
+    "afternoon": "下午好",
+    "evening": "晚上好"
+  },
+  "weekdays": {
+    "sunday": "星期日",
+    "monday": "星期一",
+    "tuesday": "星期二",
+    "wednesday": "星期三",
+    "thursday": "星期四",
+    "friday": "星期五",
+    "saturday": "星期六"
+  },
+  "relativeTime": {
+    "justNow": "刚刚",
+    "minutesAgo": "{n} 分钟前",
+    "hoursAgo": "{n} 小时前",
+    "daysAgo": "{n} 天前"
+  },
+  "hero": {
+    "admin": "管理员",
+    "welcome": "欢迎回到 Chet Admin 管理系统"
+  },
+  "stat": {
+    "userCount": "用户总数",
+    "roleCount": "角色数量",
+    "menuCount": "菜单项数",
+    "departmentCount": "部门数量",
+    "todayLogin": "今日登录",
+    "active7d": "7日活跃"
+  },
+  "trend": {
+    "title": "登录趋势",
+    "recent7days": "近 7 日",
+    "times": "{n} 次",
+    "empty": "暂无趋势数据"
+  },
+  "logs": {
+    "title": "最近操作",
+    "recent10": "最近 10 条",
+    "empty": "暂无操作记录"
+  },
+  "shortcuts": {
+    "sectionTitle": "快捷入口",
+    "sectionDesc": "快速访问常用功能模块",
+    "user": { "title": "用户管理", "desc": "管理系统用户" },
+    "role": { "title": "角色管理", "desc": "角色与权限配置" },
+    "menu": { "title": "菜单管理", "desc": "菜单与路由配置" },
+    "department": { "title": "部门管理", "desc": "组织架构管理" },
+    "dictionary": { "title": "字典管理", "desc": "数据字典维护" },
+    "notification": { "title": "通知管理", "desc": "系统通知公告" }
+  },
+  "systemInfo": {
+    "title": "系统信息",
+    "systemName": "系统名称",
+    "frameworkVersion": "框架版本",
+    "frontendFramework": "前端框架",
+    "uiLibrary": "UI 组件库",
+    "backendFramework": "后端框架",
+    "database": "数据库"
+  }
+}

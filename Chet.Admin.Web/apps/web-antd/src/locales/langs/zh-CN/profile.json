@@ -1,0 +1,25 @@
+{
+  "title": "个人中心",
+  "tabs": {
+    "baseSetting": "基本设置",
+    "password": "修改密码"
+  },
+  "baseSetting": {
+    "avatar": "头像",
+    "changeAvatar": "更换头像",
+    "uploading": "上传中...",
+    "avatarTip": "支持 JPG/PNG/GIF/WEBP/BMP，大小不超过 2MB",
+    "realName": "姓名",
+    "email": "邮箱",
+    "emailHelp": "邮箱为登录唯一凭证，不可修改",
+    "introduction": "个人简介",
+    "getProfileFailed": "获取个人信息失败",
+    "invalidImageFormat": "只能上传 JPG/PNG/GIF/WEBP/BMP 格式的图片",
+    "avatarSizeExceeded": "头像图片大小不能超过 2MB",
+    "avatarUploadFailedNoPath": "头像上传失败：未获取到文件地址",
+    "avatarUpdateSuccess": "头像更新成功",
+    "avatarUploadFailed": "头像上传失败",
+    "profileUpdateSuccess": "个人信息更新成功",
+    "profileUpdateFailed": "个人信息更新失败"
+  }
+}

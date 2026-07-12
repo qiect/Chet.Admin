@@ -1,0 +1,67 @@
+{
+  "greeting": {
+    "lateNight": "Working Late",
+    "morning": "Good Morning",
+    "forenoon": "Good Morning",
+    "noon": "Good Noon",
+    "afternoon": "Good Afternoon",
+    "evening": "Good Evening"
+  },
+  "weekdays": {
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday"
+  },
+  "relativeTime": {
+    "justNow": "just now",
+    "minutesAgo": "{n} minutes ago",
+    "hoursAgo": "{n} hours ago",
+    "daysAgo": "{n} days ago"
+  },
+  "hero": {
+    "admin": "Administrator",
+    "welcome": "Welcome back to Chet Admin"
+  },
+  "stat": {
+    "userCount": "Total Users",
+    "roleCount": "Roles",
+    "menuCount": "Menu Items",
+    "departmentCount": "Departments",
+    "todayLogin": "Today Logins",
+    "active7d": "7-Day Active"
+  },
+  "trend": {
+    "title": "Login Trend",
+    "recent7days": "Last 7 Days",
+    "times": "{n} times",
+    "empty": "No trend data"
+  },
+  "logs": {
+    "title": "Recent Activities",
+    "recent10": "Last 10 Records",
+    "empty": "No activity records"
+  },
+  "shortcuts": {
+    "sectionTitle": "Quick Access",
+    "sectionDesc": "Quickly access common modules",
+    "user": { "title": "User Management", "desc": "Manage system users" },
+    "role": { "title": "Role Management", "desc": "Role and permission configuration" },
+    "menu": { "title": "Menu Management", "desc": "Menu and route configuration" },
+    "department": { "title": "Department Management", "desc": "Organizational structure management" },
+    "dictionary": { "title": "Dictionary Management", "desc": "Data dictionary maintenance" },
+    "notification": { "title": "Notification Management", "desc": "System notifications and announcements" }
+  },
+  "systemInfo": {
+    "title": "System Information",
+    "systemName": "System Name",
+    "frameworkVersion": "Framework Version",
+    "frontendFramework": "Frontend Framework",
+    "uiLibrary": "UI Library",
+    "backendFramework": "Backend Framework",
+    "database": "Database"
+  }
+}

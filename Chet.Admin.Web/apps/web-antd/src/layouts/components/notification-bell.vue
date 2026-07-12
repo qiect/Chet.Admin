@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Bell } from '@vben/icons';
@@ -12,6 +12,7 @@ import {
   markAllAsReadApi,
   markAsReadApi,
 } from '#/api/system/notification';
+import { $t } from '#/locales';
 
 const router = useRouter();
 
@@ -101,28 +102,28 @@ function formatTime(dateStr: string) {
   const date = new Date(dateStr);
   const now = new Date();
   const diff = Math.floor((now.getTime() - date.getTime()) / 60_000);
-  if (diff < 1) return '刚刚';
-  if (diff < 60) return `${diff}分钟前`;
-  if (diff < 1_440) return `${Math.floor(diff / 60)}小时前`;
-  return `${Math.floor(diff / 1_440)}天前`;
+  if (diff < 1) return $t('common.notification.time.justNow');
+  if (diff < 60) return $t('common.notification.time.minutesAgo', { count: diff });
+  if (diff < 1_440) return $t('common.notification.time.hoursAgo', { count: Math.floor(diff / 60) });
+  return $t('common.notification.time.daysAgo', { count: Math.floor(diff / 1_440) });
 }
 
-const typeLabelMap: Record<string, string> = {
-  Announcement: '公告',
-  Notification: '通知',
-  Todo: '待办',
-};
+const typeLabelMap = computed<Record<string, string>>(() => ({
+  Announcement: $t('common.notification.type.Announcement'),
+  Notification: $t('common.notification.type.Notification'),
+  Todo: $t('common.notification.type.Todo'),
+}));
 const typeColorMap: Record<string, string> = {
   Announcement: 'blue',
   Notification: 'green',
   Todo: 'orange',
 };
-const priorityLabelMap: Record<string, string> = {
-  Low: '低',
-  Normal: '普通',
-  High: '高',
-  Urgent: '紧急',
-};
+const priorityLabelMap = computed<Record<string, string>>(() => ({
+  Low: $t('common.notification.priority.Low'),
+  Normal: $t('common.notification.priority.Normal'),
+  High: $t('common.notification.priority.High'),
+  Urgent: $t('common.notification.priority.Urgent'),
+}));
 const priorityColorMap: Record<string, string> = {
   Low: 'default',
   Normal: 'blue',
@@ -142,20 +143,20 @@ const priorityColorMap: Record<string, string> = {
       <template #content>
         <div class="w-80">
           <div class="mb-2 flex items-center justify-between border-b pb-2">
-            <span class="text-sm font-medium">通知</span>
+            <span class="text-sm font-medium">{{ $t('common.notification.title') }}</span>
             <Button
               v-if="unreadCount > 0"
               type="link"
               size="small"
               @click="onMarkAllRead"
             >
-              全部已读
+              {{ $t('common.notification.markAllRead') }}
             </Button>
           </div>
           <Spin :spinning="loading">
             <div v-if="notifications.length === 0" class="py-4">
               <Empty
-                description="暂无通知"
+                :description="$t('common.notification.empty')"
                 :image="Empty.PRESENTED_IMAGE_SIMPLE"
               />
             </div>
@@ -182,7 +183,7 @@ const priorityColorMap: Record<string, string> = {
           </Spin>
           <div class="mt-2 border-t pt-2 text-center">
             <Button type="link" size="small" @click="onViewAll">
-              查看全部
+              {{ $t('common.notification.viewAll') }}
             </Button>
           </div>
         </div>
@@ -198,7 +199,7 @@ const priorityColorMap: Record<string, string> = {
 
     <Modal
       v-model:open="detailVisible"
-      :title="currentNotification?.title || '通知详情'"
+      :title="currentNotification?.title || $t('common.notification.detailTitle')"
       :footer="null"
       width="520px"
     >
@@ -208,14 +209,14 @@ const priorityColorMap: Record<string, string> = {
             {{ typeLabelMap[currentNotification.type] || currentNotification.type }}
           </Tag>
           <Tag v-if="currentNotification.priority" :color="priorityColorMap[currentNotification.priority] || 'default'">
-            优先级：{{ priorityLabelMap[currentNotification.priority] || currentNotification.priority }}
+            {{ $t('common.notification.priorityLabel') }}：{{ priorityLabelMap[currentNotification.priority] || currentNotification.priority }}
           </Tag>
           <span class="text-xs text-gray-400">
             {{ formatTime(currentNotification.createdAt) }}
           </span>
         </div>
         <div class="border-t pt-3 text-sm leading-6 whitespace-pre-wrap">
-          {{ currentNotification.content || '（无内容）' }}
+          {{ currentNotification.content || $t('common.notification.noContent') }}
         </div>
       </div>
     </Modal>

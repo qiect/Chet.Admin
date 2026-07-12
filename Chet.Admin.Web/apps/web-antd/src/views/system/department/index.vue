@@ -11,6 +11,7 @@ import { Button, message } from 'ant-design-vue';
 import { useVbenForm } from '#/adapter/form';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import { createDeptApi, deleteDeptApi, getAllDeptsApi, getDeptTreeApi, updateDeptApi } from '#/api/system/department';
+import { $t } from '#/locales';
 import { ref } from 'vue';
 
 const { hasAccessByCodes } = useAccess();
@@ -26,14 +27,14 @@ function buildTreeSelect(items: any[], excludeId?: number): any[] {
 }
 
 const columns: VxeTableGridColumns = [
-  { field: 'name', title: '部门名称', minWidth: 180, treeNode: true, align: 'left' },
-  { field: 'code', title: '编码', minWidth: 120 },
-  { field: 'leader', title: '负责人', width: 100 },
-  { field: 'phone', title: '电话', minWidth: 120 },
-  { field: 'email', title: '邮箱', minWidth: 160 },
-  { field: 'sort', title: '排序', width: 70 },
-  { field: 'isEnabled', title: '状态', width: 70, cellRender: { name: 'CellTag' } },
-  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: '操作', width: 180 },
+  { field: 'name', title: $t('system.department.columns.name'), minWidth: 180, treeNode: true, align: 'left' },
+  { field: 'code', title: $t('system.department.columns.code'), minWidth: 120 },
+  { field: 'leader', title: $t('system.department.columns.leader'), width: 100 },
+  { field: 'phone', title: $t('system.department.columns.phone'), minWidth: 120 },
+  { field: 'email', title: $t('system.department.columns.email'), minWidth: 160 },
+  { field: 'sort', title: $t('system.common.columns.sort'), width: 70 },
+  { field: 'isEnabled', title: $t('system.common.columns.isEnabled'), width: 70, cellRender: { name: 'CellTag' } },
+  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 180 },
 ];
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -61,14 +62,14 @@ function expandAll() { gridApi.grid?.setAllTreeExpand(true); }
 function collapseAll() { gridApi.grid?.setAllTreeExpand(false); }
 
 const formSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'name', label: '部门名称', rules: 'required' },
-  { component: 'Input', fieldName: 'code', label: '部门编码', rules: 'required',
-    help: '如 TECH, HR, FIN',
+  { component: 'Input', fieldName: 'name', label: $t('system.department.form.name'), rules: 'required' },
+  { component: 'Input', fieldName: 'code', label: $t('system.department.form.code'), rules: 'required',
+    help: $t('system.department.form.codeHelp'),
   },
-  { component: 'TreeSelect', fieldName: 'parentId', label: '上级部门',
+  { component: 'TreeSelect', fieldName: 'parentId', label: $t('system.department.form.parentId'),
     componentProps: {
       treeData: [],
-      placeholder: '留空为顶级部门',
+      placeholder: $t('system.department.form.parentIdPlaceholder'),
       allowClear: true,
       showSearch: true,
       treeNodeFilterProp: 'label',
@@ -78,11 +79,11 @@ const formSchema: VbenFormSchema[] = [
       style: { width: '100%' },
     },
   },
-  { component: 'Input', fieldName: 'leader', label: '负责人' },
-  { component: 'Input', fieldName: 'phone', label: '联系电话' },
-  { component: 'Input', fieldName: 'email', label: '邮箱' },
-  { component: 'InputNumber', fieldName: 'sort', label: '排序', defaultValue: 0, componentProps: { style: { width: '100%' } } },
-  { component: 'Switch', fieldName: 'isEnabled', label: '启用', defaultValue: true },
+  { component: 'Input', fieldName: 'leader', label: $t('system.department.form.leader') },
+  { component: 'Input', fieldName: 'phone', label: $t('system.department.form.phone') },
+  { component: 'Input', fieldName: 'email', label: $t('system.department.form.email') },
+  { component: 'InputNumber', fieldName: 'sort', label: $t('system.common.form.sort'), defaultValue: 0, componentProps: { style: { width: '100%' } } },
+  { component: 'Switch', fieldName: 'isEnabled', label: $t('system.common.form.isEnabled'), defaultValue: true },
 ];
 
 const [Form, formApi] = useVbenForm({ schema: formSchema, showDefaultActions: false });
@@ -93,8 +94,8 @@ const editingId = ref(0);
 const [Modal, modalApi] = useVbenModal({
   onConfirm: async () => {
     const values = await formApi.getValues();
-    if (editingId.value) { await updateDeptApi(editingId.value, values); message.success('更新成功'); }
-    else { await createDeptApi(values); message.success('创建成功'); }
+    if (editingId.value) { await updateDeptApi(editingId.value, values); message.success($t('system.common.messages.updateSuccess')); }
+    else { await createDeptApi(values); message.success($t('system.common.messages.createSuccess')); }
     modalApi.close(); gridApi.query();
   },
   async onOpenChange(isOpen) {
@@ -116,28 +117,28 @@ const [Modal, modalApi] = useVbenModal({
 function onCreate(parentId = 0) { modalApi.setData({ parentId }).open(); }
 function onEdit(row: any) { modalApi.setData(row).open(); }
 function onDelete(row: any) {
-  deleteDeptApi(row.id).then(() => { message.success('删除成功'); gridApi.query(); });
+  deleteDeptApi(row.id).then(() => { message.success($t('system.common.messages.deleteSuccess')); gridApi.query(); });
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Modal title="部门管理">
+    <Modal :title="$t('system.department.title')">
       <Form />
     </Modal>
-    <Grid table-title="部门列表">
+    <Grid :table-title="$t('system.department.tableTitle')">
       <template #toolbar-tools>
-        <Button class="mr-2" @click="expandAll">展开全部</Button>
-        <Button class="mr-2" @click="collapseAll">折叠全部</Button>
-        <Button v-if="hasAccessByCodes(['system:dept:create'])" type="primary" @click="onCreate(0)"><Plus class="mr-2 size-4" />新增</Button>
+        <Button class="mr-2" @click="expandAll">{{ $t('system.common.actions.expandAll') }}</Button>
+        <Button class="mr-2" @click="collapseAll">{{ $t('system.common.actions.collapseAll') }}</Button>
+        <Button v-if="hasAccessByCodes(['system:dept:create'])" type="primary" @click="onCreate(0)"><Plus class="mr-2 size-4" />{{ $t('system.common.actions.create') }}</Button>
       </template>
       <template #action="{ row }">
         <VbenTableAction
           :actions="[
-            { text: '新增', auth: 'system:dept:create', onClick: () => onCreate(row.id) },
-            { text: '编辑', auth: 'system:dept:update', onClick: () => onEdit(row) },
+            { text: $t('system.common.actions.create'), auth: 'system:dept:create', onClick: () => onCreate(row.id) },
+            { text: $t('system.common.actions.edit'), auth: 'system:dept:update', onClick: () => onEdit(row) },
           ]"
-          :dropdown-actions="[{ text: '删除', auth: 'system:dept:delete', danger: true, popConfirm: { title: '确认删除？', confirm: () => onDelete(row) } }]"
+          :dropdown-actions="[{ text: $t('system.common.actions.delete'), auth: 'system:dept:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
         />
       </template>
     </Grid>

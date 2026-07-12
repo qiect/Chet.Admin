@@ -5,6 +5,7 @@ import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-tab
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 import { useAccess } from '@vben/access';
+import { formatDateTime } from '@vben/utils';
 
 import { Button, message } from 'ant-design-vue';
 
@@ -12,6 +13,7 @@ import { useVbenForm } from '#/adapter/form';
 import { useVbenVxeGrid, VbenTableAction } from '#/adapter/vxe-table';
 import { createUserApi, deleteUserApi, getUserListApi, updateUserApi, getRoleListAllApi } from '#/api/system/user';
 import { getDeptTreeApi } from '#/api/system/department';
+import { $t } from '#/locales';
 import { h, onMounted, ref } from 'vue';
 import { Tag } from 'ant-design-vue';
 
@@ -43,29 +45,29 @@ function buildDeptTreeSelect(items: any[]): any[] {
 onMounted(() => { loadDeptNameMap(); });
 
 const searchSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'keyword', label: '关键字' },
+  { component: 'Input', fieldName: 'keyword', label: $t('system.common.search.keyword') },
 ];
 
 const columns: VxeTableGridColumns = [
-  { field: 'id', title: 'ID', width: 70 },
-  { field: 'name', title: '用户名', minWidth: 120 },
-  { field: 'email', title: '邮箱', minWidth: 200 },
-  { field: 'departmentId', title: '部门', minWidth: 120,
-    slots: { default: ({ row }) => { const name = deptNameMap.value.get(row.departmentId); return name || '-'; } },
+  { field: 'id', title: $t('system.common.columns.id'), width: 70 },
+  { field: 'name', title: $t('system.user.columns.username'), minWidth: 120 },
+  { field: 'email', title: $t('system.user.columns.email'), minWidth: 200 },
+  { field: 'departmentId', title: $t('system.user.columns.department'), minWidth: 120,
+    slots: { default: ({ row }) => { const name = deptNameMap.value.get(row.departmentId); return name || $t('system.common.empty'); } },
   },
-  { field: 'roles', title: '角色', minWidth: 160,
+  { field: 'roles', title: $t('system.user.columns.roles'), minWidth: 160,
     slots: {
       default: ({ row }) => {
         const roles = row.roles || [];
-        if (!roles.length) return '-';
+        if (!roles.length) return $t('system.common.empty');
         return roles.map((r: any) => h(Tag, { color: 'blue', class: 'mr-1' }, () => r.name));
       },
     },
   },
-  { field: 'createdAt', title: '创建时间', minWidth: 180,
-    slots: { default: ({ row }) => row.createdAt ? new Date(row.createdAt).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-' },
+  { field: 'createdAt', title: $t('system.common.columns.createdAt'), minWidth: 180,
+    slots: { default: ({ row }) => row.createdAt ? formatDateTime(row.createdAt) : $t('system.common.empty') },
   },
-  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: '操作', width: 180 },
+  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 180 },
 ];
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -87,16 +89,16 @@ const [Grid, gridApi] = useVbenVxeGrid({
 // ========== 编辑用户表单 ==========
 // 注意：邮箱是用户唯一凭证，编辑时不可修改
 const editFormSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'name', label: '用户名', rules: 'required' },
-  { component: 'Input', fieldName: 'email', label: '邮箱', rules: 'required',
-    componentProps: { disabled: true, placeholder: '邮箱为唯一凭证，不可修改' },
-    help: '邮箱为用户唯一登录凭证，不支持修改',
+  { component: 'Input', fieldName: 'name', label: $t('system.user.form.username'), rules: 'required' },
+  { component: 'Input', fieldName: 'email', label: $t('system.user.form.email'), rules: 'required',
+    componentProps: { disabled: true, placeholder: $t('system.user.form.emailPlaceholder') },
+    help: $t('system.user.form.emailHelp'),
   },
-  { component: 'TreeSelect', fieldName: 'departmentId', label: '所属部门',
-    componentProps: { treeData: [], placeholder: '选择部门', allowClear: true, showSearch: true, treeNodeFilterProp: 'label', treeLine: true, treeDefaultExpandAll: true, dropdownStyle: { maxHeight: '400px' }, style: { width: '100%' } },
+  { component: 'TreeSelect', fieldName: 'departmentId', label: $t('system.user.form.department'),
+    componentProps: { treeData: [], placeholder: $t('system.user.form.departmentPlaceholder'), allowClear: true, showSearch: true, treeNodeFilterProp: 'label', treeLine: true, treeDefaultExpandAll: true, dropdownStyle: { maxHeight: '400px' }, style: { width: '100%' } },
   },
-  { component: 'Select', fieldName: 'roleIds', label: '角色',
-    componentProps: { mode: 'multiple', options: [], placeholder: '选择角色', allowClear: true, style: { width: '100%' } },
+  { component: 'Select', fieldName: 'roleIds', label: $t('system.user.form.roles'),
+    componentProps: { mode: 'multiple', options: [], placeholder: $t('system.user.form.rolesPlaceholder'), allowClear: true, style: { width: '100%' } },
   },
 ];
 
@@ -111,10 +113,10 @@ const [EditModal, editModalApi] = useVbenModal({
     if (isEdit.value && editingId.value) {
       // 编辑时不提交 email 字段（邮箱为唯一凭证不可修改）
       await updateUserApi(editingId.value, { name: values.name, departmentId: values.departmentId, roleIds: values.roleIds });
-      message.success('更新成功');
+      message.success($t('system.common.messages.updateSuccess'));
     } else {
       await createUserApi(values);
-      message.success('创建成功');
+      message.success($t('system.common.messages.createSuccess'));
     }
     editModalApi.close();
     gridApi.query();
@@ -147,19 +149,19 @@ const [EditModal, editModalApi] = useVbenModal({
 
 // ========== 新增用户表单（含密码） ==========
 const createFormSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'name', label: '用户名', rules: 'required' },
-  { component: 'Input', fieldName: 'email', label: '邮箱', rules: 'required' },
-  { component: 'VbenInputPassword', fieldName: 'password', label: '密码', rules: 'required',
-    componentProps: { placeholder: '请输入密码', passwordStrength: true },
+  { component: 'Input', fieldName: 'name', label: $t('system.user.form.username'), rules: 'required' },
+  { component: 'Input', fieldName: 'email', label: $t('system.user.form.email'), rules: 'required' },
+  { component: 'VbenInputPassword', fieldName: 'password', label: $t('system.user.form.password'), rules: 'required',
+    componentProps: { placeholder: $t('system.user.form.passwordPlaceholder'), passwordStrength: true },
   },
-  { component: 'VbenInputPassword', fieldName: 'confirmPassword', label: '确认密码', rules: 'required',
-    componentProps: { placeholder: '再次输入密码', passwordStrength: true },
+  { component: 'VbenInputPassword', fieldName: 'confirmPassword', label: $t('system.user.form.confirmPassword'), rules: 'required',
+    componentProps: { placeholder: $t('system.user.form.confirmPasswordPlaceholder'), passwordStrength: true },
   },
-  { component: 'TreeSelect', fieldName: 'departmentId', label: '所属部门',
-    componentProps: { treeData: [], placeholder: '选择部门', allowClear: true, showSearch: true, treeNodeFilterProp: 'label', treeLine: true, treeDefaultExpandAll: true, dropdownStyle: { maxHeight: '400px' }, style: { width: '100%' } },
+  { component: 'TreeSelect', fieldName: 'departmentId', label: $t('system.user.form.department'),
+    componentProps: { treeData: [], placeholder: $t('system.user.form.departmentPlaceholder'), allowClear: true, showSearch: true, treeNodeFilterProp: 'label', treeLine: true, treeDefaultExpandAll: true, dropdownStyle: { maxHeight: '400px' }, style: { width: '100%' } },
   },
-  { component: 'Select', fieldName: 'roleIds', label: '角色',
-    componentProps: { mode: 'multiple', options: [], placeholder: '选择角色', allowClear: true, style: { width: '100%' } },
+  { component: 'Select', fieldName: 'roleIds', label: $t('system.user.form.roles'),
+    componentProps: { mode: 'multiple', options: [], placeholder: $t('system.user.form.rolesPlaceholder'), allowClear: true, style: { width: '100%' } },
   },
 ];
 
@@ -169,14 +171,14 @@ const [CreateModal, createModalApi] = useVbenModal({
   onConfirm: async () => {
     const values = await createFormApi.getValues();
     if (!values.password || values.password.length < 6) {
-      message.warning('密码至少6位'); return;
+      message.warning($t('system.user.messages.passwordMinLength')); return;
     }
     if (values.password !== values.confirmPassword) {
-      message.warning('两次密码不一致'); return;
+      message.warning($t('system.user.messages.passwordMismatch')); return;
     }
     const { confirmPassword, ...submitData } = values;
     await createUserApi(submitData);
-    message.success('创建成功');
+    message.success($t('system.common.messages.createSuccess'));
     createModalApi.close();
     gridApi.query();
   },
@@ -194,11 +196,11 @@ const [CreateModal, createModalApi] = useVbenModal({
 
 // ========== 修改密码 ==========
 const pwdFormSchema: VbenFormSchema[] = [
-  { component: 'VbenInputPassword', fieldName: 'newPassword', label: '新密码', rules: 'required',
-    componentProps: { placeholder: '请输入新密码', passwordStrength: true },
+  { component: 'VbenInputPassword', fieldName: 'newPassword', label: $t('system.user.form.newPassword'), rules: 'required',
+    componentProps: { placeholder: $t('system.user.form.newPasswordPlaceholder'), passwordStrength: true },
   },
-  { component: 'VbenInputPassword', fieldName: 'confirmPassword', label: '确认密码', rules: 'required',
-    componentProps: { placeholder: '再次输入新密码', passwordStrength: true },
+  { component: 'VbenInputPassword', fieldName: 'confirmPassword', label: $t('system.user.form.confirmPassword'), rules: 'required',
+    componentProps: { placeholder: $t('system.user.form.confirmNewPasswordPlaceholder'), passwordStrength: true },
   },
 ];
 
@@ -209,13 +211,13 @@ const [PwdModal, pwdModalApi] = useVbenModal({
   onConfirm: async () => {
     const values = await pwdFormApi.getValues();
     if (!values.newPassword || values.newPassword.length < 6) {
-      message.warning('密码至少6位'); return;
+      message.warning($t('system.user.messages.passwordMinLength')); return;
     }
     if (values.newPassword !== values.confirmPassword) {
-      message.warning('两次密码不一致'); return;
+      message.warning($t('system.user.messages.passwordMismatch')); return;
     }
     await updateUserApi(pwdUserId.value, { password: values.newPassword });
-    message.success('密码修改成功');
+    message.success($t('system.user.messages.passwordChanged'));
     pwdModalApi.close();
   },
   onOpenChange(isOpen) {
@@ -227,40 +229,40 @@ function onCreate() { createModalApi.open(); }
 function onEdit(row: any) { editModalApi.setData(row).open(); }
 function onChangePwd(row: any) { pwdUserId.value = row.id; pwdModalApi.open(); }
 function onDelete(row: any) {
-  deleteUserApi(row.id).then(() => { message.success('删除成功'); gridApi.query(); });
+  deleteUserApi(row.id).then(() => { message.success($t('system.common.messages.deleteSuccess')); gridApi.query(); });
 }
 </script>
 
 <template>
   <Page auto-content-height>
     <!-- 新增用户 -->
-    <CreateModal title="新增用户">
+    <CreateModal :title="$t('system.user.modals.create')">
       <CreateForm />
     </CreateModal>
 
     <!-- 编辑用户 -->
-    <EditModal title="编辑用户">
+    <EditModal :title="$t('system.user.modals.edit')">
       <EditForm />
     </EditModal>
 
     <!-- 修改密码 -->
-    <PwdModal title="修改密码">
+    <PwdModal :title="$t('system.user.modals.changePassword')">
       <PwdForm />
     </PwdModal>
 
-    <Grid table-title="用户列表">
+    <Grid :table-title="$t('system.user.tableTitle')">
       <template #toolbar-tools>
         <Button v-if="hasAccessByCodes(['system:user:create'])" type="primary" @click="onCreate">
-          <Plus class="mr-2 size-4" />新增
+          <Plus class="mr-2 size-4" />{{ $t('system.common.actions.create') }}
         </Button>
       </template>
       <template #action="{ row }">
         <VbenTableAction
           :actions="[
-            { text: '编辑', auth: 'system:user:update', onClick: () => onEdit(row) },
-            { text: '修改密码', auth: 'system:user:update', onClick: () => onChangePwd(row) },
+            { text: $t('system.common.actions.edit'), auth: 'system:user:update', onClick: () => onEdit(row) },
+            { text: $t('system.user.actions.changePassword'), auth: 'system:user:update', onClick: () => onChangePwd(row) },
           ]"
-          :dropdown-actions="[{ text: '删除', auth: 'system:user:delete', danger: true, popConfirm: { title: '确认删除？', confirm: () => onDelete(row) } }]"
+          :dropdown-actions="[{ text: $t('system.common.actions.delete'), auth: 'system:user:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
         />
       </template>
     </Grid>

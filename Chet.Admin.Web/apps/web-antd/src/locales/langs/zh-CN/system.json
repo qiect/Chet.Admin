@@ -1,0 +1,316 @@
+{
+  "common": {
+    "search": {
+      "keyword": "关键字"
+    },
+    "columns": {
+      "id": "ID",
+      "operation": "操作",
+      "createdAt": "创建时间",
+      "status": "状态",
+      "sort": "排序",
+      "description": "描述",
+      "isEnabled": "状态"
+    },
+    "form": {
+      "sort": "排序",
+      "description": "描述",
+      "isEnabled": "启用",
+      "remark": "备注"
+    },
+    "actions": {
+      "create": "新增",
+      "edit": "编辑",
+      "delete": "删除",
+      "expandAll": "展开全部",
+      "collapseAll": "折叠全部",
+      "confirmDelete": "确认删除？"
+    },
+    "messages": {
+      "createSuccess": "创建成功",
+      "updateSuccess": "更新成功",
+      "deleteSuccess": "删除成功"
+    },
+    "empty": "-",
+    "yes": "是",
+    "no": "否",
+    "all": "全部"
+  },
+  "user": {
+    "title": "用户管理",
+    "tableTitle": "用户列表",
+    "columns": {
+      "username": "用户名",
+      "email": "邮箱",
+      "department": "部门",
+      "roles": "角色"
+    },
+    "form": {
+      "username": "用户名",
+      "email": "邮箱",
+      "department": "所属部门",
+      "roles": "角色",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "newPassword": "新密码",
+      "emailHelp": "邮箱为用户唯一登录凭证，不支持修改",
+      "emailPlaceholder": "邮箱为唯一凭证，不可修改",
+      "departmentPlaceholder": "选择部门",
+      "rolesPlaceholder": "选择角色",
+      "passwordPlaceholder": "请输入密码",
+      "confirmPasswordPlaceholder": "再次输入密码",
+      "newPasswordPlaceholder": "请输入新密码",
+      "confirmNewPasswordPlaceholder": "再次输入新密码"
+    },
+    "actions": {
+      "changePassword": "修改密码"
+    },
+    "messages": {
+      "passwordMinLength": "密码至少6位",
+      "passwordMismatch": "两次密码不一致",
+      "passwordChanged": "密码修改成功"
+    },
+    "modals": {
+      "create": "新增用户",
+      "edit": "编辑用户",
+      "changePassword": "修改密码"
+    }
+  },
+  "role": {
+    "title": "角色管理",
+    "tableTitle": "角色列表",
+    "columns": {
+      "code": "角色编码",
+      "name": "角色名称",
+      "dataScope": "数据权限"
+    },
+    "form": {
+      "code": "角色编码",
+      "name": "角色名称",
+      "dataScope": "数据权限",
+      "customDeptIds": "自定义部门",
+      "dataScopePlaceholder": "选择数据权限",
+      "customDeptIdsPlaceholder": "选择部门"
+    },
+    "dataScope": {
+      "All": "全部数据",
+      "Dept": "本部门",
+      "DeptAndChild": "本部门及下级",
+      "Self": "仅本人",
+      "Custom": "自定义"
+    },
+    "dataScopeForm": {
+      "All": "全部数据",
+      "Dept": "本部门数据",
+      "DeptAndChild": "本部门及下级部门",
+      "Self": "仅本人数据",
+      "Custom": "自定义部门"
+    },
+    "actions": {
+      "assignMenu": "分配菜单"
+    },
+    "messages": {
+      "assignMenuSuccess": "菜单分配成功"
+    },
+    "modals": {
+      "edit": "角色管理",
+      "assignMenu": "分配菜单",
+      "assignMenuAlert": "勾选菜单分配访问权限。父子节点独立勾选，可单独分配按钮权限。"
+    },
+    "buttonSuffix": "[按钮]"
+  },
+  "menu": {
+    "title": "菜单管理",
+    "tableTitle": "菜单列表",
+    "columns": {
+      "name": "菜单名称",
+      "type": "类型",
+      "permission": "权限标识",
+      "path": "路径",
+      "component": "组件",
+      "icon": "图标",
+      "isVisible": "可见"
+    },
+    "form": {
+      "type": "类型",
+      "name": "名称",
+      "permission": "权限标识",
+      "path": "路由路径",
+      "component": "组件路径",
+      "redirect": "重定向",
+      "icon": "图标",
+      "parentId": "父级菜单",
+      "isCache": "缓存",
+      "isExternal": "外链",
+      "isVisible": "菜单可见",
+      "parentIdPlaceholder": "留空为顶级菜单",
+      "typeHelp": "目录=一级分组, 菜单=页面, 按钮=操作权限",
+      "permissionHelp": "如 system:user:list",
+      "descriptionHelp": "按钮/权限的说明描述",
+      "isVisibleHelp": "关闭后菜单中不显示，但路由仍可访问"
+    },
+    "type": {
+      "Directory": "目录",
+      "Menu": "菜单",
+      "Button": "按钮"
+    }
+  },
+  "department": {
+    "title": "部门管理",
+    "tableTitle": "部门列表",
+    "columns": {
+      "name": "部门名称",
+      "code": "编码",
+      "leader": "负责人",
+      "phone": "电话",
+      "email": "邮箱"
+    },
+    "form": {
+      "name": "部门名称",
+      "code": "部门编码",
+      "parentId": "上级部门",
+      "leader": "负责人",
+      "phone": "联系电话",
+      "email": "邮箱",
+      "codeHelp": "如 TECH, HR, FIN",
+      "parentIdPlaceholder": "留空为顶级部门"
+    }
+  },
+  "dictionary": {
+    "title": "字典管理",
+    "tableTitle": "字典列表",
+    "columns": {
+      "dictType": "字典类型",
+      "name": "名称",
+      "value": "值",
+      "label": "标签",
+      "remark": "备注"
+    },
+    "search": {
+      "dictType": "字典类型"
+    },
+    "form": {
+      "dictType": "字典类型",
+      "name": "名称",
+      "value": "字典值",
+      "label": "标签",
+      "remark": "备注",
+      "parentId": "父级ID"
+    }
+  },
+  "notification": {
+    "title": "通知公告",
+    "tableTitle": "通知公告列表",
+    "columns": {
+      "title": "标题",
+      "type": "类型",
+      "priority": "优先级",
+      "isGlobal": "全局",
+      "senderName": "发送者",
+      "systemSender": "系统",
+      "userPrefix": "用户"
+    },
+    "form": {
+      "title": "标题",
+      "content": "内容",
+      "type": "类型",
+      "priority": "优先级",
+      "isGlobal": "全局通知",
+      "recipientUserIds": "接收者",
+      "recipientUserIdsPlaceholder": "选择接收用户"
+    },
+    "type": {
+      "Announcement": "公告",
+      "Notification": "通知",
+      "Todo": "待办"
+    },
+    "priority": {
+      "Low": "低",
+      "Normal": "普通",
+      "High": "高",
+      "Urgent": "紧急"
+    },
+    "messages": {
+      "selectRecipients": "非全局通知请选择接收者"
+    },
+    "modals": {
+      "create": "新增通知"
+    }
+  },
+  "onlineUser": {
+    "title": "在线用户",
+    "columns": {
+      "userName": "用户名",
+      "clientIp": "登录IP",
+      "loginTime": "登录时间",
+      "lastActiveTime": "最后活跃"
+    },
+    "actions": {
+      "forceOffline": "强制下线"
+    },
+    "messages": {
+      "forceOfflineSuccess": "已强制下线",
+      "forceOfflineFailed": "操作失败"
+    }
+  },
+  "auditLog": {
+    "title": "审计日志",
+    "tableTitle": "操作日志",
+    "search": {
+      "module": "操作模块",
+      "action": "操作类型",
+      "timeRange": "操作时间"
+    },
+    "columns": {
+      "userName": "操作人",
+      "module": "模块",
+      "action": "操作",
+      "requestPath": "请求路径",
+      "clientIp": "IP",
+      "duration": "耗时",
+      "operatedAt": "操作时间"
+    },
+    "module": {
+      "User": "用户",
+      "Role": "角色",
+      "Menu": "菜单",
+      "Department": "部门",
+      "Permission": "权限",
+      "Dictionary": "字典",
+      "Auth": "认证"
+    },
+    "action": {
+      "Create": "创建",
+      "Update": "更新",
+      "Delete": "删除",
+      "Login": "登录",
+      "Logout": "登出",
+      "Assign": "分配"
+    },
+    "messages": {
+      "selectClearDate": "请选择清理日期",
+      "clearSuccess": "清理成功"
+    },
+    "clearBeforeDatePlaceholder": "清理此日期之前",
+    "clearButton": "清理"
+  },
+  "file": {
+    "title": "文件管理",
+    "tableTitle": "文件列表",
+    "columns": {
+      "fileName": "文件名",
+      "fileSize": "大小",
+      "contentType": "类型",
+      "createdAt": "上传时间"
+    },
+    "actions": {
+      "upload": "上传文件",
+      "download": "下载"
+    },
+    "messages": {
+      "uploadSuccess": "上传成功",
+      "uploadFailed": "上传失败",
+      "downloadFailed": "下载失败"
+    }
+  }
+}

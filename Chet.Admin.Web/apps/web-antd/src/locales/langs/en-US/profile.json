@@ -1,0 +1,25 @@
+{
+  "title": "Profile",
+  "tabs": {
+    "baseSetting": "Basic Settings",
+    "password": "Change Password"
+  },
+  "baseSetting": {
+    "avatar": "Avatar",
+    "changeAvatar": "Change Avatar",
+    "uploading": "Uploading...",
+    "avatarTip": "Supports JPG/PNG/GIF/WEBP/BMP, no larger than 2MB",
+    "realName": "Name",
+    "email": "Email",
+    "emailHelp": "Email is the unique credential for login and cannot be modified",
+    "introduction": "Introduction",
+    "getProfileFailed": "Failed to get profile",
+    "invalidImageFormat": "Only JPG/PNG/GIF/WEBP/BMP image formats are supported",
+    "avatarSizeExceeded": "Avatar image size cannot exceed 2MB",
+    "avatarUploadFailedNoPath": "Avatar upload failed: file path not received",
+    "avatarUpdateSuccess": "Avatar updated successfully",
+    "avatarUploadFailed": "Avatar upload failed",
+    "profileUpdateSuccess": "Profile updated successfully",
+    "profileUpdateFailed": "Failed to update profile"
+  }
+}

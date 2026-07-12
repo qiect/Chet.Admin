@@ -5,6 +5,7 @@ import type { VxeTableGridColumns, VxeTableGridOptions } from '#/adapter/vxe-tab
 import { Page, useVbenModal } from '@vben/common-ui';
 import { Plus } from '@vben/icons';
 import { useAccess } from '@vben/access';
+import { formatDateTime } from '@vben/utils';
 
 import { Button, message, Tree, Spin, Alert } from 'ant-design-vue';
 
@@ -21,34 +22,35 @@ import {
 } from '#/api/system/role';
 import { getMenuTreeApi } from '#/api/system/menu';
 import { getDeptTreeApi } from '#/api/system/department';
+import { $t } from '#/locales';
 import { ref, watch } from 'vue';
 
 const { hasAccessByCodes } = useAccess();
 
 const searchSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'keyword', label: '关键字' },
+  { component: 'Input', fieldName: 'keyword', label: $t('system.common.search.keyword') },
 ];
 
 const dataScopeOptions = [
-  { color: 'success', label: '全部数据', value: 'All' },
-  { color: 'processing', label: '本部门', value: 'Dept' },
-  { color: 'cyan', label: '本部门及下级', value: 'DeptAndChild' },
-  { color: 'warning', label: '仅本人', value: 'Self' },
-  { color: 'purple', label: '自定义', value: 'Custom' },
+  { color: 'success', label: $t('system.role.dataScope.All'), value: 'All' },
+  { color: 'processing', label: $t('system.role.dataScope.Dept'), value: 'Dept' },
+  { color: 'cyan', label: $t('system.role.dataScope.DeptAndChild'), value: 'DeptAndChild' },
+  { color: 'warning', label: $t('system.role.dataScope.Self'), value: 'Self' },
+  { color: 'purple', label: $t('system.role.dataScope.Custom'), value: 'Custom' },
 ];
 
 const columns: VxeTableGridColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'code', title: '角色编码', minWidth: 120 },
-  { field: 'name', title: '角色名称', minWidth: 150 },
-  { field: 'description', title: '描述', minWidth: 200 },
-  { field: 'dataScope', title: '数据权限', width: 130, cellRender: { name: 'CellTag', options: dataScopeOptions } },
-  { field: 'sort', title: '排序', width: 80 },
-  { field: 'isEnabled', title: '状态', width: 80, cellRender: { name: 'CellTag' } },
-  { field: 'createdAt', title: '创建时间', minWidth: 180,
-    slots: { default: ({ row }) => row.createdAt ? new Date(row.createdAt).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-' },
+  { field: 'id', title: $t('system.common.columns.id'), width: 80 },
+  { field: 'code', title: $t('system.role.columns.code'), minWidth: 120 },
+  { field: 'name', title: $t('system.role.columns.name'), minWidth: 150 },
+  { field: 'description', title: $t('system.common.columns.description'), minWidth: 200 },
+  { field: 'dataScope', title: $t('system.role.columns.dataScope'), width: 130, cellRender: { name: 'CellTag', options: dataScopeOptions } },
+  { field: 'sort', title: $t('system.common.columns.sort'), width: 80 },
+  { field: 'isEnabled', title: $t('system.common.columns.isEnabled'), width: 80, cellRender: { name: 'CellTag' } },
+  { field: 'createdAt', title: $t('system.common.columns.createdAt'), minWidth: 180,
+    slots: { default: ({ row }) => row.createdAt ? formatDateTime(row.createdAt) : $t('system.common.empty') },
   },
-  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: '操作', width: 200 },
+  { align: 'center', field: 'operation', fixed: 'right', slots: { default: 'action' }, title: $t('system.common.columns.operation'), width: 200 },
 ];
 
 const [Grid, gridApi] = useVbenVxeGrid({
@@ -79,32 +81,32 @@ function buildDeptTreeSelectData(depts: any[]): any[] {
 }
 
 const formSchema: VbenFormSchema[] = [
-  { component: 'Input', fieldName: 'code', label: '角色编码', rules: 'required' },
-  { component: 'Input', fieldName: 'name', label: '角色名称', rules: 'required' },
-  { component: 'Textarea', fieldName: 'description', label: '描述' },
-  { component: 'InputNumber', fieldName: 'sort', label: '排序', defaultValue: 0, componentProps: { style: { width: '100%' } } },
-  { component: 'Switch', fieldName: 'isEnabled', label: '启用', defaultValue: true },
+  { component: 'Input', fieldName: 'code', label: $t('system.role.form.code'), rules: 'required' },
+  { component: 'Input', fieldName: 'name', label: $t('system.role.form.name'), rules: 'required' },
+  { component: 'Textarea', fieldName: 'description', label: $t('system.common.form.description') },
+  { component: 'InputNumber', fieldName: 'sort', label: $t('system.common.form.sort'), defaultValue: 0, componentProps: { style: { width: '100%' } } },
+  { component: 'Switch', fieldName: 'isEnabled', label: $t('system.common.form.isEnabled'), defaultValue: true },
   {
     component: 'Select',
     fieldName: 'dataScope',
-    label: '数据权限',
+    label: $t('system.role.form.dataScope'),
     defaultValue: 'Self',
     componentProps: {
       options: [
-        { label: '全部数据', value: 'All' },
-        { label: '本部门数据', value: 'Dept' },
-        { label: '本部门及下级部门', value: 'DeptAndChild' },
-        { label: '仅本人数据', value: 'Self' },
-        { label: '自定义部门', value: 'Custom' },
+        { label: $t('system.role.dataScopeForm.All'), value: 'All' },
+        { label: $t('system.role.dataScopeForm.Dept'), value: 'Dept' },
+        { label: $t('system.role.dataScopeForm.DeptAndChild'), value: 'DeptAndChild' },
+        { label: $t('system.role.dataScopeForm.Self'), value: 'Self' },
+        { label: $t('system.role.dataScopeForm.Custom'), value: 'Custom' },
       ],
-      placeholder: '选择数据权限',
+      placeholder: $t('system.role.form.dataScopePlaceholder'),
       style: { width: '100%' },
     },
   },
   {
     component: 'TreeSelect',
     fieldName: 'customDeptIds',
-    label: '自定义部门',
+    label: $t('system.role.form.customDeptIds'),
     dependencies: {
       triggerFields: ['dataScope'],
       if(values) { return values.dataScope === 'Custom'; },
@@ -113,7 +115,7 @@ const formSchema: VbenFormSchema[] = [
       treeData: [],
       treeCheckable: true,
       showCheckedStrategy: 'SHOW_ALL',
-      placeholder: '选择部门',
+      placeholder: $t('system.role.form.customDeptIdsPlaceholder'),
       allowClear: true,
       showSearch: true,
       treeNodeFilterProp: 'label',
@@ -141,10 +143,10 @@ const [Modal, modalApi] = useVbenModal({
         }
         await updateDataScopeApi(id, dataScopeData);
       }
-      message.success('更新成功');
+      message.success($t('system.common.messages.updateSuccess'));
     } else {
       await createRoleApi(values);
-      message.success('创建成功');
+      message.success($t('system.common.messages.createSuccess'));
     }
     modalApi.close(); gridApi.query();
   },
@@ -187,7 +189,7 @@ const checkedKeys = ref<number[]>([]);
 function buildMenuTree(menus: any[]): TreeNode[] {
   return (menus || []).map((m: any) => ({
     key: m.id,
-    title: m.type === 'Button' ? `${m.name} [按钮]` : m.name,
+    title: m.type === 'Button' ? `${m.name} ${$t('system.role.buttonSuffix')}` : m.name,
     value: m.id,
     children: m.children && m.children.length > 0 ? buildMenuTree(m.children) : undefined,
     selectable: false,
@@ -204,7 +206,7 @@ const [AssignModal, assignModalApi] = useVbenModal({
       | { checked: number[]; halfChecked: number[] };
     const menuIds = Array.isArray(val) ? val : (val?.checked ?? []);
     await assignRoleMenusApi(assignRoleId.value, menuIds);
-    message.success('菜单分配成功');
+    message.success($t('system.role.messages.assignMenuSuccess'));
     assignModalApi.close();
   },
   async onOpenChange(isOpen) {
@@ -236,20 +238,20 @@ async function onAssign(row: any) {
 function onCreate() { modalApi.setData({}).open(); }
 function onEdit(row: any) { modalApi.setData(row).open(); }
 function onDelete(row: any) {
-  deleteRoleApi(row.id).then(() => { message.success('删除成功'); gridApi.query(); });
+  deleteRoleApi(row.id).then(() => { message.success($t('system.common.messages.deleteSuccess')); gridApi.query(); });
 }
 </script>
 
 <template>
   <Page auto-content-height>
-    <Modal title="角色管理">
+    <Modal :title="$t('system.role.modals.edit')">
       <Form />
     </Modal>
-    <AssignModal title="分配菜单" class="w-[600px]">
+    <AssignModal :title="$t('system.role.modals.assignMenu')" class="w-[600px]">
       <Spin :spinning="assignLoading">
         <Alert type="info" show-icon class="mb-3">
           <template #message>
-            <span class="text-xs">勾选菜单分配访问权限。父子节点独立勾选，可单独分配按钮权限。</span>
+            <span class="text-xs">{{ $t('system.role.modals.assignMenuAlert') }}</span>
           </template>
         </Alert>
         <Tree
@@ -263,17 +265,17 @@ function onDelete(row: any) {
         />
       </Spin>
     </AssignModal>
-    <Grid table-title="角色列表">
+    <Grid :table-title="$t('system.role.tableTitle')">
       <template #toolbar-tools>
-        <Button v-if="hasAccessByCodes(['system:role:create'])" type="primary" @click="onCreate"><Plus class="mr-2 size-4" />新增</Button>
+        <Button v-if="hasAccessByCodes(['system:role:create'])" type="primary" @click="onCreate"><Plus class="mr-2 size-4" />{{ $t('system.common.actions.create') }}</Button>
       </template>
       <template #action="{ row }">
         <VbenTableAction
           :actions="[
-            { text: '编辑', auth: 'system:role:update', onClick: () => onEdit(row) },
-            { text: '分配菜单', auth: 'system:role:update', onClick: () => onAssign(row) },
+            { text: $t('system.common.actions.edit'), auth: 'system:role:update', onClick: () => onEdit(row) },
+            { text: $t('system.role.actions.assignMenu'), auth: 'system:role:update', onClick: () => onAssign(row) },
           ]"
-          :dropdown-actions="[{ text: '删除', auth: 'system:role:delete', danger: true, popConfirm: { title: '确认删除？', confirm: () => onDelete(row) } }]"
+          :dropdown-actions="[{ text: $t('system.common.actions.delete'), auth: 'system:role:delete', danger: true, popConfirm: { title: $t('system.common.actions.confirmDelete'), confirm: () => onDelete(row) } }]"
         />
       </template>
     </Grid>
