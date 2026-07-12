@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useAppConfig } from '@vben/hooks';
 import {
   SvgGithubIcon,
   SvgGoogleIcon,
@@ -10,15 +9,9 @@ import { $t } from '@vben/locales';
 
 import { VbenIconButton } from '@vben-core/shadcn-ui';
 
-import DingdingLogin from './dingding-login.vue';
-
 defineOptions({
   name: 'ThirdPartyLogin',
 });
-
-const {
-  auth: { dingding: dingdingAuthConfig },
-} = useAppConfig(import.meta.env, import.meta.env.PROD);
 </script>
 
 <template>
@@ -60,12 +53,6 @@ const {
       >
         <SvgGoogleIcon />
       </VbenIconButton>
-      <DingdingLogin
-        v-if="dingdingAuthConfig"
-        :corp-id="dingdingAuthConfig.corpId"
-        :client-id="dingdingAuthConfig.clientId"
-        class="mb-3"
-      />
     </div>
   </div>
 </template>
