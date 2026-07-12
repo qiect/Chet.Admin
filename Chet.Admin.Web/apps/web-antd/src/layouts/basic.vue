@@ -17,7 +17,7 @@ import LoginForm from '#/views/_core/authentication/login.vue';
 
 // 项目相关外链（指向本仓库，而非 Vben 默认链接）
 const PROJECT_GITHUB_URL = 'https://github.com/qiect/Chet.Admin';
-const PROJECT_DOC_URL = `${PROJECT_GITHUB_URL}/tree/main/docs`;
+const PROJECT_DOC_URL = 'https://qiect.github.io/docs.chet.admin/';
 const PROJECT_ISSUES_URL = `${PROJECT_GITHUB_URL}/issues`;
 
 const router = useRouter();
