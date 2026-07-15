@@ -53,8 +53,11 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   async function doRefreshToken() {
     const accessStore = useAccessStore();
     // 没有 token 时直接抛出，避免发送无效请求触发 500 错误
+    // 携带 401 标记，让 errorMessageResponseInterceptor 能正确识别为认证错误并跳过提示
     if (!accessStore.accessToken || !accessStore.refreshToken) {
-      throw new Error('No token to refresh');
+      const error: any = new Error('No token to refresh');
+      error.response = { status: 401, data: { statusCode: 401 } };
+      throw error;
     }
     const resp = await refreshTokenApi({
       accessToken: accessStore.accessToken,

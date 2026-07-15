@@ -96,7 +96,15 @@ function setupAccessGuard(router: Router) {
 
     // 生成路由表
     // 当前登录用户拥有的角色标识列表
-    const userInfo = userStore.userInfo || (await authStore.fetchUserInfo());
+    let userInfo = userStore.userInfo;
+    if (!userInfo) {
+      try {
+        userInfo = await authStore.fetchUserInfo();
+      } catch {
+        // fetchUserInfo 失败时，doReAuthenticate 已处理登出和跳转，取消当前导航
+        return false;
+      }
+    }
     const userRoles = userInfo.roles ?? [];
 
     // 生成菜单和路由
